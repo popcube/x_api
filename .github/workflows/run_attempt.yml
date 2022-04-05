@@ -8,4 +8,4 @@ jobs:
       - run: |
           echo "Hello World"
           echo ${{ github.workspace }}
-      - run: echo "run attempts ${{ github.run_attemt }}"
+      - run: echo ${{ github.run_attemt }}
