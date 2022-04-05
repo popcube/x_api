@@ -5,5 +5,7 @@ jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Hello World"
+      - run: |
+          echo "Hello World"
+          echo ${{ github.workspace }}
       - run: echo "run attempts ${{ github.run_attemt }}"
