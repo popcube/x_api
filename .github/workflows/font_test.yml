@@ -1,10 +1,14 @@
-name: bash test
+name: font test
 on: workflow_dispatch
 
 jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
+      - run: |
+          sudo apt-get update
+          sudo apt-get install fonts-ipaexfont
+          
       - run: |
           echo $(fc-list | grep IPAexGothic)
           echo $(fc-list | grep Meiryo)
