@@ -6,5 +6,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          fc-list | grep IPAexGothic 2>&1
-          fc-list | grep Meiryo 2>&1
+          echo $(fc-list | grep IPAexGothic)
+          echo $(fc-list | grep Meiryo)
