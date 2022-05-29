@@ -1,0 +1,10 @@
+name: bash test
+on: workflow_dispatch
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          fc-list | grep IPAexGothic 2>&1
+          fc-list | grep Meiryo 2>&1
