@@ -28,6 +28,8 @@ jobs:
           
           EOF
           
+          python test.py
+          
       - uses: actions/upload-artifact@v2
         with:
           path: "./fetched_song_data.csv"
