@@ -1,0 +1,35 @@
+name: python scrape
+on: workflow_dispatch
+
+jobs:
+  job1:
+    runs-on: self-hosted
+    steps:
+      - name: setup python
+        uses: actions/setup-python@v3
+      
+      - name: intall lib
+        run: |
+          pip install pandas
+      
+      - name: main
+        run: |
+          cat << 'EOF > test.py
+          
+          import pandas as pd
+          
+          import pandas as pd
+          import ssl
+
+          ssl._create_default_https_context = ssl._create_unverified_context
+
+          a = pd.read_html("https://pjsekai.com/?aad6ee23b0", encoding="utf-8", attrs={"id": "sortable_table1"})[0]
+          a.to_csv("./fetched_song_data.csv", index=False, header=False)
+          
+          EOF
+          
+      - uses: actions/upload-artifact@v2
+        with:
+          path: "./fetched_song_data.csv"
+          
+          
