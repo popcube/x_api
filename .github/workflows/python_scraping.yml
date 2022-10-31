@@ -14,7 +14,7 @@ jobs:
       
       - name: main
         run: |
-          cat << 'EOF > test.py
+          cat << 'EOF' > test.py
           
           import pandas as pd
           
