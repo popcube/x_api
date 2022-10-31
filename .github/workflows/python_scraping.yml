@@ -11,6 +11,9 @@ jobs:
       - name: intall lib
         run: |
           pip install pandas
+          pip install lxml
+          pip install html5lib
+          pip install bs4
       
       - name: main
         run: |
