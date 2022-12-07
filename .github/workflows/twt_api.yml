@@ -1,0 +1,9 @@
+name: twt api test
+on: workflow_dispatch
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -H "Authorization: Bearer ${{ secrets.TWT_BEARER_TOKEN }}" https://api.twitter.com/2/users/by/username/pj_sekai
