@@ -11,11 +11,15 @@ import { Client, auth } from "twitter-api-sdk";
 
 // Pass auth credentials to the library client 
 const client = new Client(process.env.BEARER_TOKEN);
+const params = {
+    "user.fields": "public_metrics,verified",
+    "tweet.fields": "non_public_metrics,public_metrics,organic_metrics,promoted_metrics,text"
+}
 
 
 async function main() {
     try {
-        const userObj = await client.users.findUserByUsername("pj_sekai");
+        const userObj = await client.users.findUserByUsername("pj_sekai", params);
         console.log(userObj);
     } catch (error) {
         console.log("tweets error", error);
