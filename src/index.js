@@ -12,8 +12,7 @@ import { Client, auth } from "twitter-api-sdk";
 // Pass auth credentials to the library client 
 const client = new Client(process.env.BEARER_TOKEN);
 const params = {
-    // "user.fields": "public_metrics,verified",
-    "tweet.fields": "non_public_metrics,public_metrics,organic_metrics,promoted_metrics,text"
+    "user.fields": "public_metrics,verified",
 }
 
 
