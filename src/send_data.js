@@ -11,7 +11,7 @@ const documentClient = new AWS.DynamoDB({
 
 const params = [
     {
-        "Statement": "SELECT * from twt_api_pjsekai"
+        "statements": "SELECT * from twt_api_pjsekai"
     }
 ]
 
