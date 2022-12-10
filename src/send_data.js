@@ -13,10 +13,13 @@ const params = {
         "fetch_time": "2022-12-07T17:52:00"
     }
 }
-documentClient.get(params, (err, data) => {
-    if (err) console.log(JSON.stringify(err, null, 2))
-    else console.log(JSON.stringify(data, null, 2))
-})
+
+const main = () => {
+    documentClient.get(params, (err, data) => {
+        if (err) console.log(JSON.stringify(err, null, 2))
+        else console.log(JSON.stringify(data, null, 2))
+    });
+}
 
 // // async/await.
 // try {
@@ -40,3 +43,5 @@ documentClient.get(params, (err, data) => {
 // client.batchExecuteStatement(params, (err, data) => {
 //     // process err and data.
 // });
+
+export default main;
