@@ -1,5 +1,5 @@
 import * as AWS from "@aws-sdk/client-dynamodb";
-const documentClient = new AWS.DynamoDB({
+const client = new AWS.DynamoDB({
     credentials: {
         accessKeyId: process.env.ACC_KEY,
         secretAccessKey: process.env.SEC_ACC_KEY
@@ -9,21 +9,34 @@ const documentClient = new AWS.DynamoDB({
 
 // const documentClient = new client.DocumentClient();
 
+// const params = {
+//     Statements: [
+//         {
+//             Statement: `SELECT * 
+//             FROM "twt_api_pjsekai" 
+//             WHERE "fetch_time" = '2022-12-07T17:52:00'
+//             `
+//         }
+//     ]
+// }
+
 const params = {
-    Statements: [
-        {
-            Statement: `SELECT * 
-            FROM "twt_api_pjsekai" 
-            WHERE "fetch_time" = '2022-12-07T17:52:00'
-            `
+    TableName: "twt_api_pjsekai",
+    Key: {
+        "fetch_time": {
+            S: "2022-12-07T17:52:00"
         }
-    ]
+    }
 }
 
 const main = () => {
-    documentClient.batchExecuteStatement(params, (err, data) => {
-        if (err) console.log(JSON.stringify(err, null, 2))
-        else console.log(JSON.stringify(data, null, 2))
+    // client.batchExecuteStatement(params, (err, data) => {
+    //     if (err) console.log(JSON.stringify(err, null, 2))
+    //     else console.log(JSON.stringify(data, null, 2))
+    // });
+    client.getItem(params, function (err, data) {
+        if (err) console.log(err);
+        else console.log(data);
     });
 }
 
