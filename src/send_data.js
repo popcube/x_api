@@ -14,7 +14,7 @@ const params = {
         {
             Statement: `SELECT * 
             FROM twt_api_pjsekai
-            WHERE fetch_time = "2022-12-07T17:52:00"
+            WHERE fetch_time="2022-12-07T17:52:00"
             `
         }
     ]
