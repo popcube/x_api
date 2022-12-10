@@ -1,5 +1,6 @@
 //Import package
 // import { Client, auth } from "twitter-api-sdk";
-import Get_data from "./get_data.js"
+import get_data from "./get_data.js"
+import send_data from "./send_data.js"
 
-Get_data();
+const userObj = get_data();
