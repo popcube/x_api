@@ -1,11 +1,11 @@
 import * as AWS from "@aws-sdk/client-dynamodb";
-const client = new AWS.DynamoDB({
+const documentClient = new AWS.DynamoDB({
     accessKeyId: process.env.ACC_KEY,
     secretAccessKey: process.env.SEC_ACC_KEY,
     region: "REGION"
 });
 
-const documentClient = new client.DocumentClient();
+// const documentClient = new client.DocumentClient();
 
 const params = {
     TableName: 'twt_api_pjsekai',
@@ -15,7 +15,7 @@ const params = {
 }
 
 const main = () => {
-    documentClient.get(params, (err, data) => {
+    documentClient.batchExecuteStatement(params, (err, data) => {
         if (err) console.log(JSON.stringify(err, null, 2))
         else console.log(JSON.stringify(data, null, 2))
     });
