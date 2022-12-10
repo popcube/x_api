@@ -12,7 +12,7 @@ const documentClient = new AWS.DynamoDB({
 const params = {
     Statements: [
         {
-            Statement: "SELECT * from twt_api_pjsekai"
+            Statement: 'SELECT * FROM "twt_api_pjsekai" WHERE fetch_time = "2022-12-07T17:52:00"'
         }
     ]
 }
