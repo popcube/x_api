@@ -13,8 +13,8 @@ const params = {
     Statements: [
         {
             Statement: `SELECT * 
-            FROM twt_api_pjsekai
-            WHERE fetch_time="2022-12-07T17:52:00"
+            FROM "twt_api_pjsekai" 
+            WHERE "fetch_time" = '2022-12-07T17:52:00'
             `
         }
     ]
