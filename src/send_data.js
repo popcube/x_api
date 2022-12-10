@@ -1,8 +1,10 @@
 import * as AWS from "@aws-sdk/client-dynamodb";
 const documentClient = new AWS.DynamoDB({
-    accessKeyId: process.env.ACC_KEY,
-    secretAccessKey: process.env.SEC_ACC_KEY,
-    region: "REGION"
+    credentials: {
+        accessKeyId: process.env.ACC_KEY,
+        secretAccessKey: process.env.SEC_ACC_KEY
+    },
+    region: "ap-northeast-1"
 });
 
 // const documentClient = new client.DocumentClient();
