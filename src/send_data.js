@@ -9,12 +9,11 @@ const documentClient = new AWS.DynamoDB({
 
 // const documentClient = new client.DocumentClient();
 
-const params = {
-    TableName: 'twt_api_pjsekai',
-    Key: {
-        "fetch_time": "2022-12-07T17:52:00"
+const params = [
+    {
+        "Statement": "SELECT * from twt_api_pjsekai"
     }
-}
+]
 
 const main = () => {
     documentClient.batchExecuteStatement(params, (err, data) => {
