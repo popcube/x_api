@@ -5,7 +5,7 @@ const client = new AWS.DynamoDB({
     region: "REGION"
 });
 
-const documentClient = client.DocumentClient();
+const documentClient = new client.DocumentClient();
 
 const params = {
     TableName: 'twt_api_pjsekai',
