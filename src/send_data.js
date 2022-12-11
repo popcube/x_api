@@ -7,37 +7,26 @@ const client = new AWS.DynamoDB({
     region: "ap-northeast-1"
 });
 
-// const documentClient = new client.DocumentClient();
+// const makeDynObj = (twtObj) => {
+//     const fetchTime = new Date().toISOString().slice(0, -2);
 
-// const params = {
-//     Statements: [
-//         {
-//             Statement: `SELECT * 
-//             FROM "twt_api_pjsekai" 
-//             WHERE "fetch_time" = '2022-12-07T17:52:00'
-//             `
+//     return {
+//         TableName: "twt_api_pjsekai",
+//         Key: {
+//             "fetch_time": {
+//                 S: fetchTime
+//             }
 //         }
-//     ]
+//     };
 // }
 
-const params = (fetchTime = "2022-12-07T17:52:00") => {
-    return {
-        TableName: "twt_api_pjsekai",
-        Key: {
-            "fetch_time": {
-                S: fetchTime
-            }
-        }
-    };
-}
 
-const main = () => {
-    const fetchTime = new Date().toISOString().slice(0, -2);
+const main = (dynObj) => {
     // client.getItem(params(), function (err, data) {
     //     if (err) console.log(err);
     //     else console.log(JSON.stringify(data, null, 2));
     // });
-    client.putItem(params(fetchTime), function (err, data) {
+    client.putItem(dynObj, function (err, data) {
         if (err) console.log(err);
         else console.log(JSON.stringify(data, null, 2));
     });
