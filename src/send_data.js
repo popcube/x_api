@@ -20,21 +20,24 @@ const client = new AWS.DynamoDB({
 //     ]
 // }
 
-const params = {
-    TableName: "twt_api_pjsekai",
-    Key: {
-        "fetch_time": {
-            S: "2022-12-07T17:52:00"
+const params = (fetchTime = "2022-12-07T17:52:00") => {
+    return {
+        TableName: "twt_api_pjsekai",
+        Key: {
+            "fetch_time": {
+                S: fetchTime
+            }
         }
-    }
+    };
 }
 
 const main = () => {
-    // client.batchExecuteStatement(params, (err, data) => {
-    //     if (err) console.log(JSON.stringify(err, null, 2))
-    //     else console.log(JSON.stringify(data, null, 2))
+    const fetchTime = new Date().toISOString().slice(0, -2);
+    // client.getItem(params(), function (err, data) {
+    //     if (err) console.log(err);
+    //     else console.log(JSON.stringify(data, null, 2));
     // });
-    client.getItem(params, function (err, data) {
+    client.putItem(params(fetchTime), function (err, data) {
         if (err) console.log(err);
         else console.log(JSON.stringify(data, null, 2));
     });
