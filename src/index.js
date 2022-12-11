@@ -7,20 +7,39 @@ const makeDynObj = (twtObj) => {
 
     return new Promise((resolve) => {
         const fetchTime = new Date().toISOString().slice(0, -2);
+        const twtData = twtObj.data;
+        const twtDataPM = twtData.public_metrics;
         resolve(
             {
                 TableName: "twt_api_pjsekai",
                 Item: {
-                    fetch_time: { S: fetchTime }
+                    fetch_time: { S: fetchTime },
+                    data: {
+                        M: {
+                            username: { S: twtData.username },
+                            id: { N: twtData.id },
+                            name: { S: twtData.name },
+                            public_metrics: {
+                                M: {
+                                    followers_count: { N: twtDataPM.followers_count },
+                                    following_count: { N: twtDataPM.following_count },
+                                    listed_count: { N: twtDataPM.listed_count },
+                                    tweet_count: { N: twtDataPM.tweet_count }
+                                }
+                            },
+                            verified: { BOOL: twtData.verified }
+                        }
+                    }
                 }
             }
         )
-    });
-}
+    })
+};
 
 
 
 
 const twtObj = get_data();
 const dynObj = await makeDynObj(twtObj)
+console.log(JSON.stringify(dynObj, null, 2));
 send_data(dynObj);
