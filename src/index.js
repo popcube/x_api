@@ -17,5 +17,5 @@ const makeDynObj = (twtObj) => {
 
 
 
-const twtObj = get_data();
-// send_data();
+// const twtObj = get_data();
+send_data();
