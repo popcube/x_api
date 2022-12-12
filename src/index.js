@@ -18,7 +18,7 @@ const makeDynObj = (twtObj) => {
                     data: {
                         M: {
                             username: { S: twtData.username },
-                            id: { N: twtData.id },
+                            id: { S: twtData.id },
                             name: { S: twtData.name },
                             public_metrics: {
                                 M: {
@@ -42,5 +42,5 @@ const makeDynObj = (twtObj) => {
 
 const twtObj = await get_data();
 const dynObj = await makeDynObj(twtObj)
-console.log(JSON.stringify(dynObj, null, 2));
+// console.log(JSON.stringify(dynObj, null, 2));
 send_data(dynObj);

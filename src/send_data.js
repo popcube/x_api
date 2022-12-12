@@ -28,6 +28,7 @@ const main = (dynObj) => {
     // });
     client.putItem(dynObj, function (err, data) {
         if (err) console.log(err);
+        else console.log("Data successfully sent at " + dynObj.Item.fetch_time)
     });
 }
 

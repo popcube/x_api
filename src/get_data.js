@@ -18,7 +18,7 @@ const params = {
 const main = async () => {
     try {
         const userObj = await client.users.findUserByUsername("pj_sekai", params);
-        console.log(userObj);
+        // console.log(userObj);
         return userObj;
     } catch (error) {
         console.log("tweets error", error);
