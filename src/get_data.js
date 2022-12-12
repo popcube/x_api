@@ -18,10 +18,10 @@ const params = {
 const main = async () => {
     try {
         const userObj = await client.users.findUserByUsername("pj_sekai", params);
-        // console.log(userObj);
+        console.log("Data received at " + new Date().toISOString().slice(0, -2));
         return userObj;
     } catch (error) {
-        console.log("tweets error", error);
+        console.log("twitter api get request error", error);
     }
 }
 

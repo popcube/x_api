@@ -8,7 +8,7 @@ const makeDynObj = (twtObj) => {
     return new Promise((resolve) => {
         const fetchTime = new Date().toISOString().slice(0, -2);
         const twtData = twtObj.data;
-        console.log(JSON.stringify(twtObj, null, 2));
+        // console.log(JSON.stringify(twtObj, null, 2));
         const twtDataPM = twtData.public_metrics;
         resolve(
             {
@@ -20,13 +20,13 @@ const makeDynObj = (twtObj) => {
                             username: { S: twtData.username },
                             id: { S: twtData.id },
                             name: { S: twtData.name },
-                            public_metrics: {
-                                M: {
-                                    followers_count: { N: twtDataPM.followers_count },
-                                    following_count: { N: twtDataPM.following_count },
-                                    listed_count: { N: twtDataPM.listed_count },
-                                    tweet_count: { N: twtDataPM.tweet_count }
-                                }
+                            // public_metrics: {
+                            //     M: {
+                            //         followers_count: { N: twtDataPM.followers_count },
+                            //         following_count: { N: twtDataPM.following_count },
+                            //         listed_count: { N: twtDataPM.listed_count },
+                            //         tweet_count: { N: twtDataPM.tweet_count }
+                            //     }
                             },
                             verified: { BOOL: twtData.verified }
                         }
