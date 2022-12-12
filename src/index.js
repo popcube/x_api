@@ -22,7 +22,6 @@ const makeDynObj = (twtObj) => {
                     following_count: { N: twtDataPM.following_count.toString() },
                     listed_count: { N: twtDataPM.listed_count.toString() },
                     tweet_count: { N: twtDataPM.tweet_count.toString() }
-                    },
                     // data: {
                     //     M: {
                     //         username: { S: twtData.username },
@@ -41,8 +40,7 @@ const makeDynObj = (twtObj) => {
                     // }
                 }
             }
-        );
-        }
+        );}
     })
 };
 
