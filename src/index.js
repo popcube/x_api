@@ -40,7 +40,7 @@ const makeDynObj = (twtObj) => {
 
 
 
-const twtObj = get_data();
+const twtObj = await get_data();
 const dynObj = await makeDynObj(twtObj)
 console.log(JSON.stringify(dynObj, null, 2));
 send_data(dynObj);
