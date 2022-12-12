@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 ## scheduled at every hour
   schedule:
-    - cron: '25 * * * *'
+    - cron: '29 * * * *'
 
 jobs:
   job1:
