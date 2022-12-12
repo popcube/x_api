@@ -8,6 +8,7 @@ const makeDynObj = (twtObj) => {
     return new Promise((resolve) => {
         const fetchTime = new Date().toISOString().slice(0, -2);
         const twtData = twtObj.data;
+        console.log(JSON.stringify(twtObj, null, 2));
         const twtDataPM = twtData.public_metrics;
         resolve(
             {
