@@ -27,7 +27,7 @@ const makeDynObj = (twtObj) => {
                             //         listed_count: { N: twtDataPM.listed_count },
                             //         tweet_count: { N: twtDataPM.tweet_count }
                             //     }
-                            },
+                            // },
                             verified: { BOOL: twtData.verified }
                         }
                     }
