@@ -10,7 +10,7 @@ const makeDynObj = (twtObj) => {
         const twtData = twtObj.data;
         // console.log(JSON.stringify(twtObj, null, 2));
         const twtDataPM = twtData.public_metrics;
-        if (twtData.verified) {
+        if ( !twtData.verified ) {
             reject("this twitter account is not verified");
         } else {
             resolve(
