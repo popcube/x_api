@@ -10,14 +10,17 @@ import { Client, auth } from "twitter-api-sdk";
 
 // Pass auth credentials to the library client 
 const client = new Client(process.env.BEARER_TOKEN);
-const params = {
+const paramsFollowers = {
     "user.fields": "public_metrics,verified",
+}
+const paramsTweets = {
+    "max_results": 100
 }
 
 
-const main = async () => {
+export const getFollowers = async () => {
     try {
-        const userObj = await client.users.findUserByUsername("pj_sekai", params);
+        const userObj = await client.users.findUserByUsername("pj_sekai", paramsFollowers);
         console.log("Data received at " + new Date().toISOString().slice(0, -2));
         return userObj;
     } catch (error) {
@@ -25,4 +28,12 @@ const main = async () => {
     }
 }
 
-export default main;
+export const getTweets = async () => {
+    try {
+        const tweetObj = await client.tweets.usersIdTweets("pj_sekai", paramsTweets);
+        console.log("Data received at " + new Date().toISOString().slice(0, -2));
+        return tweetObj;
+    } catch (error) {
+        console.log("twitter api get request error", error);
+    }
+}
