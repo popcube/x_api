@@ -28,9 +28,9 @@ export const getFollowers = async () => {
     }
 }
 
-export const getTweets = async () => {
+export const getTweets = async (id) => {
     try {
-        const tweetObj = await client.tweets.usersIdTweets("pj_sekai", paramsTweets);
+        const tweetObj = await client.tweets.usersIdTweets(id, paramsTweets);
         console.log("Data received at " + new Date().toISOString().slice(0, -2));
         return tweetObj;
     } catch (error) {
