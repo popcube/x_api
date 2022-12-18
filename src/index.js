@@ -30,8 +30,9 @@ const makeFollowersDynObj = (twtObj) => {
 
 
 const flwObj = await getFollowers();
-const dynObj = await makeFollowersDynObj(flwObj)
+// const dynObj = await makeFollowersDynObj(flwObj)
 // sendDyn(dynObj);
 
-const twtObj = getTweets()
+console.log(flwObj.data.id)
+const twtObj = getTweets(flwObj.data.id)
 console.log(JSON.stringify(twtObj, null, 2));
