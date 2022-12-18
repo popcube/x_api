@@ -8,7 +8,7 @@ const makeFollowersDynObj = (twtObj) => {
     return new Promise((resolve, reject) => {
         const fetchTime = new Date().toISOString().slice(0, -2);
         const twtData = twtObj.data;
-        // console.log(JSON.stringify(twtObj, null, 2));
+        console.log(JSON.stringify(twtObj, null, 2));
         const twtDataPM = twtData.public_metrics;
         if (!twtData.verified) {
             reject("this twitter account is not verified");
@@ -29,8 +29,8 @@ const makeFollowersDynObj = (twtObj) => {
 
 
 
-// const flwObj = await getFollowers();
-// const dynObj = await makeFollowersDynObj(flwObj)
+const flwObj = await getFollowers();
+const dynObj = await makeFollowersDynObj(flwObj)
 // sendDyn(dynObj);
 
 const twtObj = getTweets()
