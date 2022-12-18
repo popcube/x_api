@@ -15,7 +15,7 @@ const paramsFollowers = {
 }
 const paramsTweets = {
     "max_results": 100,
-    "tweet.fields": "created_at,id,non_public_metrics,public_metrics,organic_metrics,promoted_metrics,source,text,withheld"
+    "tweet.fields": "created_at,id,public_metrics,source,text,withheld"
 }
 
 
