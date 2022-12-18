@@ -22,7 +22,7 @@ const paramsTweets = {
 export const getFollowers = async () => {
     try {
         const userObj = await client.users.findUserByUsername("pj_sekai", paramsFollowers);
-        console.log("Data received at " + new Date().toISOString().slice(0, -2));
+        console.log("Followers data received at " + new Date().toISOString().slice(0, -2));
         return userObj;
     } catch (error) {
         console.log("twitter api get request error", error);
@@ -32,7 +32,7 @@ export const getFollowers = async () => {
 export const getTweets = async (id) => {
     try {
         const tweetObj = await client.tweets.usersIdTweets(id, paramsTweets);
-        console.log("Data received at " + new Date().toISOString().slice(0, -2));
+        console.log("Tweets data received at " + new Date().toISOString().slice(0, -2));
         return tweetObj;
     } catch (error) {
         console.log("twitter api get request error");
