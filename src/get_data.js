@@ -34,6 +34,7 @@ export const getTweets = async (id) => {
         console.log("Data received at " + new Date().toISOString().slice(0, -2));
         return tweetObj;
     } catch (error) {
-        console.log("twitter api get request error", error);
+        console.log("twitter api get request error");
+        thorw(error)
     }
 }
