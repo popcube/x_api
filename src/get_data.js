@@ -38,7 +38,7 @@ export const getTweets = async (id) => {
         while (tweetObj.meta.next_token) {
             paramsTweets["pagination_token"] = tweetObj.meta.next_token;
             var tweetObj = await client.tweets.usersIdTweets(id, paramsTweets);
-            resArr.push(...tweetObjtweetObj.data);
+            resArr.push(...tweetObj.data);
             console.log("paginating... until tweets created at " + tweetObj.data[tweetObj.data.length - 1].created_at);
         }
         return resArr;
