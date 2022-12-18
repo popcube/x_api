@@ -33,6 +33,7 @@ export const getTweets = async (id) => {
     try {
         const tweetObj = await client.tweets.usersIdTweets(id, paramsTweets);
         console.log("Tweets data received at " + new Date().toISOString().slice(0, -2));
+        console.log("meta: " + JSON.stringify(twtObj.meta, null, 2))
         return tweetObj;
     } catch (error) {
         console.log("twitter api get request error");
