@@ -1,0 +1,25 @@
+name: MeCab try
+on: workflow_dispatch
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Python Setup
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: lib setup
+        run: |
+          pip install mecab-python3
+          pip install ipadic
+
+          python << 'EOF'
+          import MeCab
+          import ipadic
+
+          mecab = MeCab.Tagger(ipadic.MECAB_ARGS)
+          print(mecab.parse("ここは地球上の日本です。"))
+
+          EOF

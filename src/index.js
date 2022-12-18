@@ -35,5 +35,6 @@ const flwObj = await getFollowers();
 
 console.log(flwObj.data.id);
 const twtArr = await getTweets(flwObj.data.id);
-console.log(JSON.stringify(twtArr.slice(-10, -1), null, 2));
-console.log(twtArr.length);
+console.log(JSON.stringify(twtArr.slice(-2, -1), null, 2));
+console.log("Tweet data size: " + twtArr.length);
+

@@ -34,7 +34,7 @@ export const getTweets = async (id) => {
         var tweetObj = await client.tweets.usersIdTweets(id, paramsTweets);
         const resArr = tweetObj.data;
         console.log("Tweets data received at " + new Date().toISOString().slice(0, -2));
-        console.log("meta: " + JSON.stringify(tweetObj.meta, null, 2))
+        // console.log("meta: " + JSON.stringify(tweetObj.meta, null, 2))
         while (tweetObj.meta.next_token) {
             paramsTweets["pagination_token"] = tweetObj.meta.next_token;
             var tweetObj = await client.tweets.usersIdTweets(id, paramsTweets);
