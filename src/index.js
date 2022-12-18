@@ -35,4 +35,5 @@ const flwObj = await getFollowers();
 
 console.log(flwObj.data.id);
 const twtObj = await getTweets(flwObj.data.id);
-console.log(JSON.stringify(twtObj, null, 2));
+console.log(JSON.stringify(twtObj.data[0], null, 2));
+console.log(twtObj.data.length);
