@@ -32,16 +32,16 @@ export const getFollowers = async () => {
 export const getTweets = async (id) => {
     try {
         var tweetObj = await client.tweets.usersIdTweets(id, paramsTweets);
-        const resObj = tweetObj.data;
+        const resArr = tweetObj.data;
         console.log("Tweets data received at " + new Date().toISOString().slice(0, -2));
         console.log("meta: " + JSON.stringify(tweetObj.meta, null, 2))
         while (tweetObj.meta.next_token) {
             paramsTweets["pagination_token"] = tweetObj.meta.next_token;
             var tweetObj = await client.tweets.usersIdTweets(id, paramsTweets);
-            resObj.push(tweetObj.data);
-            console.log("paginating... at " + tweetObj.data.created_at);
+            resArr.push(tweetObj.data);
+            console.log("paginating... until tweets created at " + tweetObj.data[99].created_at);
         }
-        return resObj;
+        return resArr;
     } catch (error) {
         console.log("twitter api get request error");
         throw (error)
