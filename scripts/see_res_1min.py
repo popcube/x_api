@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from datetime import datetime, timedelta
 import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
-# import pandas as pd
+import pandas as pd
 import sys
 
 
@@ -37,7 +37,7 @@ def make_fill_pairs(x_in):
     return x_fill_pairs
 
 
-with open("../results.csv") as f:
+with open("./results_1min.csv") as f:
     rd = list(csv.reader(f))[1:]
 
 
@@ -49,18 +49,22 @@ x = [d[0] for d in data]
 y = [d[1] for d in data]
 # y2 = [d[2] if d[2] > 7000 else float('NaN') for d in data]
 
+# 移動平均線
+y_mean10 = pd.Series(y).rolling(10).mean()
+y_mean60 = pd.Series(y).rolling(60).mean()
+
 plt.scatter(x, y, c="white")
 # ax2 = plt.gca().twinx()
 # ax2.scatter(x, y2, color="orange")
 # ax2.plot(x, y2, color="orange")
 
 plt.gca().xaxis.set_major_locator(mdates.HourLocator(byhour=12))
-plt.gca().xaxis.set_minor_locator(mdates.HourLocator(interval=3))
+plt.gca().xaxis.set_minor_locator(mdates.HourLocator(interval=1))
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %a'))
 plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
 # plt.gca().xaxis.major_ticklabels.set_ha("left")
 
-plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(1000))
+plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(100))
 plt.gca().yaxis.set_minor_locator(ticker.MultipleLocator(100))
 plt.gca().yaxis.set_major_formatter(
     ticker.ScalarFormatter(useOffset=False, useMathText=False))
@@ -76,11 +80,9 @@ x_fill_pairs = make_fill_pairs(x)
 for x_fill_pair in x_fill_pairs:
     plt.gca().fill_between(x_fill_pair, [max(y)], [min(y)], fc="#BCECE0")
 
-<<<<<<< HEAD
-plt.savefig("./results.png")
-plt.close()
-=======
-plt.scatter(x, y, edgecolors="black", c="white", zorder=10)
-plt.plot(x, y, c="black", zorder=1)
+# plt.scatter(x, y, edgecolors="black", c="white", zorder=10)
+plt.plot(x, y, c="grey", zorder=1, label="1分毎のデータ")
+plt.plot(x, y_mean10, c="orange", linewidth=2, zorder=5, label="10分移動平均")
+plt.plot(x, y_mean60, c="red", linewidth=2, zorder=10, label="60分移動平均")
+plt.legend(prop={"family": ["IPAexGothic"]})
 plt.show()
->>>>>>> 305c9813b7a5ef9f162a748e2a6600f6305fae0b

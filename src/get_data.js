@@ -10,19 +10,40 @@ import { Client, auth } from "twitter-api-sdk";
 
 // Pass auth credentials to the library client 
 const client = new Client(process.env.BEARER_TOKEN);
-const params = {
+const paramsFollowers = {
     "user.fields": "public_metrics,verified",
+}
+const paramsTweets = {
+    "max_results": 100,
+    "tweet.fields": "created_at,id,public_metrics,text,withheld"
 }
 
 
-const main = async () => {
+export const getFollowers = async () => {
     try {
-        const userObj = await client.users.findUserByUsername("pj_sekai", params);
-        console.log("Data received at " + new Date().toISOString().slice(0, -2));
+        const userObj = await client.users.findUserByUsername("pj_sekai", paramsFollowers);
+        console.log("Followers data received at " + new Date().toISOString().slice(0, -2));
         return userObj;
     } catch (error) {
         console.log("twitter api get request error", error);
     }
 }
 
-export default main;
+export const getTweets = async (id) => {
+    try {
+        var tweetObj = await client.tweets.usersIdTweets(id, paramsTweets);
+        const resArr = tweetObj.data;
+        console.log("Tweets data received at " + new Date().toISOString().slice(0, -2));
+        // console.log("meta: " + JSON.stringify(tweetObj.meta, null, 2))
+        while (tweetObj.meta.next_token) {
+            paramsTweets["pagination_token"] = tweetObj.meta.next_token;
+            var tweetObj = await client.tweets.usersIdTweets(id, paramsTweets);
+            resArr.push(...tweetObj.data);
+            console.log("paginating... until tweets created at " + tweetObj.data[tweetObj.data.length - 1].created_at);
+        }
+        return resArr;
+    } catch (error) {
+        console.log("twitter api get request error");
+        throw (error)
+    }
+}
