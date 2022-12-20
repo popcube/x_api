@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from datetime import datetime, timedelta
 import matplotlib.dates as mdates
 
-with open("./results.csv") as f:
+with open("../results.csv") as f:
     rd = list(csv.reader(f))[1:]
 
 
@@ -58,4 +58,5 @@ print(x_fill_pairs)
 for x_fill_pair in x_fill_pairs:
     plt.gca().fill_between(x_fill_pair, [max(y)], [min(y)])
 
-plt.show()
+plt.savefig("./results.png")
+plt.close()
