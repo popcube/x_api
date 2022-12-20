@@ -5,6 +5,7 @@ import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
 import pandas as pd
 import sys
+from statistics import mean as mean
 
 
 def make_fill_pairs(x_in):
@@ -36,8 +37,46 @@ def make_fill_pairs(x_in):
 
     return x_fill_pairs
 
+def make_timeline(x, y, tl=False, y0=False):
+    # 移動平均線
+    if tl:
+        y_mean10 = pd.Series(y).rolling(10).mean()
+        y_mean60 = pd.Series(y).rolling(60).mean()
 
-with open("./results_1min.csv") as f:
+    plt.scatter(x, y, c="white")
+
+    plt.gca().xaxis.set_major_locator(mdates.HourLocator(byhour=12))
+    plt.gca().xaxis.set_minor_locator(mdates.HourLocator(interval=1))
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %a'))
+    plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
+
+    plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(100))
+    plt.gca().yaxis.set_minor_locator(ticker.MultipleLocator(100))
+    plt.gca().yaxis.set_major_formatter(
+        ticker.ScalarFormatter(useOffset=False, useMathText=False))
+    plt.gca().yaxis.get_major_formatter().set_scientific(False)
+
+    plt.gca().set_ylabel("フォロワー数", fontname="IPAexGothic")
+    plt.gca().tick_params(axis='x', which='major', length=14, color="white")
+
+    x_fill_pairs = make_fill_pairs(x)
+
+    # print(x_fill_pairs)
+
+    for x_fill_pair in x_fill_pairs:
+        plt.gca().fill_between(x_fill_pair, [max(y)], [min(y)], fc="#BCECE0")
+
+    # plt.scatter(x, y, edgecolors="black", c="white", zorder=10)
+    plt.plot(x, y, c="grey", zorder=1, label="1分毎のデータ")
+    if tl:
+        plt.plot(x, y_mean10, c="orange", linewidth=2, zorder=5, label="10分移動平均")
+        plt.plot(x, y_mean60, c="red", linewidth=2, zorder=10, label="60分移動平均")
+        if y0:
+            plt.gca().fill_between(x, y_mean60, [0] * len(y_mean60), fc="cyan")
+    plt.legend(prop={"family": ["IPAexGothic"]})
+
+
+with open("./results.csv") as f:
     rd = list(csv.reader(f))[1:]
 
 
@@ -47,42 +86,74 @@ data.sort(key=lambda x: x[0])
 
 x = [d[0] for d in data]
 y = [d[1] for d in data]
-# y2 = [d[2] if d[2] > 7000 else float('NaN') for d in data]
 
-# 移動平均線
-y_mean10 = pd.Series(y).rolling(10).mean()
-y_mean60 = pd.Series(y).rolling(60).mean()
+make_timeline(x, y, tl=True)
 
-plt.scatter(x, y, c="white")
-# ax2 = plt.gca().twinx()
-# ax2.scatter(x, y2, color="orange")
-# ax2.plot(x, y2, color="orange")
+# plt.show()
 
-plt.gca().xaxis.set_major_locator(mdates.HourLocator(byhour=12))
-plt.gca().xaxis.set_minor_locator(mdates.HourLocator(interval=1))
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %a'))
-plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
-# plt.gca().xaxis.major_ticklabels.set_ha("left")
+# plt.savefig("results.png")
+plt.close()
 
-plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(100))
-plt.gca().yaxis.set_minor_locator(ticker.MultipleLocator(100))
-plt.gca().yaxis.set_major_formatter(
-    ticker.ScalarFormatter(useOffset=False, useMathText=False))
-plt.gca().yaxis.get_major_formatter().set_scientific(False)
+####################
+# cut value define #
+y_cut_min = -8     #
+y_cut_max = 12     #
+####################
 
-plt.gca().set_ylabel("フォロワー数", fontname="IPAexGothic")
-plt.gca().tick_params(axis='x', which='major', length=14, color="white")
+y_dif = [y[i] - y[i-1] for i in range(1, len(y))]
+y_dif_cut = []
+for d in y_dif:
+    if y_cut_min <= d and d <= y_cut_max:
+        y_dif_cut.append(d)
+print(mean(y_dif))
+print(mean(y_dif_cut))
 
-x_fill_pairs = make_fill_pairs(x)
-
-# print(x_fill_pairs)
-
-for x_fill_pair in x_fill_pairs:
-    plt.gca().fill_between(x_fill_pair, [max(y)], [min(y)], fc="#BCECE0")
-
-# plt.scatter(x, y, edgecolors="black", c="white", zorder=10)
-plt.plot(x, y, c="grey", zorder=1, label="1分毎のデータ")
-plt.plot(x, y_mean10, c="orange", linewidth=2, zorder=5, label="10分移動平均")
-plt.plot(x, y_mean60, c="red", linewidth=2, zorder=10, label="60分移動平均")
+plt.hist(y_dif, range=(-50, 50), bins=100, label="元の増減量")
 plt.legend(prop={"family": ["IPAexGothic"]})
+plt.savefig("./ori_dif.png")
+
+plt.hist(y_dif_cut, bins=max(y_dif_cut)-min(y_dif_cut), label="うち、有効な増減量")
+plt.legend(prop={"family": ["IPAexGothic"]})
+plt.savefig("./cut_dif.png")
+plt.close()
+
+y_cut_temp_min = y_cut_min
+y_cut_temp_max = y_cut_max
+y_cut_dif = [0]
+y_base_inc = mean(y_dif_cut)
+
+def yd_valid(yd):
+    global y_cut_min
+    global y_cut_max
+    return  (y_cut_min <= yd and yd <= y_cut_max)
+
+for i, yd in enumerate(y_dif):
+    if  yd_valid(yd):
+        y_cut_dif.append(yd)
+
+    elif yd < y_cut_min:
+        yd_temp = yd - y_cut_temp_min
+        if yd_valid(yd_temp):
+            y_cut_dif.append(yd_temp)
+        else:
+            y_cut_dif.append(y_base_inc)
+        y_cut_temp_min = yd - y_base_inc
+
+    elif y_cut_max < yd:
+        yd_temp = yd - y_cut_temp_max
+        if yd_valid(yd_temp):
+            y_cut_dif.append(yd_temp)
+        else:
+            y_cut_dif.append(y_base_inc)
+        y_cut_temp_max = yd - y_base_inc
+
+# print(len(x), len(y_dif), len(y_cut))
+make_timeline(x, y_cut_dif, tl=True, y0=True)
 plt.show()
+
+y_cut = [0]
+for yd in y_cut_dif[1:]:
+    y_cut.append(y_cut[-1] + yd)
+make_timeline(x, y_cut)
+plt.show()
+# make_timeline(x, )

@@ -76,11 +76,6 @@ x_fill_pairs = make_fill_pairs(x)
 for x_fill_pair in x_fill_pairs:
     plt.gca().fill_between(x_fill_pair, [max(y)], [min(y)], fc="#BCECE0")
 
-<<<<<<< HEAD
-plt.savefig("./results.png")
-plt.close()
-=======
 plt.scatter(x, y, edgecolors="black", c="white", zorder=10)
 plt.plot(x, y, c="black", zorder=1)
-plt.show()
->>>>>>> 305c9813b7a5ef9f162a748e2a6600f6305fae0b
+plt.savefig("../results.png")
