@@ -24,7 +24,7 @@ def make_fill_pairs(x_in):
     if x_temp[0].hour == 23:
         x_temp.insert(0, x_in[0])
     if x_temp[-1].hour == 17:
-        x_temp.append(-1, x_in[-1])
+        x_temp.append(x_in[-1])
 
     if len(x_temp) % 2 != 0:
         print("error: x_temp has odd number count!")
@@ -36,6 +36,9 @@ def make_fill_pairs(x_in):
         x_fill_pairs.append([x_temp[ii], x_temp[ii+1]])
 
     return x_fill_pairs
+
+# タイムラインチャート作成
+
 
 def make_timeline(x, y, tl=False, y0=False):
     # 移動平均線
@@ -69,7 +72,8 @@ def make_timeline(x, y, tl=False, y0=False):
     # plt.scatter(x, y, edgecolors="black", c="white", zorder=10)
     plt.plot(x, y, c="grey", zorder=1, label="1分毎のデータ")
     if tl:
-        plt.plot(x, y_mean10, c="orange", linewidth=2, zorder=5, label="10分移動平均")
+        plt.plot(x, y_mean10, c="orange", linewidth=2,
+                 zorder=5, label="10分移動平均")
         plt.plot(x, y_mean60, c="red", linewidth=2, zorder=10, label="60分移動平均")
         if y0:
             plt.gca().fill_between(x, y_mean60, [0] * len(y_mean60), fc="cyan")
@@ -84,15 +88,19 @@ data = [[datetime.fromisoformat(
     d[0] + "0") + timedelta(hours=9), int(d[1])] for d in rd]
 data.sort(key=lambda x: x[0])
 
+# FOR DEBUG
+# data = data[1000:2000]
+
 x = [d[0] for d in data]
 y = [d[1] for d in data]
 
-make_timeline(x, y, tl=True)
+# make_timeline(x, y, tl=True)
 
 # plt.show()
+# # exit()
 
-# plt.savefig("results.png")
-plt.close()
+# # plt.savefig("results.png")
+# plt.close()
 
 ####################
 # cut value define #
@@ -117,38 +125,96 @@ plt.legend(prop={"family": ["IPAexGothic"]})
 plt.savefig("./cut_dif.png")
 plt.close()
 
-y_cut_temp_min = y_cut_min
-y_cut_temp_max = y_cut_max
+# y_cut_temp_min = y_cut_min
+# y_cut_temp_max = y_cut_max
 y_cut_dif = [0]
-y_base_inc = mean(y_dif_cut)
+y_base_inc_def = mean(y_dif_cut)
+y_base_inc = y_base_inc_def
+y_cut_all = y_cut_max - y_cut_min - 2 * y_base_inc_def
+adjustee_idxs = {"plus": [], "minus": []}
+
 
 def yd_valid(yd):
     global y_cut_min
     global y_cut_max
-    return  (y_cut_min <= yd and yd <= y_cut_max)
+    return (y_cut_min <= yd and yd <= y_cut_max)
 
+
+def init_bulk():
+    global y_base_inc
+    global y_cut_all
+
+    y_base_inc = y_base_inc_def
+    # y_cut_all = y_cut_max - y_cut_min - 2 * y_base_inc_def
+    adjustee_idxs["plus"].clear()
+    adjustee_idxs["minus"].clear()
+
+
+def adjust_bulk():
+    # global adjustee_idxs
+    global y_base_inc
+    global y_cut_dif
+    global y_cut_all
+    # global y_dif
+
+    if len(adjustee_idxs["plus"]) > 0 and len(adjustee_idxs["minus"]) > 0:
+        plus_mean = mean([y_dif[ai] for ai in adjustee_idxs["plus"]])
+        minus_mean = mean([y_dif[ai] for ai in adjustee_idxs["minus"]])
+        y_base_inc = (plus_mean + minus_mean) / 2
+        y_cut_all = plus_mean - y_base_inc
+        for ai in adjustee_idxs["plus"]:
+            y_cut_dif[ai] = y_dif[ai] - y_cut_all
+        for ai in adjustee_idxs["minus"]:
+            y_cut_dif[ai] = y_dif[ai] + y_cut_all
+
+
+nan_count = 0
 for i, yd in enumerate(y_dif):
-    if  yd_valid(yd):
+    # 増減量通常時
+    if yd_valid(yd):
         y_cut_dif.append(yd)
 
+    # 減少量超過時
     elif yd < y_cut_min:
-        yd_temp = yd - y_cut_temp_min
+        yd_temp = yd + y_cut_all
         if yd_valid(yd_temp):
-            y_cut_dif.append(yd_temp)
+            adjustee_idxs["minus"].append(i)
+            adjust_bulk()
+            y_cut_dif.append(yd + y_cut_all)
         else:
-            y_cut_dif.append(y_base_inc)
-        y_cut_temp_min = yd - y_base_inc
+            y_cut_dif.append(y_base_inc_def)
 
+            # print(
+            #     f"exceeded minus in y_cut_all {y_cut_all}, x {x[i].isoformat()}")
+            # print(adjustee_idxs)
+            nan_count += 1
+
+            init_bulk()
+            y_cut_all = - (yd + y_base_inc_def)
+
+    # 増加量超過時
     elif y_cut_max < yd:
-        yd_temp = yd - y_cut_temp_max
+        yd_temp = yd - y_cut_all
         if yd_valid(yd_temp):
-            y_cut_dif.append(yd_temp)
+            adjustee_idxs["plus"].append(i)
+            y_cut_dif.append(yd - y_cut_all)
         else:
-            y_cut_dif.append(y_base_inc)
-        y_cut_temp_max = yd - y_base_inc
+            y_cut_dif.append(y_base_inc_def)
 
+            # print(
+            #     f"exceeded plus in y_cut_all {y_cut_all}, x {x[i].isoformat()}")
+            # print(adjustee_idxs)
+            nan_count += 1
+
+            init_bulk()
+            y_cut_all = yd - y_base_inc_def
+
+print(f"nan_count {nan_count}, nan_ratio {nan_count * 100 / len(data)}%")
 # print(len(x), len(y_dif), len(y_cut))
 make_timeline(x, y_cut_dif, tl=True, y0=True)
+plt.show()
+
+make_timeline(x, y, tl=True)
 plt.show()
 
 y_cut = [0]
