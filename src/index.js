@@ -40,4 +40,9 @@ if (false) {
 }
 
 const dynScan = await scanDyn(scanParam);
-console.log(dynScan)
+if (dynScan["$metadata"].httpStatusCode == "200") {
+    console.log("data succcessfully scanned. count: " + dynScan["Count"]);
+} else {
+    console.log("ERROR at scan");
+    console.log(JSON.stringify(dynScan, null, 2));
+}
