@@ -26,4 +26,4 @@ jobs:
 
        - uses: actions/upload-artifact@v3
          with:
-           path: "./result.csv"
+           path: "./results.csv"

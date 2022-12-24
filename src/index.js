@@ -50,4 +50,4 @@ if (dynScan["$metadata"].httpStatusCode == "200") {
 const outputCsv = dynScan.Items.reduce((prev, curr) => {
     prev += `"${curr["fetch_time"]["S"]}","${curr["followers_count"]["N"]}"\n`;
 }, '"fetch_time","followers_count"\n');
-fs.writeFileSync("./result.csv", JSON.stringify(dynScan.Items));
+fs.writeFileSync("./results.csv", outputCsv);
