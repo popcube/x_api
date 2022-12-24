@@ -14,4 +14,9 @@ export const sendDyn = (dynObj) => {
     });
 }
 
-export const getLatestTweets = () => { }
+export const scanDyn = async () => {
+    await client.Scan(dynObj, function (err, data) {
+        if (err) console.log(err);
+        else console.log("Data successfully scanned at " + dynObj.Item.fetch_time.S)
+    });
+}
