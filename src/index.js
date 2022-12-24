@@ -1,7 +1,7 @@
 //Import package
 // import { Client, auth } from "twitter-api-sdk";
-import { getFollowers, getTweets } from "./get_data.js"
-import { sendDyn } from "./send_data.js"
+import { getFollowers, getTweets } from "./twt_api.js"
+import { sendDyn, scanDyn } from "./dyn_api.js"
 
 const makeFollowersDynObj = (twtObj) => {
 
@@ -26,15 +26,18 @@ const makeFollowersDynObj = (twtObj) => {
     })
 };
 
+const scanParam = { TableName: "twt_api_pjsekai" };
 
-
-
-const flwObj = await getFollowers();
+// const flwObj = await getFollowers();
 // const dynObj = await makeFollowersDynObj(flwObj)
 // sendDyn(dynObj);
 
-console.log(flwObj.data.id);
-const twtArr = await getTweets(flwObj.data.id);
-console.log(JSON.stringify(twtArr.slice(-2, -1), null, 2));
-console.log("Tweet data size: " + twtArr.length);
+if (false) {
+    console.log(flwObj.data.id);
+    const twtArr = await getTweets(flwObj.data.id);
+    console.log(JSON.stringify(twtArr.slice(-2, -1), null, 2));
+    console.log("Tweet data size: " + twtArr.length);
+}
 
+const dynScan = await scanDyn(scanParam);
+console.log(dynScan)
