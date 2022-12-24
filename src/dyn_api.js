@@ -14,7 +14,7 @@ export const sendDyn = (dynObj) => {
     });
 }
 
-export const scanDyn = async () => {
+export const scanDyn = async (dynObj) => {
     await client.Scan(dynObj, function (err, data) {
         if (err) console.log(err);
         else console.log("Data successfully scanned at " + dynObj.Item.fetch_time.S)
