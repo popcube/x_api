@@ -17,7 +17,13 @@ jobs:
        
        - run: |
            npm start
+           
+           ls -la
          env:
            BEARER_TOKEN: ${{ secrets.TWT_BEARER_TOKEN }}
            ACC_KEY: ${{ secrets.AWS_DYN_ACC_KEY }}
            SEC_ACC_KEY: ${{ secrets.AWS_DYN_SEC_ACC_KEY }}
+
+       - uses: actions/upload-artifact@v3
+         with:
+           path: "./result.csv"

@@ -2,6 +2,7 @@
 // import { Client, auth } from "twitter-api-sdk";
 import { getFollowers, getTweets } from "./twt_api.js"
 import { sendDyn, scanDyn } from "./dyn_api.js"
+import fs from "fs"
 
 const makeFollowersDynObj = (twtObj) => {
 
@@ -46,3 +47,7 @@ if (dynScan["$metadata"].httpStatusCode == "200") {
     console.log("ERROR at scan");
     console.log(JSON.stringify(dynScan, null, 2));
 }
+const outputCsv = dynScan.Items.reduce((prev, curr) => {
+    prev += `"${curr["fetch_time"]["S"]}","${curr["followers_count"]["N"]}"\n`;
+}, '"fetch_time","followers_count"\n');
+fs.writeFileSync("./result.csv", JSON.stringify(dynScan.Items));
