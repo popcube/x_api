@@ -26,7 +26,7 @@ const makeFollowersDynObj = (twtObj) => {
     })
 };
 
-const scanParam = { TableName: "twt_api_pjsekai" };
+const scanParam = { TableName: "twt_api_1min" };
 
 // const flwObj = await getFollowers();
 // const dynObj = await makeFollowersDynObj(flwObj)
