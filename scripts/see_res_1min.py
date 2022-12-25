@@ -81,7 +81,8 @@ def make_timeline(x, y, tl=False, y0=False):
                  zorder=5, label="10分移動平均")
         plt.plot(x, y_mean60, c="red", linewidth=2, zorder=10, label="60分移動平均")
         if y0:
-            plt.gca().fill_between(x, y_mean60, [0] * len(y_mean60), fc="cyan")
+            plt.gca().fill_between(x, [max(0, ym) for ym in y_mean60], [
+                0] * len(y_mean60), fc="cyan")
     plt.legend(prop={"family": ["IPAexGothic"]})
 
 
