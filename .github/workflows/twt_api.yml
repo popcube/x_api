@@ -32,8 +32,8 @@ jobs:
           pip install pandas
           python ./scripts/see_res_1min.py
 
-       - uses: actions/upload-artifact@v3
-         with:
-           path: |
-             ./results.csv
-             ./*.png
+      - uses: actions/upload-artifact@v3
+        with:
+          path: |
+            ./results.csv
+            ./*.png
