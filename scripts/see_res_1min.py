@@ -48,13 +48,20 @@ def make_timeline(x, y, tl=False, y0=False):
 
     plt.scatter(x, y, c="white")
 
+    xaxis_minor_interval = int(
+        (max(x) - min(x)).total_seconds()) // (48 * 60 * 60)
+    # print(max(x) - min(x))
+    # print(xaxis_minor_interval)
+
     plt.gca().xaxis.set_major_locator(mdates.HourLocator(byhour=12))
-    plt.gca().xaxis.set_minor_locator(mdates.HourLocator(interval=1))
+    plt.gca().xaxis.set_minor_locator(mdates.HourLocator(interval=xaxis_minor_interval))
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %a'))
     plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
 
-    plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(100))
-    plt.gca().yaxis.set_minor_locator(ticker.MultipleLocator(100))
+    plt.gca().yaxis.set_major_locator(
+        ticker.MultipleLocator(max((max(y) - min(y))//600, 0.1) * 100))
+    plt.gca().yaxis.set_minor_locator(
+        ticker.MultipleLocator(max((max(y) - min(y))//480, 0.1) * 10))
     plt.gca().yaxis.set_major_formatter(
         ticker.ScalarFormatter(useOffset=False, useMathText=False))
     plt.gca().yaxis.get_major_formatter().set_scientific(False)
@@ -113,8 +120,8 @@ y_dif_cut = []
 for d in y_dif:
     if y_cut_min <= d and d <= y_cut_max:
         y_dif_cut.append(d)
-print(mean(y_dif))
-print(mean(y_dif_cut))
+print(f'mean before cut: {mean(y_dif):.2f}')
+print(f'mean after cut: {mean(y_dif_cut):.2f}')
 
 plt.hist(y_dif, range=(-50, 50), bins=100, label="元の増減量")
 plt.legend(prop={"family": ["IPAexGothic"]})
@@ -184,9 +191,9 @@ for i, yd in enumerate(y_dif):
         else:
             y_cut_dif.append(y_base_inc_def)
 
-            # print(
-            #     f"exceeded minus in y_cut_all {y_cut_all}, x {x[i].isoformat()}")
-            # print(adjustee_idxs)
+            print(
+                f"exceeded minus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
+            print(adjustee_idxs)
             nan_count += 1
 
             init_bulk()
@@ -201,9 +208,9 @@ for i, yd in enumerate(y_dif):
         else:
             y_cut_dif.append(y_base_inc_def)
 
-            # print(
-            #     f"exceeded plus in y_cut_all {y_cut_all}, x {x[i].isoformat()}")
-            # print(adjustee_idxs)
+            print(
+                f"exceeded plus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
+            print(adjustee_idxs)
             nan_count += 1
 
             init_bulk()
@@ -211,15 +218,24 @@ for i, yd in enumerate(y_dif):
 
 print(f"nan_count {nan_count}, nan_ratio {nan_count * 100 / len(data)}%")
 # print(len(x), len(y_dif), len(y_cut))
-make_timeline(x, y_cut_dif, tl=True, y0=True)
-plt.show()
 
-make_timeline(x, y, tl=True)
-plt.show()
+make_timeline(x, [0] + [y[i+1] - y[i]
+              for i in range(len(y)-1)], tl=True, y0=True)
+plt.savefig("./y_dif.png")
+plt.close()
+
+make_timeline(x, y_cut_dif, tl=True, y0=True)
+plt.savefig("./y_cut_dif.png")
+plt.close()
+
+make_timeline(x, y)
+plt.savefig("./y_raw.png")
+plt.close()
 
 y_cut = [0]
 for yd in y_cut_dif[1:]:
     y_cut.append(y_cut[-1] + yd)
 make_timeline(x, y_cut)
-plt.show()
+plt.savefig("./y_cut.png")
+plt.close()
 # make_timeline(x, )
