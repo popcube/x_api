@@ -1,6 +1,5 @@
 name: twt api test
-on:
-  workflow_dispatch:
+on: workflow_dispatch
 ## scheduled at every hour
 ##  schedule:
 ##    - cron: '29 * * * *'
