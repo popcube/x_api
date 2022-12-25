@@ -23,7 +23,18 @@ jobs:
            BEARER_TOKEN: ${{ secrets.TWT_BEARER_TOKEN }}
            ACC_KEY: ${{ secrets.AWS_DYN_ACC_KEY }}
            SEC_ACC_KEY: ${{ secrets.AWS_DYN_SEC_ACC_KEY }}
+      
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+        
+      - run: |
+          pip install matplotlib
+          pip install pandas
+          python ./scripts/see_res_1min.py
 
        - uses: actions/upload-artifact@v3
          with:
-           path: "./results.csv"
+           path: |
+             ./results.csv
+             ./*.png

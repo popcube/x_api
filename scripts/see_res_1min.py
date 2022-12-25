@@ -5,7 +5,7 @@ import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
 import pandas as pd
 import sys
-from statistics import mean as mean
+from statistics import mean, stdev
 
 
 def make_fill_pairs(x_in):
@@ -15,10 +15,7 @@ def make_fill_pairs(x_in):
     # print(x_in[-1].hour)
     x_datelist = [datetime(x_in[0].year, x_in[0].month, x_in[0].day) +
                   timedelta(hours=1) * i for i in range(x_datalist_hours + 1)]
-    x_temp = []
-    for x_data in x_datelist:
-        if x_data.hour == 17 or x_data.hour == 23:
-            x_temp.append(x_data)
+    x_temp = [xd for xd in x_datelist if xd.hour == 17 or xd.hour == 23]
 
     # print(x_temp)
     if x_temp[0].hour == 23:
@@ -41,6 +38,7 @@ def make_fill_pairs(x_in):
 
 
 def make_timeline(x, y, tl=False, y0=False):
+    plt.figure(figsize=(15, 8))
     # 移動平均線
     if tl:
         y_mean10 = pd.Series(y).rolling(10).mean()
@@ -101,14 +99,6 @@ data.sort(key=lambda x: x[0])
 x = [d[0] for d in data]
 y = [d[1] for d in data]
 
-# make_timeline(x, y, tl=True)
-
-# plt.show()
-# # exit()
-
-# # plt.savefig("results.png")
-# plt.close()
-
 ####################
 # cut value define #
 y_cut_min = -8     #
@@ -116,18 +106,53 @@ y_cut_max = 12     #
 ####################
 
 y_dif = [y[i] - y[i-1] for i in range(1, len(y))]
-y_dif_cut = []
-for d in y_dif:
-    if y_cut_min <= d and d <= y_cut_max:
-        y_dif_cut.append(d)
+y_dif_cut = [d for d in y_dif if y_cut_min <= d and d <= y_cut_max]
 print(f'mean before cut: {mean(y_dif):.2f}')
 print(f'mean after cut: {mean(y_dif_cut):.2f}')
 
+if False:
+    ydct = [d for d in y_dif if -1 <= d and d <= 6]
+    ydct2 = [d for d in y_dif if (-40 <= d and d < -8) or (12 < d and d <= 40)]
+    plt.figure(figsize=(15, 8))
+    plt.hist(y_dif, range=(-50, 50), bins=100, label="元の増減量")
+    plt.hist(ydct, range=(-50, 50), bins=100, label="自然とみなす範囲")
+    plt.hist(ydct2, range=(-50, 50), bins=100, label="ノイズとみなす範囲")
+    plt.legend(prop={"family": ["IPAexGothic"]})
+    plt.savefig("./ydct.png")
+    plt.close()
+
+    def gaussian_func(x, mu, sigma):
+        return 1/(sigma * np.sqrt(2 * np.pi)) * np.exp(- (x - mu)**2 / (2 * sigma**2))
+
+    def make_counts(in_data):
+        res_counts = dict()
+        for d in in_data:
+            if str(d) not in res_counts.keys():
+                res_counts[str(d)] = 0
+            else:
+                res_counts[str(d)] += 1
+        return res_counts
+
+    ydct_dict = make_counts(ydct)
+    ydct2_dict = make_counts(ydct2)
+    print(ydct2_dict)
+    print("mean(ydct2_dict.values())", mean(ydct2_dict.values()))
+
+    ydct_counts = [d - mean(ydct2_dict.values())
+                   for d in ydct_dict.values()]
+    ydct_x = list(map(int, ydct_dict.keys()))
+
+    plt.plot(ydct_x, ydct_counts, marker='o', linewidth=0)
+    plt.show()
+
+    sys.exit(1)
+
+plt.figure(figsize=(15, 8))
 plt.hist(y_dif, range=(-50, 50), bins=100, label="元の増減量")
 plt.legend(prop={"family": ["IPAexGothic"]})
 plt.savefig("./ori_dif.png")
 
-plt.hist(y_dif_cut, bins=max(y_dif_cut)-min(y_dif_cut), label="うち、有効な増減量")
+plt.hist(y_dif_cut, range=(-50, 50), bins=100, label="うち、有効な増減量")
 plt.legend(prop={"family": ["IPAexGothic"]})
 plt.savefig("./cut_dif.png")
 plt.close()
