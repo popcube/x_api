@@ -216,9 +216,9 @@ for i, yd in enumerate(y_dif):
         else:
             y_cut_dif.append(y_base_inc_def)
 
-            print(
-                f"exceeded minus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
-            print(adjustee_idxs)
+            # print(
+            #     f"exceeded minus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
+            # print(adjustee_idxs)
             nan_count += 1
 
             init_bulk()
@@ -233,9 +233,9 @@ for i, yd in enumerate(y_dif):
         else:
             y_cut_dif.append(y_base_inc_def)
 
-            print(
-                f"exceeded plus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
-            print(adjustee_idxs)
+            # print(
+            #     f"exceeded plus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
+            # print(adjustee_idxs)
             nan_count += 1
 
             init_bulk()
@@ -245,11 +245,11 @@ print(f"nan_count {nan_count}, nan_ratio {nan_count * 100 / len(data)}%")
 # print(len(x), len(y_dif), len(y_cut))
 
 make_timeline(x, [0] + [y[i+1] - y[i]
-              for i in range(len(y)-1)], tl=True, y0=True)
+              for i in range(len(y)-1)], tl=True, y0=False)
 plt.savefig("./y_dif.png")
 plt.close()
 
-make_timeline(x, y_cut_dif, tl=True, y0=True)
+make_timeline(x, y_cut_dif, tl=True, y0=False)
 plt.savefig("./y_cut_dif.png")
 plt.close()
 
