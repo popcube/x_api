@@ -245,11 +245,11 @@ print(f"nan_count {nan_count}, nan_ratio {nan_count * 100 / len(data)}%")
 # print(len(x), len(y_dif), len(y_cut))
 
 make_timeline(x, [0] + [y[i+1] - y[i]
-              for i in range(len(y)-1)], tl=True, y0=False)
+              for i in range(len(y)-1)], tl=True, y0=True)
 plt.savefig("./y_dif.png")
 plt.close()
 
-make_timeline(x, y_cut_dif, tl=True, y0=False)
+make_timeline(x, y_cut_dif, tl=True, y0=True)
 plt.savefig("./y_cut_dif.png")
 plt.close()
 
