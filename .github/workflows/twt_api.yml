@@ -28,6 +28,8 @@ jobs:
           python-version: '3.x'
         
       - run: |
+          sudo apt-get update
+          sudo apt-get install fonts-ipaexfont
           pip install matplotlib
           pip install pandas
           python ./scripts/see_res_1min.py
