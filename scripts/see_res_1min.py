@@ -37,8 +37,10 @@ def make_fill_pairs(x_in):
 # タイムラインチャート作成
 
 
-def make_timeline(x, y, tl=False, y0=False):
+def make_timeline(x, y, figname, tl=False, y0=False):
+
     plt.figure(figsize=(15, 8))
+
     # 移動平均線
     if tl:
         y_mean10 = pd.Series(y).rolling(10).mean()
@@ -77,13 +79,28 @@ def make_timeline(x, y, tl=False, y0=False):
     # plt.scatter(x, y, edgecolors="black", c="white", zorder=10)
     plt.plot(x, y, c="grey", zorder=1, label="1分毎のデータ")
     if tl:
-        plt.plot(x, y_mean10, c="orange", linewidth=2,
-                 zorder=5, label="10分移動平均")
+        # plt.plot(x, y_mean10, c="orange", linewidth=2,
+        #          zorder=5, label="10分移動平均")
         plt.plot(x, y_mean60, c="red", linewidth=2, zorder=10, label="60分移動平均")
         if y0:
             plt.gca().fill_between(x, [max(0, ym) for ym in y_mean60], [
                 0] * len(y_mean60), fc="cyan")
     plt.legend(prop={"family": ["IPAexGothic"]})
+
+    plt.plot([x[ni] for ni in nan_idxs], [y[ni]
+             for ni in nan_idxs], marker='o', linewidth=0, zorder=20, label="nan idx")
+
+    # ローカル実行ならグラフ表示、Actions実行ならグラフ保存
+    if len(sys.argv) > 1:
+        if len(sys.argv) == 2 and sys.argv[1] == "local":
+            plt.show()
+            return
+        else:
+            print(
+                'only one "local" parameter is allowed. Otherwise no parameters are given.')
+
+    plt.savefig(f'./{figname}.png')
+    plt.close()
 
 
 with open("./results.csv") as f:
@@ -165,6 +182,8 @@ y_base_inc_def = mean(y_dif_cut)
 y_base_inc = y_base_inc_def
 y_cut_all = y_cut_max - y_cut_min - 2 * y_base_inc_def
 adjustee_idxs = {"plus": [], "minus": []}
+# adjustee_idxs = {"plus": [], "minus": [], "combi": {"idx": 0, "num": 0}}
+nan_idxs = []
 
 
 def yd_valid(yd):
@@ -175,12 +194,35 @@ def yd_valid(yd):
 
 def init_bulk():
     global y_base_inc
-    global y_cut_all
+    # global y_cut_all
+    # global adjustee_idxs
 
     y_base_inc = y_base_inc_def
     # y_cut_all = y_cut_max - y_cut_min - 2 * y_base_inc_def
     adjustee_idxs["plus"].clear()
     adjustee_idxs["minus"].clear()
+
+
+def if_adjustee_not_used():
+    # global adjustee_idxs
+    global nan_idxs
+    # if (len(adjustee_idxs["plus"]) + len(adjustee_idxs["minus"])) >= 2:
+    #     if len(adjustee_idxs["plus"]) == 0 or len(adjustee_idxs["minus"]) == 0:
+    if (
+        (len(adjustee_idxs["plus"]) + len(adjustee_idxs["minus"])) < 2 or
+        len(adjustee_idxs["plus"]) == 0 or
+        len(adjustee_idxs["minus"]) == 0
+    ):
+        print(
+            f"y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}")
+        print(adjustee_idxs)
+        nan_idxs += adjustee_idxs["plus"] + adjustee_idxs["minus"]
+
+    return (
+        (len(adjustee_idxs["plus"]) + len(adjustee_idxs["minus"])) < 2 or
+        len(adjustee_idxs["plus"]) == 0 or
+        len(adjustee_idxs["minus"]) == 0
+    )
 
 
 def adjust_bulk():
@@ -200,8 +242,13 @@ def adjust_bulk():
         for ai in adjustee_idxs["minus"]:
             y_cut_dif[ai] = y_dif[ai] + y_cut_all
 
+        # if adjustee_idxs["combi"]["idx"] != 0:
+        #     y_cut_dif[adjustee_idxs["combi"]["idx"]] = y_dif[ai] - \
+        #         (y_cut_all + [adjustee_idxs["combi"]["num"]])
+
 
 nan_count = 0
+y_cut_all_combi = 0
 for i, yd in enumerate(y_dif):
     # 増減量通常時
     if yd_valid(yd):
@@ -209,8 +256,7 @@ for i, yd in enumerate(y_dif):
 
     # 減少量超過時
     elif yd < y_cut_min:
-        yd_temp = yd + y_cut_all
-        if yd_valid(yd_temp):
+        if yd_valid(yd + y_cut_all):
             adjustee_idxs["minus"].append(i)
             adjust_bulk()
             y_cut_dif.append(yd + y_cut_all)
@@ -220,48 +266,46 @@ for i, yd in enumerate(y_dif):
             # print(
             #     f"exceeded minus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
             # print(adjustee_idxs)
-            nan_count += 1
+
+            if if_adjustee_not_used():
+                nan_count += 1
 
             init_bulk()
-            y_cut_all = - (yd + y_base_inc_def)
+            y_cut_all = - (yd + y_base_inc)
+            adjustee_idxs["minus"].append(i)
 
     # 増加量超過時
     elif y_cut_max < yd:
-        yd_temp = yd - y_cut_all
-        if yd_valid(yd_temp):
+        if yd_valid(yd - y_cut_all):
             adjustee_idxs["plus"].append(i)
             y_cut_dif.append(yd - y_cut_all)
         else:
-            y_cut_dif.append(y_base_inc_def)
+            y_cut_dif.append(y_base_inc)
 
             # print(
             #     f"exceeded plus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
             # print(adjustee_idxs)
-            nan_count += 1
+            if if_adjustee_not_used():
+                nan_count += 1
 
             init_bulk()
             y_cut_all = yd - y_base_inc_def
+            adjustee_idxs["plus"].append(i)
 
 print(f"nan_count {nan_count}, nan_ratio {nan_count * 100 / len(data)}%")
 # print(len(x), len(y_dif), len(y_cut))
 
+###### Chart creaation start ######
 make_timeline(x, [0] + [y[i+1] - y[i]
-              for i in range(len(y)-1)], tl=True, y0=True)
-plt.savefig("./y_dif.png")
-plt.close()
-
-make_timeline(x, y_cut_dif, tl=True, y0=True)
-plt.savefig("./y_cut_dif.png")
-plt.close()
-
-make_timeline(x, y)
-plt.savefig("./y_raw.png")
-plt.close()
+              for i in range(len(y)-1)], "y_dif", tl=True, y0=True)
+make_timeline(x, y_cut_dif, "y_cut_dif", tl=True, y0=True)
+make_timeline(x, y, "y_raw")
 
 y_cut = [0]
 for yd in y_cut_dif[1:]:
     y_cut.append(y_cut[-1] + yd)
-make_timeline(x, y_cut)
-plt.savefig("./y_cut.png")
-plt.close()
-# make_timeline(x, )
+make_timeline(x, y_cut, "y_cut")
+
+if len(sys.argv) > 1:
+    if len(sys.argv) == 2 and sys.argv[1] == "local":
+        pass
