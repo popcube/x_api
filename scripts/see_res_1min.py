@@ -43,7 +43,7 @@ def make_timeline(x, y, figname, tl=False, y0=False):
 
     # 移動平均線
     if tl:
-        y_mean10 = pd.Series(y).rolling(10).mean()
+        # y_mean10 = pd.Series(y).rolling(10).mean()
         y_mean60 = pd.Series(y).rolling(60).mean()
 
     plt.scatter(x, y, c="white")
@@ -87,10 +87,28 @@ def make_timeline(x, y, figname, tl=False, y0=False):
                 0] * len(y_mean60), fc="cyan")
     plt.legend(prop={"family": ["IPAexGothic"]})
 
-    plt.plot([x[ni] for ni in nan_idxs], [y[ni]
-             for ni in nan_idxs], marker='o', linewidth=0, zorder=20, label="nan idx")
+    # 差分表示のときはnan部を点で表現
+    if y[0] == 0:
+        plt.plot(
+            [x[ni] for ni in nan_idxs],
+            [y[ni] for ni in nan_idxs],
+            marker='o', color="blue", linewidth=0, zorder=20, label="nan idx"
+        )
+        # plt.plot(
+        #     [x[ni] for ni in adjusted_idxs],
+        #     [y[ni] for ni in adjusted_idxs],
+        #     marker='o', color="orange", linewidth=0, zorder=20, label="nan idx"
+        # )
+    # 実数表示の時はnan部を2点間の線で表現
+    else:
+        for ni in nan_idxs:
+            plt.plot([x[ni-1], x[ni]], [y[ni-1], y[ni]],
+                     color="blue", zorder=20)
+        # for ni in adjusted_idxs:
+        #     plt.plot([x[ni-1], x[ni]], [y[ni-1], y[ni]],
+        #              color="orange", zorder=20)
 
-    # ローカル実行ならグラフ表示、Actions実行ならグラフ保存
+        # ローカル実行ならグラフ表示、Actions実行ならグラフ保存
     if len(sys.argv) > 1:
         if len(sys.argv) == 2 and sys.argv[1] == "local":
             plt.show()
@@ -123,7 +141,7 @@ y_cut_min = -8     #
 y_cut_max = 12     #
 ####################
 
-y_dif = [y[i] - y[i-1] for i in range(1, len(y))]
+y_dif = [0] + [y[i] - y[i-1] for i in range(1, len(y))]
 y_dif_cut = [d for d in y_dif if y_cut_min <= d and d <= y_cut_max]
 print(f'mean before cut: {mean(y_dif):.2f}')
 print(f'mean after cut: {mean(y_dif_cut):.2f}')
@@ -177,13 +195,13 @@ plt.close()
 
 # y_cut_temp_min = y_cut_min
 # y_cut_temp_max = y_cut_max
-y_cut_dif = [0]
+y_cut_dif = []
 y_base_inc_def = mean(y_dif_cut)
 y_base_inc = y_base_inc_def
 y_cut_all = y_cut_max - y_cut_min - 2 * y_base_inc_def
 adjustee_idxs = {"plus": [], "minus": []}
-# adjustee_idxs = {"plus": [], "minus": [], "combi": {"idx": 0, "num": 0}}
 nan_idxs = []
+adjusted_idxs = set()
 
 
 def yd_valid(yd):
@@ -206,10 +224,7 @@ def init_bulk():
 def if_adjustee_not_used():
     # global adjustee_idxs
     global nan_idxs
-    # if (len(adjustee_idxs["plus"]) + len(adjustee_idxs["minus"])) >= 2:
-    #     if len(adjustee_idxs["plus"]) == 0 or len(adjustee_idxs["minus"]) == 0:
     if (
-        (len(adjustee_idxs["plus"]) + len(adjustee_idxs["minus"])) < 2 or
         len(adjustee_idxs["plus"]) == 0 or
         len(adjustee_idxs["minus"]) == 0
     ):
@@ -219,7 +234,6 @@ def if_adjustee_not_used():
         nan_idxs += adjustee_idxs["plus"] + adjustee_idxs["minus"]
 
     return (
-        (len(adjustee_idxs["plus"]) + len(adjustee_idxs["minus"])) < 2 or
         len(adjustee_idxs["plus"]) == 0 or
         len(adjustee_idxs["minus"]) == 0
     )
@@ -231,24 +245,30 @@ def adjust_bulk():
     global y_cut_dif
     global y_cut_all
     # global y_dif
+    global adjusted_idxs
 
     if len(adjustee_idxs["plus"]) > 0 and len(adjustee_idxs["minus"]) > 0:
+        adjusted_idxs = set(
+            adjustee_idxs["plus"] + adjustee_idxs["minus"] + list(adjusted_idxs))
+
         plus_mean = mean([y_dif[ai] for ai in adjustee_idxs["plus"]])
         minus_mean = mean([y_dif[ai] for ai in adjustee_idxs["minus"]])
         y_base_inc = (plus_mean + minus_mean) / 2
         y_cut_all = plus_mean - y_base_inc
+        # print(y_cut_dif, y_dif[:3], adjustee_idxs, y_cut_all)
         for ai in adjustee_idxs["plus"]:
-            y_cut_dif[ai] = y_dif[ai] - y_cut_all
+            if len(y_cut_dif) != ai:
+                y_cut_dif[ai] = y_dif[ai] - y_cut_all
         for ai in adjustee_idxs["minus"]:
-            y_cut_dif[ai] = y_dif[ai] + y_cut_all
-
-        # if adjustee_idxs["combi"]["idx"] != 0:
-        #     y_cut_dif[adjustee_idxs["combi"]["idx"]] = y_dif[ai] - \
-        #         (y_cut_all + [adjustee_idxs["combi"]["num"]])
+            if len(y_cut_dif) != ai:
+                y_cut_dif[ai] = y_dif[ai] + y_cut_all
+    elif len(adjustee_idxs["minus"]) > 0:
+        y_cut_all = - (y_dif[max(adjustee_idxs["minus"])] - y_base_inc)
+    elif len(adjustee_idxs["plus"]) > 0:
+        y_cut_all = y_dif[max(adjustee_idxs["plus"])] - y_base_inc
 
 
 nan_count = 0
-y_cut_all_combi = 0
 for i, yd in enumerate(y_dif):
     # 増減量通常時
     if yd_valid(yd):
@@ -271,16 +291,17 @@ for i, yd in enumerate(y_dif):
                 nan_count += 1
 
             init_bulk()
-            y_cut_all = - (yd + y_base_inc)
+            y_cut_all = - (yd - y_base_inc)
             adjustee_idxs["minus"].append(i)
 
     # 増加量超過時
     elif y_cut_max < yd:
         if yd_valid(yd - y_cut_all):
             adjustee_idxs["plus"].append(i)
+            adjust_bulk()
             y_cut_dif.append(yd - y_cut_all)
         else:
-            y_cut_dif.append(y_base_inc)
+            y_cut_dif.append(y_base_inc_def)
 
             # print(
             #     f"exceeded plus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
@@ -289,10 +310,10 @@ for i, yd in enumerate(y_dif):
                 nan_count += 1
 
             init_bulk()
-            y_cut_all = yd - y_base_inc_def
+            y_cut_all = yd - y_base_inc
             adjustee_idxs["plus"].append(i)
 
-print(f"nan_count {nan_count}, nan_ratio {nan_count * 100 / len(data)}%")
+print(f"nan_count {nan_count}, nan_ratio {nan_count * 100 / len(data):.3f}%")
 # print(len(x), len(y_dif), len(y_cut))
 
 ###### Chart creaation start ######
