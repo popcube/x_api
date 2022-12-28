@@ -94,11 +94,11 @@ def make_timeline(x, y, figname, tl=False, y0=False):
             [y[ni] for ni in nan_idxs],
             marker='o', color="blue", linewidth=0, zorder=20, label="nan idx"
         )
-        # plt.plot(
-        #     [x[ni] for ni in adjusted_idxs],
-        #     [y[ni] for ni in adjusted_idxs],
-        #     marker='o', color="orange", linewidth=0, zorder=20, label="nan idx"
-        # )
+        plt.plot(
+            [x[ni] for ni in adjusted_idxs],
+            [y[ni] for ni in adjusted_idxs],
+            marker='o', color="orange", linewidth=0, zorder=20, label="nan idx"
+        )
     # 実数表示の時はnan部を2点間の線で表現
     else:
         for ni in nan_idxs:
@@ -113,9 +113,6 @@ def make_timeline(x, y, figname, tl=False, y0=False):
         if len(sys.argv) == 2 and sys.argv[1] == "local":
             plt.show()
             return
-        else:
-            print(
-                'only one "local" parameter is allowed. Otherwise no parameters are given.')
 
     plt.savefig(f'./{figname}.png')
     plt.close()
@@ -129,16 +126,17 @@ data = [[datetime.fromisoformat(
     d[0] + "0") + timedelta(hours=9), int(d[1])] for d in rd]
 data.sort(key=lambda x: x[0])
 
-# FOR DEBUG
-# data = data[1000:2000]
-
 x = [d[0] for d in data]
 y = [d[1] for d in data]
 
+# 12/25 3:00 -
+# x = [d[0] for d in data if d[0] > datetime(2022, 12, 25, 3, 0, 0)]
+# y = [d[1] for d in data if d[0] > datetime(2022, 12, 25, 3, 0, 0)]
+
 ####################
 # cut value define #
-y_cut_min = -8     #
-y_cut_max = 12     #
+y_cut_min = -5.5     #
+y_cut_max = 12.5     #
 ####################
 
 y_dif = [0] + [y[i] - y[i-1] for i in range(1, len(y))]
@@ -205,8 +203,8 @@ adjusted_idxs = set()
 
 
 def yd_valid(yd):
-    global y_cut_min
-    global y_cut_max
+    # global y_cut_min
+    # global y_cut_max
     return (y_cut_min <= yd and yd <= y_cut_max)
 
 
@@ -216,7 +214,6 @@ def init_bulk():
     # global adjustee_idxs
 
     y_base_inc = y_base_inc_def
-    # y_cut_all = y_cut_max - y_cut_min - 2 * y_base_inc_def
     adjustee_idxs["plus"].clear()
     adjustee_idxs["minus"].clear()
 
@@ -228,15 +225,10 @@ def if_adjustee_not_used():
         len(adjustee_idxs["plus"]) == 0 or
         len(adjustee_idxs["minus"]) == 0
     ):
-        print(
-            f"y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}")
-        print(adjustee_idxs)
+        # print(
+        #     f"y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}")
+        # print(adjustee_idxs)
         nan_idxs += adjustee_idxs["plus"] + adjustee_idxs["minus"]
-
-    return (
-        len(adjustee_idxs["plus"]) == 0 or
-        len(adjustee_idxs["minus"]) == 0
-    )
 
 
 def adjust_bulk():
@@ -255,7 +247,6 @@ def adjust_bulk():
         minus_mean = mean([y_dif[ai] for ai in adjustee_idxs["minus"]])
         y_base_inc = (plus_mean + minus_mean) / 2
         y_cut_all = plus_mean - y_base_inc
-        # print(y_cut_dif, y_dif[:3], adjustee_idxs, y_cut_all)
         for ai in adjustee_idxs["plus"]:
             if len(y_cut_dif) != ai:
                 y_cut_dif[ai] = y_dif[ai] - y_cut_all
@@ -268,7 +259,6 @@ def adjust_bulk():
         y_cut_all = y_dif[max(adjustee_idxs["plus"])] - y_base_inc
 
 
-nan_count = 0
 for i, yd in enumerate(y_dif):
     # 増減量通常時
     if yd_valid(yd):
@@ -287,8 +277,7 @@ for i, yd in enumerate(y_dif):
             #     f"exceeded minus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
             # print(adjustee_idxs)
 
-            if if_adjustee_not_used():
-                nan_count += 1
+            if_adjustee_not_used()
 
             init_bulk()
             y_cut_all = - (yd - y_base_inc)
@@ -306,14 +295,16 @@ for i, yd in enumerate(y_dif):
             # print(
             #     f"exceeded plus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
             # print(adjustee_idxs)
-            if if_adjustee_not_used():
-                nan_count += 1
+            if_adjustee_not_used()
 
             init_bulk()
             y_cut_all = yd - y_base_inc
             adjustee_idxs["plus"].append(i)
 
-print(f"nan_count {nan_count}, nan_ratio {nan_count * 100 / len(data):.3f}%")
+if_adjustee_not_used()
+
+print(
+    f"nan_count {len(nan_idxs)}, nan_ratio {len(nan_idxs) * 100 / len(data):.3f}%")
 # print(len(x), len(y_dif), len(y_cut))
 
 ###### Chart creaation start ######
@@ -329,4 +320,9 @@ make_timeline(x, y_cut, "y_cut")
 
 if len(sys.argv) > 1:
     if len(sys.argv) == 2 and sys.argv[1] == "local":
-        pass
+        sys.exit(0)
+
+df = pd.DataFrame([x, y_cut_dif]).T
+df.columns = ["time", "y_cut_diff"]
+df.drop(nan_idxs, inplace=True)
+df.to_csv("./result_cut_dif.csv", index=False)

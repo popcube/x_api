@@ -47,8 +47,9 @@ if (dynScan["$metadata"].httpStatusCode == "200") {
     console.log("ERROR at scan");
     console.log(JSON.stringify(dynScan, null, 2));
 }
-const outputCsv = dynScan.Items.reduce((prev, curr) => {
+dynScan.Items.reduce((prev, curr) => {
     prev += `"${curr["fetch_time"]["S"]}","${curr["followers_count"]["N"]}"\n`;
     return prev;
-}, '"fetch_time","followers_count"\n');
-fs.writeFileSync("./results.csv", outputCsv);
+}, '"fetch_time","followers_count"\n').then((outputCsv) => {
+    fs.writeFileSync("./results.csv", outputCsv);
+});
