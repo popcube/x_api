@@ -1,4 +1,4 @@
-name: "twt api test"
+name: "main flow"
 on: workflow_dispatch
 ## scheduled at every hour
 ##  schedule:

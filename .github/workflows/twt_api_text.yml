@@ -1,4 +1,4 @@
-name: font test
+name: tweet get test
 on: workflow_dispatch
 
 jobs:
