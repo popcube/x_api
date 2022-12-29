@@ -3,6 +3,8 @@ import pandas as pd
 from statsmodels.tsa.seasonal import STL
 # import statsmodels.api as sm
 from matplotlib import pyplot as plt
+from make_timeline import make_timeline
+import sys
 
 df = pd.read_csv("result_cut_dif.csv", index_col="time", parse_dates=True)
 # df["index_min"] = df["time"].apply(
@@ -14,19 +16,21 @@ df = pd.read_csv("result_cut_dif.csv", index_col="time", parse_dates=True)
 # df = df.set_index(["index_day", "index_hour", "index_min"])
 
 print(df)
-df2 = df.resample('H').mean()
+df2 = df.resample('15min').mean()
 print(df2)
 # df2.plot()
 # plt.show()
 # exit()
 
-stl = STL(df2['y_cut_diff'], period=24, robust=True)
+stl = STL(df2['y_cut_diff'], period=24*4, robust=True)
 stl_series = stl.fit()
 stl_series.plot()
-plt.show()
+plt.savefig("./STL_decompose.png")
+plt.close()
 
 stl_r = stl_series.resid
-stl_r.plot()
-plt.axhline(y=0, linestyle="dotted")
 
-plt.show()
+make_timeline(stl_r.index, stl_r, "res_err.png")
+# plt.axhline(y=0, linestyle="dotted")
+
+# plt.savefig("./res_err.png")

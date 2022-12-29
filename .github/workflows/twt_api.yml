@@ -32,10 +32,13 @@ jobs:
           sudo apt-get install fonts-ipaexfont
           pip install matplotlib
           pip install pandas
+          pip install statsmodels
+
           python ./scripts/see_res_1min.py
+          python ./scripts/make_stats_1min.py
 
       - uses: actions/upload-artifact@v3
         with:
           path: |
-            ./results.csv
+            ./*.csv
             ./*.png
