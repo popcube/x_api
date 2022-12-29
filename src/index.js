@@ -38,7 +38,7 @@ const flwObj = await getFollowers(userName);
 
 console.log("User id: " + flwObj.data.id);
 const twtArr = await getTweets(flwObj.data.id);
-console.log(JSON.stringify(twtArr.slice(-2, twtArr.length), null, 2));
+console.log(JSON.stringify(twtArr.slice(-1, twtArr.length), null, 2));
 console.log("Tweet count size: " + twtArr.length);
 
 for (const twt of twtArr.slice(-2, twtArr.length)) {
@@ -50,6 +50,7 @@ console.log("Referemced Tweet count size: " + twtArrRef.length);
 
 for (const twt of twtArrRef.slice(-2, twtArrRef.length)) {
     console.log(`${twt.created_at} https://twitter.com/${userName}/status/${twt.id}`)
+    console.log(twtArrRef.referenced_tweets)
 };
 
 const twtCsv = twtArr.reduce((prev, curr) => {
@@ -58,6 +59,8 @@ const twtCsv = twtArr.reduce((prev, curr) => {
     return prev;
 }, '"UTC time","referenced","url"');
 fs.writeFileSync("./twtResults.csv", twtCsv);
+
+// DO NOT DELETE BELOW
 
 // const dynScan = await scanDyn(scanParam);
 // if (dynScan["$metadata"].httpStatusCode == "200") {
