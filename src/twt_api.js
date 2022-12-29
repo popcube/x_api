@@ -19,9 +19,9 @@ const paramsTweets = {
 }
 
 
-export const getFollowers = async () => {
+export const getFollowers = async (userName) => {
     try {
-        const userObj = await client.users.findUserByUsername("pj_sekai", paramsFollowers);
+        const userObj = await client.users.findUserByUsername(userName, paramsFollowers);
         console.log("Followers data received at " + new Date().toISOString().slice(0, -2));
         return userObj;
     } catch (error) {

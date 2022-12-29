@@ -28,16 +28,22 @@ const makeFollowersDynObj = (twtObj) => {
 };
 
 const scanParam = { TableName: "twt_api_1min" };
+const userName = "pj_sekai"
 
-const flwObj = await getFollowers();
+const flwObj = await getFollowers(userName);
+/* DEPRECATED to be deleted*/
 // const dynObj = await makeFollowersDynObj(flwObj)
 // sendDyn(dynObj);
+/* DEPRECATED to be deleted*/
 
-
-console.log(flwObj.data.id);
+console.log("User id: " + flwObj.data.id);
 const twtArr = await getTweets(flwObj.data.id);
 console.log(JSON.stringify(twtArr.slice(-2, -1), null, 2));
 console.log("Tweet data size: " + twtArr.length);
+
+for (const twt of twtArr) {
+    console.log(`${twt.created_at} https://twitter.com/${userName}/status/${twt.id}`)
+};
 
 
 // const dynScan = await scanDyn(scanParam);
