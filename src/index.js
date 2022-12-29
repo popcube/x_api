@@ -47,6 +47,8 @@ for (const twt of twtArr.slice(-2, twtArr.length)) {
 
 const twtArrRef = twtArr.filter(el => "referenced_tweets" in el);
 console.log("Referenced tweet count size: " + twtArrRef.length);
+const twtArrRefMulti = twtArrRef.filter(el => el.referenced_tweets.length > 1);
+console.log("Multi referenced tweet count size: " + twtArrRefMulti.length);
 
 for (const twt of twtArrRef.slice(-2, twtArrRef.length)) {
     console.log(`${twt.created_at} https://twitter.com/${userName}/status/${twt.id}`)
@@ -54,7 +56,7 @@ for (const twt of twtArrRef.slice(-2, twtArrRef.length)) {
 };
 
 const twtCsv = twtArr.reduce((prev, curr) => {
-    const referenced = "referenced_tweets" in curr ? curr.referenced_tweets.type.slice(0, 3).toUpperCase() : "ORG"
+    const referenced = "referenced_tweets" in curr ? curr.referenced_tweets.type[0].slice(0, 3).toUpperCase() : "ORG"
     prev += `"${curr.created_at}","${referenced},"https://twitter.com/${userName}/status/${curr.id}"\n`;
     return prev;
 }, '"UTC time","referenced","url"');
