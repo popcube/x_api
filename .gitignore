@@ -1,5 +1,8 @@
 # library
-node_modules/
+/node_modules/
+
+# cache
+__pycache__/
 
 # data files
 *.csv
