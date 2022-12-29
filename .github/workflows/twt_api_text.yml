@@ -1,0 +1,19 @@
+name: font test
+on: workflow_dispatch
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: setup
+        run: |
+          npm install twitter-api-sdk
+       
+      - run: |
+          npm start
+           
+          ls -la
+        env:
+          BEARER_TOKEN: ${{ secrets.TWT_BEARER_TOKEN }}

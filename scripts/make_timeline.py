@@ -84,11 +84,11 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
             plt.gca().fill_between(x, [max(0, ym) for ym in y_mean60], [
                 0] * len(y_mean60), fc="cyan")
 
-    plt.axhline(y=0, linestyle="dotted")
     plt.legend(prop={"family": ["IPAexGothic"]})
 
     # 差分表示のときはnan部を点で表現
     if y[0] == 0:
+        plt.axhline(y=0, linestyle="dotted")
         if len(nan_idxs) > 0:
             plt.plot(
                 [x[ni] for ni in nan_idxs],
