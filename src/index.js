@@ -41,7 +41,7 @@ const twtArr = await getTweets(flwObj.data.id);
 console.log(JSON.stringify(twtArr.slice(-2, -1), null, 2));
 console.log("Tweet data size: " + twtArr.length);
 
-for (const twt of twtArr) {
+for (const twt of twtArr.slice(-10, 0)) {
     console.log(`${twt.created_at} https://twitter.com/${userName}/status/${twt.id}`)
 };
 
