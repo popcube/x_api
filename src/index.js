@@ -57,9 +57,9 @@ for (const twt of twtArrRef.slice(-2, twtArrRef.length)) {
 
 const twtCsv = twtArr.reduce((prev, curr) => {
     const referenced = "referenced_tweets" in curr ? curr.referenced_tweets[0].type.slice(0, 3).toUpperCase() : "ORG"
-    prev += `"${curr.created_at}","${referenced},"https://twitter.com/${userName}/status/${curr.id}"\n`;
+    prev += `"${curr.created_at.slice(0, -2)}","${referenced},"https://twitter.com/${userName}/status/${curr.id}"\n`;
     return prev;
-}, '"UTC time","referenced","url"');
+}, '"UTC time","referenced","url"\n');
 fs.writeFileSync("./twtResults.csv", twtCsv);
 
 // DO NOT DELETE BELOW
