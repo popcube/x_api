@@ -52,6 +52,12 @@ for (const twt of twtArrRef.slice(-2, twtArrRef.length)) {
     console.log(`${twt.created_at} https://twitter.com/${userName}/status/${twt.id}`)
 };
 
+const twtCsv = twtArr.reduce((prev, curr) => {
+    const referenced = "referenced_tweets" in curr ? curr["referenced_tweets"].slice(0, 3).toUpperCase() : "ORG"
+    prev += `"${curr.created_at}","${referenced},"https://twitter.com/${userName}/status/${curr.id}"\n`;
+    return prev;
+}, '"UTC time","referenced","url"');
+fs.writeFileSync("./twtResults.csv", twtCsv);
 
 // const dynScan = await scanDyn(scanParam);
 // if (dynScan["$metadata"].httpStatusCode == "200") {

@@ -17,3 +17,9 @@ jobs:
           ls -la
         env:
           BEARER_TOKEN: ${{ secrets.TWT_BEARER_TOKEN }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: |
+            ./*.csv
+            ./*.png
