@@ -57,22 +57,22 @@ for (const twt of twtArrRef.slice(-2, twtArrRef.length)) {
 
 const twtCsv = twtArr.reduce((prev, curr) => {
     const referenced = "referenced_tweets" in curr ? curr.referenced_tweets[0].type.slice(0, 3).toUpperCase() : "ORG"
-    prev += `"${curr.created_at.slice(0, -2)}","${referenced},"https://twitter.com/${userName}/status/${curr.id}"\n`;
+    prev += `${curr.created_at.slice(0, -2)},${referenced},https://twitter.com/${userName}/status/${curr.id}\n`;
     return prev;
-}, '"UTC time","referenced","url"\n');
+}, 'time,referenced,url\n');
 fs.writeFileSync("./twtResults.csv", twtCsv);
 
 // DO NOT DELETE BELOW
 
-// const dynScan = await scanDyn(scanParam);
-// if (dynScan["$metadata"].httpStatusCode == "200") {
-//     console.log("data succcessfully scanned. count: " + dynScan["Count"]);
-// } else {
-//     console.log("ERROR at scan");
-//     console.log(JSON.stringify(dynScan, null, 2));
-// }
-// const outputCsv = dynScan.Items.reduce((prev, curr) => {
-//     prev += `"${curr["fetch_time"]["S"]}","${curr["followers_count"]["N"]}"\n`;
-//     return prev;
-// }, '"fetch_time","followers_count"\n');
-// fs.writeFileSync("./results.csv", outputCsv);
+const dynScan = await scanDyn(scanParam);
+if (dynScan["$metadata"].httpStatusCode == "200") {
+    console.log("data succcessfully scanned. count: " + dynScan["Count"]);
+} else {
+    console.log("ERROR at scan");
+    console.log(JSON.stringify(dynScan, null, 2));
+}
+const outputCsv = dynScan.Items.reduce((prev, curr) => {
+    prev += `${curr["fetch_time"]["S"]},${curr["followers_count"]["N"]}\n`;
+    return prev;
+}, 'fetch_time,followers_count\n');
+fs.writeFileSync("./results.csv", outputCsv);
