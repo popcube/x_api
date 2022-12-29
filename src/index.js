@@ -38,10 +38,17 @@ const flwObj = await getFollowers(userName);
 
 console.log("User id: " + flwObj.data.id);
 const twtArr = await getTweets(flwObj.data.id);
-console.log(JSON.stringify(twtArr.slice(-2, -1), null, 2));
-console.log("Tweet data size: " + twtArr.length);
+console.log(JSON.stringify(twtArr.slice(-2, twtArr.length), null, 2));
+console.log("Tweet count size: " + twtArr.length);
 
-for (const twt of twtArr.slice(-10, 0)) {
+for (const twt of twtArr.slice(-2, twtArr.length)) {
+    console.log(`${twt.created_at} https://twitter.com/${userName}/status/${twt.id}`)
+};
+
+const twtArrRef = twtArr.filter(el => "referenced_tweets" in el);
+console.log("Referemced Tweet count size: " + twtArrRef.length);
+
+for (const twt of twtArrRef.slice(-2, twtArrRef.length)) {
     console.log(`${twt.created_at} https://twitter.com/${userName}/status/${twt.id}`)
 };
 
