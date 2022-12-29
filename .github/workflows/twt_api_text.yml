@@ -19,6 +19,7 @@ jobs:
           BEARER_TOKEN: ${{ secrets.TWT_BEARER_TOKEN }}
 
       - uses: actions/upload-artifact@v3
+        if-no-files-found: error
         with:
           path: |
             ./*.csv

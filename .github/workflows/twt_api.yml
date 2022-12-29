@@ -38,6 +38,7 @@ jobs:
           python ./scripts/make_stats_1min.py
 
       - uses: actions/upload-artifact@v3
+        if-no-files-found: error
         with:
           path: |
             ./*.csv

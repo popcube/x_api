@@ -54,7 +54,7 @@ for (const twt of twtArrRef.slice(-2, twtArrRef.length)) {
 };
 
 const twtCsv = twtArr.reduce((prev, curr) => {
-    const referenced = "referenced_tweets" in curr ? curr["referenced_tweets"].slice(0, 3).toUpperCase() : "ORG"
+    const referenced = "referenced_tweets" in curr ? curr.referenced_tweets.type.slice(0, 3).toUpperCase() : "ORG"
     prev += `"${curr.created_at}","${referenced},"https://twitter.com/${userName}/status/${curr.id}"\n`;
     return prev;
 }, '"UTC time","referenced","url"');
