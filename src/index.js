@@ -46,11 +46,11 @@ for (const twt of twtArr.slice(-2, twtArr.length)) {
 };
 
 const twtArrRef = twtArr.filter(el => "referenced_tweets" in el);
-console.log("Referemced Tweet count size: " + twtArrRef.length);
+console.log("Referenced tweet count size: " + twtArrRef.length);
 
 for (const twt of twtArrRef.slice(-2, twtArrRef.length)) {
     console.log(`${twt.created_at} https://twitter.com/${userName}/status/${twt.id}`)
-    console.log(twtArrRef.referenced_tweets)
+    console.log(twt.referenced_tweets)
 };
 
 const twtCsv = twtArr.reduce((prev, curr) => {
