@@ -35,7 +35,7 @@ def make_fill_pairs(x_in):
 # タイムラインチャート作成
 
 
-def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=[]):
+def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=[], annot_list=[]):
 
     plt.figure(figsize=(15, 8))
 
@@ -44,10 +44,10 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
         # y_mean10 = pd.Series(y).rolling(10).mean()
         y_mean60 = pd.Series(y).rolling(60).mean()
 
-    plt.scatter(x, y, c="white")
+    plt.scatter(x, y, marker='None')
 
-    xaxis_minor_interval = int(
-        (max(x) - min(x)).total_seconds()) // (48 * 60 * 60)
+    xaxis_minor_interval = max(
+        int((max(x) - min(x)).total_seconds()) // (48 * 60 * 60), 1)
     # print(max(x) - min(x))
     # print(xaxis_minor_interval)
 
@@ -57,22 +57,18 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
     plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
 
     plt.gca().yaxis.set_major_locator(
-        ticker.MultipleLocator(max((max(y) - min(y))//600, 0.1) * 100))
+        ticker.MultipleLocator(max((max(y) - min(y))//600, 0.01) * 100))
     plt.gca().yaxis.set_minor_locator(
         ticker.MultipleLocator(max((max(y) - min(y))//480, 0.1) * 10))
     plt.gca().yaxis.set_major_formatter(
         ticker.ScalarFormatter(useOffset=False, useMathText=False))
     plt.gca().yaxis.get_major_formatter().set_scientific(False)
 
-    plt.gca().set_ylabel("フォロワー数推移", fontname="IPAexGothic")
     plt.gca().tick_params(axis='x', which='major', length=14, color="white")
 
     x_fill_pairs = make_fill_pairs(x)
 
     # print(x_fill_pairs)
-
-    for x_fill_pair in x_fill_pairs:
-        plt.gca().fill_between(x_fill_pair, [max(y)], [min(y)], fc="#BCECE0")
 
     # plt.scatter(x, y, edgecolors="black", c="white", zorder=10)
     plt.plot(x, y, c="grey", zorder=1, label="元データ")
@@ -87,7 +83,8 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
     plt.legend(prop={"family": ["IPAexGothic"]})
 
     # 差分表示のときはnan部を点で表現
-    if y[0] == 0:
+    if 'dif' in figname:
+        plt.gca().set_ylabel("フォロワー数増減量推移", fontname="IPAexGothic")
         plt.axhline(y=0, linestyle="dotted")
         if len(nan_idxs) > 0:
             plt.plot(
@@ -103,12 +100,25 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
             )
     # 実数表示の時はnan部を2点間の線で表現
     else:
+        plt.gca().set_ylabel("フォロワー数推移", fontname="IPAexGothic")
         for ni in nan_idxs:
             plt.plot([x[ni-1], x[ni]], [y[ni-1], y[ni]],
                      color="blue", zorder=20)
         for ni in adjusted_idxs:
             plt.plot([x[ni-1], x[ni]], [y[ni-1], y[ni]],
                      color="orange", zorder=20)
+
+    # この処理時点でのy軸描画範囲 {最小値、最大値}
+    ylim = plt.gca().get_ylim()
+
+    # アノテーションがあるとき
+    for i, al in enumerate(annot_list):
+        x_text = i * 20
+        plt.gca().annotate(al[1], xy=(al[0], ylim[0]), size=15, xytext=(
+            x_text, -20), textcoords='axes points', bbox={"boxstyle": "round"}, arrowprops=dict())
+
+    for x_fill_pair in x_fill_pairs:
+        plt.gca().fill_between(x_fill_pair, *ylim, fc="#BCECE0", zorder=0)
 
         # ローカル実行ならグラフ表示、Actions実行ならグラフ保存
     if len(sys.argv) > 1:
