@@ -7,6 +7,11 @@ import pandas as pd
 
 
 def make_fill_pairs(x_in):
+    x_fill_pairs = []
+
+    if len(x_in) == 0:
+        return x_fill_pairs
+
     x_datalist_days = (datetime(x_in[-1].year, x_in[-1].month, x_in[-1].day) -
                        datetime(x_in[0].year, x_in[0].month, x_in[0].day)).days
     x_datalist_hours = x_datalist_days * 24 + x_in[-1].hour
@@ -14,6 +19,9 @@ def make_fill_pairs(x_in):
     x_datelist = [datetime(x_in[0].year, x_in[0].month, x_in[0].day) +
                   timedelta(hours=1) * i for i in range(x_datalist_hours + 1)]
     x_temp = [xd for xd in x_datelist if xd.hour == 17 or xd.hour == 23]
+
+    if len(x_temp) == 0:
+        return x_fill_pairs
 
     # print(x_temp)
     if x_temp[0].hour == 23:
@@ -25,7 +33,6 @@ def make_fill_pairs(x_in):
         print("error: x_temp has odd number count!")
         sys.exit(1)
 
-    x_fill_pairs = []
     for i in range(len(x_temp)//2):
         ii = 2*i
         x_fill_pairs.append([x_temp[ii], x_temp[ii+1]])

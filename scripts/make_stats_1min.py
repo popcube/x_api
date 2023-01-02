@@ -54,23 +54,23 @@ df_flw = df_flw[df_flw.index > init_ts]
 # day_list = df_flw.index.day
 # print(set(year_list), set(mownth_list), set(day_list))
 
-
+df_twt_index_str = " ".join(df_twt.index.to_series().apply(str))
 for year in set(df_flw.index.year):
     month_list = set(df_flw.loc[str(year)].index.month)
     for month in month_list:
         day_list = set(df_flw.loc[f'{year}-{month}'].index.day)
         for day in day_list:
             today = f'{year}-{month}-{day}'
-            df_twt_day = df_twt.loc[today]
             df_flw_day = df_flw.loc[today]
-            print(" ".join(df_twt_day.index.to_series().apply(str)))
-            print('2022-12-29' in (" ".join(df_twt_day.index.to_series().apply(str))))
-            # df_tot_day = pd.concat([df_twt_day, df_flw_day], axis=1)
-            # print(df_tot_day)
+            # print(" ".join(df_twt_day.index.to_series().apply(str)))
+            # print('2022-12-29' in (" ".join(df_twt_day.index.to_series().apply(str))))
 
-            # ds_anot = df_tot_day[df_tot_day["url"] == df_tot_day["url"]]["url"]
-            annot_list = list(
-                zip(df_twt_day.index, range(1, len(df_twt_day) + 1)))
+            annot_list = []
+            if today in df_twt_index_str:
+                df_twt_day = df_twt.loc[today]
+                annot_list = list(
+                    zip(df_twt_day.index, range(1, len(df_twt_day) + 1)))
+
             print(*annot_list)
             # print(df_tot_day["y_cut_diff"].to_list())
             make_timeline(df_flw_day.index,
