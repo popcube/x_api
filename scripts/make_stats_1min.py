@@ -6,8 +6,9 @@ from matplotlib import pyplot as plt
 from make_timeline import make_timeline
 import sys
 
-df = pd.read_csv("result_cut_dif.csv", index_col="time", parse_dates=True)
-df.sort_index(inplace=True)
+df_flw_1min = pd.read_csv("result_cut_dif.csv",
+                          index_col="time", parse_dates=True)
+df_flw_1min.sort_index(inplace=True)
 # df["index_min"] = df["time"].apply(
 #     lambda x: datetime.fromisoformat(x[:-7] + ":00:000"))
 # df["index_hour"] = df["time"].apply(
@@ -26,8 +27,9 @@ df_twt.index = df_twt.index.to_series().apply(
 # sys.exit(0)
 
 # print(df)
-# df_flw = df.resample(rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
-df_flw = df.resample(rule='15min', label='right', closed='right').mean()
+df_flw = df_flw_1min.resample(
+    rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
+# df_flw = df.resample(rule='15min', label='right', closed='right').mean()
 # print(df_flw)
 # df_flw.plot()
 # plt.show()
@@ -54,6 +56,28 @@ df_flw = df_flw[df_flw.index > init_ts]
 # day_list = df_flw.index.day
 # print(set(year_list), set(mownth_list), set(day_list))
 
+
+# def windowed_index(data_df, window_df):
+#     res_df = pd.DataFrame(columns=data_df.columns)
+#     for di in data_df.index:
+#         for wt in window_df.index:
+#             wt_min = wt - timedelta(minutes=5)
+#             wt_max = wt + timedelta(minutes=15)
+#             if wt_min <= di and di <= wt_max:
+#                 res_df = pd.concat([res_df, pd.DataFrame(data_df.at[di]).T])
+#                 # print("## debug line ##")
+#                 # print(res_df)
+#                 # print()
+#                 # print(data_df.loc[di])
+#                 # print()
+
+#     return res_df
+
+
+# print(windowed_index(df_flw_1min, df_twt.iloc[3:6]))
+# print(df_twt.iloc[3:6])
+# sys.exit(9)
+
 df_twt_index_str = " ".join(df_twt.index.to_series().apply(str))
 # print(df_twt_index_str)
 for year in set(df_flw.index.year):
@@ -63,8 +87,6 @@ for year in set(df_flw.index.year):
         for day in day_list:
             today = f'{year}-{month:02d}-{day:02d}'
             df_flw_day = df_flw.loc[today]
-            # print(" ".join(df_twt_day.index.to_series().apply(str)))
-            # print('2022-12-29' in (" ".join(df_twt_day.index.to_series().apply(str))))
 
             annot_list = []
             if today in df_twt_index_str:
@@ -72,9 +94,23 @@ for year in set(df_flw.index.year):
                 annot_list = list(
                     zip(df_twt_day.index, range(1, len(df_twt_day) + 1)))
 
+                df_flw_day_1min = pd.DataFrame(columns=df_flw_day.columns)
+                for ti in df_twt_day.index:
+                    window_min = ti - timedelta(minutes=5)
+                    window_max = ti + timedelta(minutes=15)
+                    df_flw_day_1min = pd.concat([df_flw_day_1min, df_flw_1min.query(
+                        '@window_min <= index and index <= @window_max')])
+                df_flw_day_1min = df_flw_day_1min[~df_flw_day_1min.index.duplicated(
+                )]
+                print()
+                print(df_flw_day_1min)
+                print()
+
             print(*annot_list)
             print(today)
             make_timeline(df_flw_day.index,
                           df_flw_day["y_cut_diff"], f'res_diff_{today}', annot_list=annot_list)
-            # if today == "2022-12-19":
-            #     sys.exit(9)
+            # make_timeline(df_flw_1min.loc[today].index, df_flw_1min.loc[today]
+            #               ["y_cut_diff"], f'cut_diff_{today}', annot_list=annot_list)
+            if today == "2022-12-19":
+                sys.exit(9)

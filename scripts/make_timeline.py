@@ -124,16 +124,20 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
         # plt.close()
         plt.plot(x, y, marker='o', markerfacecolor='black', markeredgewidth=0,
                  markersize=4, linewidth=0, label="15分毎の元データ")
-        X_Y_Spline = make_interp_spline(
-            list(map(lambda ix: ix.timestamp(), x)), y)
-        X_ = [min(x) + i * 0.001 * (max(x) - min(x)) for i in range(1001)]
-        X_ = list(map(lambda ix: ix.timestamp(), X_))
-        Y_ = X_Y_Spline(X_)
-        # print(x[:5])
-        # print(list(map(datetime.utcfromtimestamp, X_))[:5])
-        # sys.exit(9)
-        plt.plot(list(map(datetime.utcfromtimestamp, X_)),
-                 Y_, c="grey", zorder=1, label="補完曲線")
+
+        if len(x) <= 100:
+            X_Y_Spline = make_interp_spline(
+                list(map(lambda ix: ix.timestamp(), x)), y)
+            X_ = [min(x) + i * 0.001 * (max(x) - min(x)) for i in range(1001)]
+            X_ = list(map(lambda ix: ix.timestamp(), X_))
+            Y_ = X_Y_Spline(X_)
+            # print(x[:5])
+            # print(list(map(datetime.utcfromtimestamp, X_))[:5])
+            # sys.exit(9)
+            plt.plot(list(map(datetime.utcfromtimestamp, X_)),
+                     Y_, c="grey", zorder=1, label="補完曲線")
+        else:
+            plt.plot(x, y, c="grey", zorder=1)
         # plt.show()
         # sys.exit()
         cm_colors = plt.cm.get_cmap("Dark2").colors
@@ -166,4 +170,5 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
             return
 
     plt.savefig(f'./{figname}.png')
+    print(f'./{figname}.png is saved!')
     plt.close()
