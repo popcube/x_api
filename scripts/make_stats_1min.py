@@ -26,7 +26,8 @@ df_twt.index = df_twt.index.to_series().apply(
 # sys.exit(0)
 
 # print(df)
-df_flw = df.resample('15min').mean()
+# df_flw = df.resample(rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
+df_flw = df.resample(rule='15min', label='right', closed='right').mean()
 # print(df_flw)
 # df_flw.plot()
 # plt.show()
@@ -46,7 +47,6 @@ make_timeline(stl_r.index, stl_r, "dif_err")
 # plt.savefig("./res_err.png")
 
 init_ts = max(df_twt.index[0], df_flw.index[0])
-year_list = df_flw.index.year
 
 df_twt = df_twt[df_twt.index > init_ts]
 df_flw = df_flw[df_flw.index > init_ts]
@@ -55,12 +55,13 @@ df_flw = df_flw[df_flw.index > init_ts]
 # print(set(year_list), set(mownth_list), set(day_list))
 
 df_twt_index_str = " ".join(df_twt.index.to_series().apply(str))
+# print(df_twt_index_str)
 for year in set(df_flw.index.year):
     month_list = set(df_flw.loc[str(year)].index.month)
     for month in month_list:
         day_list = set(df_flw.loc[f'{year}-{month}'].index.day)
         for day in day_list:
-            today = f'{year}-{month}-{day}'
+            today = f'{year}-{month:02d}-{day:02d}'
             df_flw_day = df_flw.loc[today]
             # print(" ".join(df_twt_day.index.to_series().apply(str)))
             # print('2022-12-29' in (" ".join(df_twt_day.index.to_series().apply(str))))
@@ -72,7 +73,8 @@ for year in set(df_flw.index.year):
                     zip(df_twt_day.index, range(1, len(df_twt_day) + 1)))
 
             print(*annot_list)
-            # print(df_tot_day["y_cut_diff"].to_list())
+            print(today)
             make_timeline(df_flw_day.index,
                           df_flw_day["y_cut_diff"], f'res_diff_{today}', annot_list=annot_list)
-            # sys.exit()
+            # if today == "2022-12-19":
+            #     sys.exit(9)

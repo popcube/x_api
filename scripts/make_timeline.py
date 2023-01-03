@@ -4,6 +4,8 @@ import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
 import sys
 import pandas as pd
+from scipy.interpolate import make_interp_spline
+import numpy as np
 
 
 def make_fill_pairs(x_in):
@@ -77,8 +79,9 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
 
     # print(x_fill_pairs)
 
-    # plt.scatter(x, y, edgecolors="black", c="white", zorder=10)
-    plt.plot(x, y, c="grey", zorder=1, label="元データ")
+    # アノテーションがないとき（一日毎の表示意外）
+    if len(annot_list) == 0:
+        plt.plot(x, y, c="grey", zorder=1, label="元データ")
     if tl:
         # plt.plot(x, y_mean10, c="orange", linewidth=2,
         #          zorder=5, label="10分移動平均")
@@ -86,8 +89,6 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
         if y0:
             plt.gca().fill_between(x, [max(0, ym) for ym in y_mean60], [
                 0] * len(y_mean60), fc="cyan")
-
-    plt.legend(prop={"family": ["IPAexGothic"]})
 
     # 差分表示のときはnan部を点で表現
     if 'dif' in figname:
@@ -118,16 +119,47 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
     # この処理時点でのy軸描画範囲 {最小値、最大値}
     ylim = plt.gca().get_ylim()
 
-    # アノテーションがあるとき
-    for i, al in enumerate(annot_list):
-        x_text = i * 20
-        plt.gca().annotate(al[1], xy=(al[0], ylim[0]), size=15, xytext=(
-            x_text, -20), textcoords='axes points', bbox={"boxstyle": "round"}, arrowprops=dict())
+    # アノテーションがあるとき（一日毎の表示限定）
+    if len(annot_list) > 0:
+        # plt.close()
+        plt.plot(x, y, marker='o', markerfacecolor='black', markeredgewidth=0,
+                 markersize=4, linewidth=0, label="15分毎の元データ")
+        X_Y_Spline = make_interp_spline(
+            list(map(lambda ix: ix.timestamp(), x)), y)
+        X_ = [min(x) + i * 0.001 * (max(x) - min(x)) for i in range(1001)]
+        X_ = list(map(lambda ix: ix.timestamp(), X_))
+        Y_ = X_Y_Spline(X_)
+        # print(x[:5])
+        # print(list(map(datetime.utcfromtimestamp, X_))[:5])
+        # sys.exit(9)
+        plt.plot(list(map(datetime.utcfromtimestamp, X_)),
+                 Y_, c="grey", zorder=1, label="補完曲線")
+        # plt.show()
+        # sys.exit()
+        cm_colors = plt.cm.get_cmap("Dark2").colors
+        for i, al in enumerate(annot_list):
+            x_text = i / len(annot_list)
+            ci = i % len(cm_colors)
+            plt.gca().annotate(al[1], xy=(al[0], ylim[1]), size=15, xytext=(
+                x_text, 1.05), textcoords='axes fraction',
+                bbox={
+                    "boxstyle": "circle",
+                    "fc": "white",
+                    "ec": cm_colors[ci]
+            },
+                arrowprops={
+                    "arrowstyle": "wedge",
+                    "color": cm_colors[ci]
+            })
+            plt.axvline(x=al[0], ymin=0, ymax=1,
+                        linestyle="dotted", color=cm_colors[ci])
 
     for x_fill_pair in x_fill_pairs:
         plt.gca().fill_between(x_fill_pair, *ylim, fc="#BCECE0", zorder=0)
 
-        # ローカル実行ならグラフ表示、Actions実行ならグラフ保存
+    plt.legend(prop={"family": ["IPAexGothic"]})
+
+    # ローカル実行ならグラフ表示、Actions実行ならグラフ保存
     if len(sys.argv) > 1:
         if len(sys.argv) == 2 and sys.argv[1] == "local":
             plt.show()
