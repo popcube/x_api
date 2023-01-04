@@ -11,6 +11,6 @@ jobs:
           path: ./goodday.txt
       - name: main
         run: |
-          curl -XPOST -H "Authorization: token ${{ secrets.MY_TOKEN }}" \
+          curl -D- -s -XPOST -H "Authorization: token ${{ secrets.MY_TOKEN }}" \
           -d '{"ref": "master", "inputs": {"rid": "${{ github.run_id }}"}}' \
           "https://github.com/repos/popcube/prosekacube/actions/workflows/28501413/dispatches"
