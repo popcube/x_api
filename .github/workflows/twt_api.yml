@@ -27,7 +27,8 @@ jobs:
         with:
           python-version: '3.x'
         
-      - run: |
+      - name: main run
+        run: |
           sudo apt-get update
           sudo apt-get install fonts-ipaexfont
           pip install matplotlib

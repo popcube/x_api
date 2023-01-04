@@ -137,7 +137,7 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
             plt.plot(list(map(datetime.utcfromtimestamp, X_)),
                      Y_, c="grey", zorder=1, label="補完曲線")
         else:
-            plt.plot(x, y, c="grey", zorder=1)
+            plt.plot(x, y, c="black", zorder=1)
         # plt.show()
         # sys.exit()
         cm_colors = plt.cm.get_cmap("Dark2").colors
