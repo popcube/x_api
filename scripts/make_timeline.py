@@ -10,26 +10,27 @@ import numpy as np
 
 def make_fill_pairs(x_in):
     x_fill_pairs = []
+    # print(x_in)
 
     if len(x_in) == 0:
         return x_fill_pairs
 
-    x_datalist_days = (datetime(x_in[-1].year, x_in[-1].month, x_in[-1].day) -
-                       datetime(x_in[0].year, x_in[0].month, x_in[0].day)).days
-    x_datalist_hours = x_datalist_days * 24 + x_in[-1].hour
+    x_datalist_seconds = (x_in[-1] - x_in[0]).total_seconds()
+    # x_datalist_hours = x_datalist_days * 24 + x_in[-1].hour
     # print(x_in[-1].hour)
-    x_datelist = [datetime(x_in[0].year, x_in[0].month, x_in[0].day) +
-                  timedelta(hours=1) * i for i in range(x_datalist_hours + 1)]
+    x_datelist = [datetime(x_in[0].year, x_in[0].month, x_in[0].day, x_in[0].hour) +
+                  timedelta(hours=1) * i for i in range(int(x_datalist_seconds) // 3600 + 2)]
     x_temp = [xd for xd in x_datelist if xd.hour == 17 or xd.hour == 23]
 
     if len(x_temp) == 0:
         return x_fill_pairs
 
-    # print(x_temp)
+    # print(x_datelist)
     if x_temp[0].hour == 23:
         x_temp.insert(0, x_in[0])
     if x_temp[-1].hour == 17:
         x_temp.append(x_in[-1])
+    # print(x_temp)
 
     if len(x_temp) % 2 != 0:
         print("error: x_temp has odd number count!")
@@ -66,9 +67,9 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
     plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
 
     plt.gca().yaxis.set_major_locator(
-        ticker.MultipleLocator(max((max(y) - min(y))//600, 0.01) * 100))
+        ticker.MultipleLocator(max((max(y) - min(y))//60, 1) * 5))
     plt.gca().yaxis.set_minor_locator(
-        ticker.MultipleLocator(max((max(y) - min(y))//480, 0.1) * 10))
+        ticker.MultipleLocator(max((max(y) - min(y))//60, 1) * 1))
     plt.gca().yaxis.set_major_formatter(
         ticker.ScalarFormatter(useOffset=False, useMathText=False))
     plt.gca().yaxis.get_major_formatter().set_scientific(False)
@@ -123,9 +124,9 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
     if len(annot_list) > 0:
         # plt.close()
         plt.plot(x, y, marker='o', markerfacecolor='black', markeredgewidth=0,
-                 markersize=4, linewidth=0, label="15分毎の元データ")
+                 markersize=4, linewidth=0, label="元データ")
 
-        if len(x) <= 100:
+        if len(x) <= 10:
             X_Y_Spline = make_interp_spline(
                 list(map(lambda ix: ix.timestamp(), x)), y)
             X_ = [min(x) + i * 0.001 * (max(x) - min(x)) for i in range(1001)]

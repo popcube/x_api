@@ -27,7 +27,7 @@ y_cut_min = -5.5   #
 y_cut_max = 12.5   #
 ####################
 
-y_dif = [0] + [y[i] - y[i-1] for i in range(1, len(y))]
+y_dif = [0] + [(y[i] - y[i-1]) * 60 / (x[i]-x[i-1]).total_seconds() for i in range(1, len(y))]
 y_dif_cut = [d for d in y_dif if y_cut_min <= d and d <= y_cut_max]
 print(f'mean before cut: {mean(y_dif):.2f}')
 print(f'mean after cut: {mean(y_dif_cut):.2f}')
