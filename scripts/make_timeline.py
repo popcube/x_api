@@ -45,7 +45,7 @@ def make_fill_pairs(x_in):
 # タイムラインチャート作成
 
 
-def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=[], annot_list=[]):
+def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=[], annot_list=[], y_label="", interp=False):
 
     plt.figure(figsize=(15, 8))
 
@@ -67,7 +67,7 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
     plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
 
     plt.gca().yaxis.set_major_locator(
-        ticker.MultipleLocator(max((max(y) - min(y))//60, 1) * 5))
+        ticker.MultipleLocator(max(5*((max(y) - min(y))//60), 1)))
     plt.gca().yaxis.set_minor_locator(
         ticker.MultipleLocator(max((max(y) - min(y))//60, 1) * 1))
     plt.gca().yaxis.set_major_formatter(
@@ -93,7 +93,8 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
 
     # 差分表示のときはnan部を点で表現
     if 'dif' in figname:
-        plt.gca().set_ylabel("フォロワー数増減量推移", fontname="IPAexGothic")
+        if len(y_label) == 0:
+            plt.gca().set_ylabel("フォロワー数増減量推移", fontname="IPAexGothic")
         plt.axhline(y=0, linestyle="dotted")
         if len(nan_idxs) > 0:
             plt.plot(
@@ -109,13 +110,17 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
             )
     # 実数表示の時はnan部を2点間の線で表現
     else:
-        plt.gca().set_ylabel("フォロワー数推移", fontname="IPAexGothic")
+        if len(y_label) == 0:
+            plt.gca().set_ylabel("フォロワー数推移", fontname="IPAexGothic")
         for ni in nan_idxs:
             plt.plot([x[ni-1], x[ni]], [y[ni-1], y[ni]],
                      color="blue", zorder=20)
         for ni in adjusted_idxs:
             plt.plot([x[ni-1], x[ni]], [y[ni-1], y[ni]],
                      color="orange", zorder=20)
+
+    if len(y_label) > 0:
+        plt.gca().set_ylabel(y_label, fontname="IPAexGothic")
 
     # この処理時点でのy軸描画範囲 {最小値、最大値}
     ylim = plt.gca().get_ylim()
@@ -126,7 +131,7 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
         plt.plot(x, y, marker='o', markerfacecolor='black', markeredgewidth=0,
                  markersize=4, linewidth=0, label="元データ")
 
-        if len(x) <= 10:
+        if interp:
             X_Y_Spline = make_interp_spline(
                 list(map(lambda ix: ix.timestamp(), x)), y)
             X_ = [min(x) + i * 0.001 * (max(x) - min(x)) for i in range(1001)]
@@ -138,7 +143,7 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
             plt.plot(list(map(datetime.utcfromtimestamp, X_)),
                      Y_, c="grey", zorder=1, label="補完曲線")
         else:
-            plt.plot(x, y, c="black", zorder=1)
+            plt.plot(x, y, c="grey", zorder=1)
         # plt.show()
         # sys.exit()
         cm_colors = plt.cm.get_cmap("Dark2").colors
