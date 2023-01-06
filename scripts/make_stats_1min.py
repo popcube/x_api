@@ -81,7 +81,8 @@ for year in set(df_res.index.year):
             print(today)
             make_timeline(df_res_day.index,
                           df_res_day["res"], f'res_diff_{today}', annot_list=annot_list, y_label=f'増減量残差 {today}', interp=True)
-            continue
+            make_timeline(df_flw.loc[today].index,
+                          df_flw.loc[today]["y_cut_diff"], f'cut_diff_{today}', annot_list=annot_list, y_label=f'フォロワー数増減量フィルター後 {today}')
 
             if today == '2022-12-30':
                 window_min = datetime(2022, 12, 30, 11)
@@ -123,8 +124,8 @@ for year in set(df_res.index.year):
                               df_flw_raw_temp["followers_count"], f'flw_raw_{today}_temp3', annot_list=annot_list[:1])
 
             if today == '2023-01-03':
-                window_min3 = datetime(2023, 1, 3, 12)
-                window_max3 = datetime(2023, 1, 3, 15)
+                window_min3 = datetime(2023, 1, 3, 11)
+                window_max3 = datetime(2023, 1, 3, 16)
                 df_flw_1min_temp = df_flw_1min.query(
                     '@window_min3 <= index and index <= @window_max3')
                 make_timeline(df_flw_1min_temp.index,
@@ -133,5 +134,12 @@ for year in set(df_res.index.year):
                 df_flw_raw_temp = df_flw_raw.query(
                     '@window_min3 <= index and index <= @window_max3')
                 make_timeline(df_flw_raw_temp.index,
-                              df_flw_raw_temp["followers_count"], f'flw_raw_{today}_temp4', annot_list=annot_list[:9])
+                              df_flw_raw_temp["followers_count"], f'flw_raw_{today}_temp4', annot_list=annot_list[8:9])
+                
+                window_min3 = datetime(2023, 1, 4, 11)
+                window_max3 = datetime(2023, 1, 4, 16)
+                df_flw_raw_temp = df_flw_raw.query(
+                    '@window_min3 <= index and index <= @window_max3')
+                make_timeline(df_flw_raw_temp.index,
+                              df_flw_raw_temp["followers_count"], f'flw_raw_{today}_temp5', annot_list=[])
                 print(df_twt.loc[today]["url"][:9].to_list())

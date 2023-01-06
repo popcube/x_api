@@ -28,6 +28,7 @@ y_cut_max = 12.5   #
 ####################
 
 y_dif = [0] + [(y[i] - y[i-1]) * 60 / (x[i]-x[i-1]).total_seconds() for i in range(1, len(y))]
+x_dif = [x[0]] + [x[i] + (x[i+1] -x[i])/2 for i in range(len(x)-1)]
 y_dif_cut = [d for d in y_dif if y_cut_min <= d and d <= y_cut_max]
 print(f'mean before cut: {mean(y_dif):.2f}')
 print(f'mean after cut: {mean(y_dif_cut):.2f}')
@@ -196,9 +197,9 @@ print(
 # print(len(x), len(y_dif), len(y_cut))
 
 ###### Chart creaation part ######
-make_timeline(x, [0] + [y[i+1] - y[i]
+make_timeline(x_dif, [0] + [y[i+1] - y[i]
               for i in range(len(y)-1)], "y_dif", tl=True, y0=True, nan_idxs=nan_idxs, adjusted_idxs=adjusted_idxs)
-make_timeline(x, y_cut_dif, "y_cut_dif", tl=True, y0=True)
+make_timeline(x_dif, y_cut_dif, "y_cut_dif", tl=True, y0=True)
 make_timeline(x, y, "y_raw", nan_idxs=nan_idxs)
 
 y_cut = [0]
@@ -210,7 +211,7 @@ if len(sys.argv) > 1:
     if len(sys.argv) == 2 and sys.argv[1] == "local":
         sys.exit(0)
 
-df = pd.DataFrame([x, y_cut_dif]).T
+df = pd.DataFrame([x_dif, y_cut_dif]).T
 df.columns = ["time", "y_cut_diff"]
 df.drop(nan_idxs, inplace=True)
 df.to_csv("./result_cut_dif.csv", index=False)

@@ -45,7 +45,7 @@ def make_fill_pairs(x_in):
 # タイムラインチャート作成
 
 
-def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=[], annot_list=[], y_label="", interp=False):
+def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=[], annot_list=False, y_label="", interp=False):
 
     plt.figure(figsize=(15, 8))
 
@@ -80,8 +80,8 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
 
     # print(x_fill_pairs)
 
-    # アノテーションがないとき（一日毎の表示意外）
-    if len(annot_list) == 0:
+    # アノテーションがないとき（一日毎の表示以外）
+    if type(annot_list) is bool:
         plt.plot(x, y, c="grey", zorder=1, label="元データ")
     if tl:
         # plt.plot(x, y_mean10, c="orange", linewidth=2,
@@ -126,7 +126,7 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
     ylim = plt.gca().get_ylim()
 
     # アノテーションがあるとき（一日毎の表示限定）
-    if len(annot_list) > 0:
+    if type(annot_list) is list:
         # plt.close()
         plt.plot(x, y, marker='o', markerfacecolor='black', markeredgewidth=0,
                  markersize=4, linewidth=0, label="元データ")
