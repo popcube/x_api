@@ -134,8 +134,8 @@ for year in set(df_res.index.year):
                 df_flw_raw_temp = df_flw_raw.query(
                     '@window_min3 <= index and index <= @window_max3')
                 make_timeline(df_flw_raw_temp.index,
-                              df_flw_raw_temp["followers_count"], f'flw_raw_{today}_temp4', annot_list=annot_list[8:9])
-                
+                              df_flw_raw_temp["followers_count"], f'flw_raw_{today}_temp4', annot_list=[])
+
                 window_min3 = datetime(2023, 1, 4, 11)
                 window_max3 = datetime(2023, 1, 4, 16)
                 df_flw_raw_temp = df_flw_raw.query(

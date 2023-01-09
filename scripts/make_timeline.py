@@ -55,15 +55,44 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
         y_mean60 = pd.Series(y).rolling(60).mean()
 
     plt.scatter(x, y, marker='None')
+    plt.title("プロセカ公式ツイッター（@pj_sekai）フォロワー数観測", fontname="IPAexGothic")
 
+    xaxis_minor_interval_presets = [1, 2, 3, 4,
+                                    6, 8, 12] + [24 * i for i in range(1, 100)]
     xaxis_minor_interval = max(
-        int((max(x) - min(x)).total_seconds()) // (48 * 60 * 60), 1)
+        int((max(x) - min(x)).total_seconds()) // (40 * 60 * 60), 1)
+    for i, xaxis_minor_interval_preset in enumerate(xaxis_minor_interval_presets):
+        if xaxis_minor_interval < xaxis_minor_interval_preset:
+            if i == 0:
+                xaxis_minor_interval = xaxis_minor_interval_presets[0]
+                break
+            else:
+                xaxis_minor_interval = xaxis_minor_interval_presets[i-1]
+                break
+    else:
+        print("##### ERROR ##### \nxaxis minor tick value not found!")
+        sys.exit(1)
+
+    xaxis_minor_byhour = [0]
+    if xaxis_minor_interval < 24:
+        xaxis_minor_byhour = [xaxis_minor_interval *
+                              i for i in range(24 // xaxis_minor_interval)]
     # print(max(x) - min(x))
     # print(xaxis_minor_interval)
+    xaxis_major_loc = mdates.RRuleLocator(mdates.rrulewrapper(
+        mdates.DAILY, byhour=11, byminute=59))
+    plt.gca().xaxis.set_major_locator(xaxis_major_loc)
+    if (max(x) - min(x)).days <= 20:
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d\n%a'))
+    elif (max(x) - min(x)).days <= 40:
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d\n%a'))
+        plt.xticks(rotation=90)
+    else:
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+        plt.xticks(rotation=90)
 
-    plt.gca().xaxis.set_major_locator(mdates.HourLocator(byhour=12))
-    plt.gca().xaxis.set_minor_locator(mdates.HourLocator(interval=xaxis_minor_interval))
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %a'))
+    plt.gca().xaxis.set_minor_locator(mdates.HourLocator(byhour=xaxis_minor_byhour))
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d\n%a'))
     plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
 
     plt.gca().yaxis.set_major_locator(
@@ -100,24 +129,32 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
             plt.plot(
                 [x[ni] for ni in nan_idxs],
                 [y[ni] for ni in nan_idxs],
-                marker='o', color="blue", linewidth=0, zorder=20, label="nan idx"
+                marker='o', color="blue", linewidth=0, zorder=20, label="無視されるデータ点"
             )
         if len(adjusted_idxs) > 0:
             plt.plot(
                 [x[ni] for ni in adjusted_idxs],
                 [y[ni] for ni in adjusted_idxs],
-                marker='o', color="orange", linewidth=0, zorder=20, label="nan idx"
+                marker='o', color="orange", linewidth=0, zorder=20, label="平均化されるデータ点"
             )
     # 実数表示の時はnan部を2点間の線で表現
     else:
         if len(y_label) == 0:
             plt.gca().set_ylabel("フォロワー数推移", fontname="IPAexGothic")
-        for ni in nan_idxs:
-            plt.plot([x[ni-1], x[ni]], [y[ni-1], y[ni]],
-                     color="blue", zorder=20)
-        for ni in adjusted_idxs:
-            plt.plot([x[ni-1], x[ni]], [y[ni-1], y[ni]],
-                     color="orange", zorder=20)
+        for i, ni in enumerate(nan_idxs):
+            if i == 0:
+                plt.plot([x[ni-1], x[ni]], [y[ni-1], y[ni]],
+                         color="blue", zorder=20, label="その他ノイズっぽい増減")
+            else:
+                plt.plot([x[ni-1], x[ni]], [y[ni-1], y[ni]],
+                         color="blue", zorder=20)
+        for i, ni in enumerate(adjusted_idxs):
+            if i == 0:
+                plt.plot([x[ni-1], x[ni]], [y[ni-1], y[ni]],
+                         color="orange", zorder=20, label="振動ノイズっぽい増減")
+            else:
+                plt.plot([x[ni-1], x[ni]], [y[ni-1], y[ni]],
+                         color="orange", zorder=20)
 
     if len(y_label) > 0:
         plt.gca().set_ylabel(y_label, fontname="IPAexGothic")
@@ -164,8 +201,13 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
             plt.axvline(x=al[0], ymin=0, ymax=1,
                         linestyle="dotted", color=cm_colors[ci])
 
-    for x_fill_pair in x_fill_pairs:
-        plt.gca().fill_between(x_fill_pair, *ylim, fc="#BCECE0", zorder=0)
+    for i, x_fill_pair in enumerate(x_fill_pairs):
+        if i == 0:
+            plt.gca().fill_between(x_fill_pair, *ylim,
+                                   fc="#BCECE0", zorder=0, label="17時-23時の時間帯")
+        else:
+            plt.gca().fill_between(x_fill_pair, *ylim,
+                                   fc="#BCECE0", zorder=0)
 
     plt.legend(prop={"family": ["IPAexGothic"]})
 

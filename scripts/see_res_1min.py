@@ -27,8 +27,9 @@ y_cut_min = -5.5   #
 y_cut_max = 12.5   #
 ####################
 
-y_dif = [0] + [(y[i] - y[i-1]) * 60 / (x[i]-x[i-1]).total_seconds() for i in range(1, len(y))]
-x_dif = [x[0]] + [x[i] + (x[i+1] -x[i])/2 for i in range(len(x)-1)]
+y_dif = [0] + [(y[i] - y[i-1]) * 60 / (x[i]-x[i-1]).total_seconds()
+               for i in range(1, len(y))]
+x_dif = [x[0]] + [x[i] + (x[i+1] - x[i])/2 for i in range(len(x)-1)]
 y_dif_cut = [d for d in y_dif if y_cut_min <= d and d <= y_cut_max]
 print(f'mean before cut: {mean(y_dif):.2f}')
 print(f'mean after cut: {mean(y_dif_cut):.2f}')
@@ -198,9 +199,11 @@ print(
 
 ###### Chart creaation part ######
 make_timeline(x_dif, [0] + [y[i+1] - y[i]
-              for i in range(len(y)-1)], "y_dif", tl=True, y0=True, nan_idxs=nan_idxs, adjusted_idxs=adjusted_idxs)
+              for i in range(len(y)-1)], "y_dif", y0=True, nan_idxs=nan_idxs, adjusted_idxs=adjusted_idxs)
 make_timeline(x_dif, y_cut_dif, "y_cut_dif", tl=True, y0=True)
-make_timeline(x, y, "y_raw", nan_idxs=nan_idxs)
+make_timeline(x, y, "y_raw")
+make_timeline(x, y, "y_raw_annot", nan_idxs=nan_idxs,
+              adjusted_idxs=adjusted_idxs)
 
 y_cut = [0]
 for yd in y_cut_dif[1:]:
