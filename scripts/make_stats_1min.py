@@ -6,9 +6,19 @@ from matplotlib import pyplot as plt
 from make_timeline import make_timeline
 import sys
 
+from make_js import make_js
+
+outputter = make_js("test_name")
+
+
 df_flw_1min = pd.read_csv("result_cut_dif.csv",
                           index_col="time", parse_dates=True)
 df_flw_1min.sort_index(inplace=True)
+
+outputter.write_js(df_flw_1min.loc["2022-12-28"]
+                   ["y_cut_diff"], "test_data_name")
+del outputter
+sys.exit(1)
 
 df_flw_raw = pd.read_csv("results.csv",
                          index_col="fetch_time", parse_dates=True)
