@@ -45,7 +45,7 @@ def make_fill_pairs(x_in):
 # タイムラインチャート作成
 
 
-def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=[], annot_list=False, y_label="", interp=False):
+def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=[], annot_dfds=False, y_label="", interp=False):
 
     plt.figure(figsize=(15, 8))
 
@@ -55,7 +55,12 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
         y_mean60 = pd.Series(y).rolling(60).mean()
 
     plt.scatter(x, y, marker='None')
-    plt.title("プロセカ公式ツイッター（@pj_sekai）フォロワー数観測", fontname="IPAexGothic")
+
+    if type(annot_dfds) is bool:
+        plt.title("プロセカ公式ツイッター（@pj_sekai）フォロワー数観測", fontname="IPAexGothic")
+    else:
+        plt.title("プロセカ公式ツイッター（@pj_sekai）フォロワー数観測",
+                  fontname="IPAexGothic", y=1, pad=45)
 
     xaxis_minor_interval_presets = [1, 2, 3, 4,
                                     6, 8, 12] + [24 * i for i in range(1, 100)]
@@ -80,7 +85,7 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
     # print(max(x) - min(x))
     # print(xaxis_minor_interval)
     xaxis_major_loc = mdates.RRuleLocator(mdates.rrulewrapper(
-        mdates.DAILY, byhour=11, byminute=59))
+        mdates.DAILY, byhour=11, byminute=30))
     plt.gca().xaxis.set_major_locator(xaxis_major_loc)
     if (max(x) - min(x)).days <= 20:
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d\n%a'))
@@ -110,7 +115,7 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
     # print(x_fill_pairs)
 
     # アノテーションがないとき（一日毎の表示以外）
-    if type(annot_list) is bool:
+    if type(annot_dfds) is bool:
         plt.plot(x, y, c="grey", zorder=1, label="元データ")
     if tl:
         # plt.plot(x, y_mean10, c="orange", linewidth=2,
@@ -163,7 +168,7 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
     ylim = plt.gca().get_ylim()
 
     # アノテーションがあるとき（一日毎の表示限定）
-    if type(annot_list) is list:
+    if type(annot_dfds) is pd.core.series.Series or type(annot_dfds) is pd.core.frame.DataFrame:
         # plt.close()
         plt.plot(x, y, marker='o', markerfacecolor='black', markeredgewidth=0,
                  markersize=4, linewidth=0, label="元データ")
@@ -184,10 +189,10 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
         # plt.show()
         # sys.exit()
         cm_colors = plt.cm.get_cmap("Dark2").colors
-        for i, al in enumerate(annot_list):
-            x_text = i / len(annot_list)
+        for i, al in enumerate(annot_dfds.index):
+            x_text = i / len(annot_dfds.index)
             ci = i % len(cm_colors)
-            plt.gca().annotate(al[1], xy=(al[0], ylim[1]), size=15, xytext=(
+            plt.gca().annotate(i+1, xy=(al, ylim[1]), size=15, xytext=(
                 x_text, 1.05), textcoords='axes fraction',
                 bbox={
                     "boxstyle": "circle",
@@ -198,7 +203,7 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
                     "arrowstyle": "wedge",
                     "color": cm_colors[ci]
             })
-            plt.axvline(x=al[0], ymin=0, ymax=1,
+            plt.axvline(x=al, ymin=0, ymax=1,
                         linestyle="dotted", color=cm_colors[ci])
 
     for i, x_fill_pair in enumerate(x_fill_pairs):
