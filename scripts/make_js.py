@@ -1,9 +1,5 @@
 
 
-def timestamp_to_str(ts):
-    return f'"{str(ts)[:-3]}",'
-
-
 class make_js:
 
     output_js = ""
@@ -31,7 +27,7 @@ class make_js:
                 "            "
             ])
             f.writelines(in_ds.index.to_series().apply(
-                lambda x: f'"{str(x)[:-7]}", ').to_list())
+                self.timestamp_to_str).to_list())
             f.writelines([
                 "\n",
                 "        ],\n",
@@ -45,3 +41,8 @@ class make_js:
                 "    },\n"
             ])
             print(f'{data_count} data are written')
+
+    @staticmethod
+    def timestamp_to_str(ts):
+        ts_str = ts.strftime("%Y-%m-%d %H:%M:%S")
+        return f'"{ts_str}", '

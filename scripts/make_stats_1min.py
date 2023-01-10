@@ -18,7 +18,7 @@ df_flw_1min.sort_index(inplace=True)
 outputter.write_js(df_flw_1min.loc["2022-12-28"]
                    ["y_cut_diff"], "test_data_name")
 del outputter
-# sys.exit(0)
+sys.exit(0)
 
 df_flw_raw = pd.read_csv("results.csv",
                          index_col="fetch_time", parse_dates=True)
