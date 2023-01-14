@@ -112,11 +112,12 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
 
     x_fill_pairs = make_fill_pairs(x)
 
+    y_label_temp = y_label if len(y_label) > 0 else "元データ"
     # print(x_fill_pairs)
 
     # アノテーションがないとき（一日毎の表示以外）
     if type(annot_dfds) is bool:
-        plt.plot(x, y, c="grey", zorder=1, label="元データ")
+        plt.plot(x, y, c="grey", zorder=1, label=y_label_temp)
     if tl:
         # plt.plot(x, y_mean10, c="orange", linewidth=2,
         #          zorder=5, label="10分移動平均")
@@ -171,7 +172,7 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
     if type(annot_dfds) is pd.core.series.Series or type(annot_dfds) is pd.core.frame.DataFrame:
         # plt.close()
         plt.plot(x, y, marker='o', markerfacecolor='black', markeredgewidth=0,
-                 markersize=4, linewidth=0, label="元データ")
+                 markersize=4, linewidth=0, label=y_label_temp)
 
         if interp:
             X_Y_Spline = make_interp_spline(
