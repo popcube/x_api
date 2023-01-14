@@ -68,7 +68,7 @@ print(df_res)
 make_timeline(df_res.index, df_res["res"], 'res_diff', y_label="増減量残差")
 make_timeline(stl_trend[stl_trend.index > init_ts].index,
               stl_trend[stl_trend.index > init_ts], 'trend_diff', y_label="増減量（/分）トレンド")
-sys.exit(1)
+# sys.exit(1)
 
 df_twt_index_str = " ".join(df_twt.index.to_series().apply(str))
 
