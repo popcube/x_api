@@ -15,15 +15,15 @@ df_flw_1min = pd.read_csv("result_cut_dif.csv",
                           index_col="time", parse_dates=True)
 df_flw_1min.sort_index(inplace=True)
 
-outputter.write_js(df_flw_1min.loc["2022-12-28"]
-                   ["y_cut_diff"], "test_data_name")
-del outputter
+# outputter.write_js(df_flw_1min.loc["2022-12-28"]
+#                    ["y_cut_diff"], "sample_data")
+# del outputter
 # sys.exit(0)
 
-df_flw_raw = pd.read_csv("results.csv",
-                         index_col="fetch_time", parse_dates=True)
-df_flw_raw.sort_index(inplace=True)
-df_flw_raw.index = df_flw_raw.index.to_series().apply(
+df_flw_raw_1min = pd.read_csv("results.csv",
+                              index_col="fetch_time", parse_dates=True)
+df_flw_raw_1min.sort_index(inplace=True)
+df_flw_raw_1min.index = df_flw_raw_1min.index.to_series().apply(
     lambda x: x + timedelta(hours=9))
 
 df_twt = pd.read_csv("twtResults.csv", index_col="time", parse_dates=True, )
@@ -32,16 +32,18 @@ df_twt.index = df_twt.index.to_series().apply(
     lambda x: x + timedelta(hours=9))
 
 today = "2023-01-09"
-make_timeline(df_flw_raw.loc[today].index,
-              df_flw_raw.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
+make_timeline(df_flw_raw_1min.loc[today].index,
+              df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
 today = "2022-12-23"
-make_timeline(df_flw_raw.loc[today].index,
-              df_flw_raw.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
+make_timeline(df_flw_raw_1min.loc[today].index,
+              df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
 make_timeline(df_flw_1min.loc[today].index,
               df_flw_1min.loc[today].iloc[:, 0], "flw_cut_1min_" + today + "_temp", annot_dfds=df_twt.loc[today])
 # sys.exit(0)
 
 df_flw = df_flw_1min.resample(
+    rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
+df_raw = df_flw_raw_1min.resample(
     rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
 
 
@@ -61,6 +63,7 @@ init_ts = max(df_twt.index[0], df_flw.index[0])
 
 df_twt = df_twt[df_twt.index > init_ts]
 df_flw = df_flw[df_flw.index > init_ts]
+df_raw = df_raw[df_raw.index > init_ts]
 df_res = pd.DataFrame(stl_r).query('index > @init_ts')
 df_res.columns = ["res"]
 print(df_res)
@@ -68,7 +71,13 @@ print(df_res)
 make_timeline(df_res.index, df_res["res"], 'res_diff', y_label="増減量残差")
 make_timeline(stl_trend[stl_trend.index > init_ts].index,
               stl_trend[stl_trend.index > init_ts], 'trend_diff', y_label="増減量（/分）トレンド")
-# sys.exit(1)
+
+
+outputter.write_js(stl_trend[stl_trend.index > init_ts], "trend_15min")
+outputter.write_js(df_raw["followers_count"], "raw_15min")
+outputter.write_js(df_flw["y_cut_diff"], "cut_diff_15min")
+del outputter
+sys.exit(1)
 
 df_twt_index_str = " ".join(df_twt.index.to_series().apply(str))
 
@@ -107,12 +116,12 @@ for year in set(df_res.index.year):
             #     make_timeline(df_flw_1min_temp.index,
             #                   df_flw_1min_temp["y_cut_diff"], f'flw_diff_{today}_temp2', annot_dfds=annot_dfds[:7])
 
-            #     df_flw_raw_temp = df_flw_raw.query(
+            #     df_flw_raw_temp = df_flw_raw_1min.query(
             #         '@window_min <= index and index <= @window_max')
             #     make_timeline(df_flw_raw_temp.index,
             #                   df_flw_raw_temp["followers_count"], f'flw_raw_{today}_temp', annot_dfds=annot_dfds[:7])
 
-            #     df_flw_raw_temp = df_flw_raw.query(
+            #     df_flw_raw_temp = df_flw_raw_1min.query(
             #         '@window_min2 <= index and index <= @window_max2')
             #     make_timeline(df_flw_raw_temp.index,
             #                   df_flw_raw_temp["followers_count"], f'flw_raw_{today}_temp2', annot_dfds=annot_dfds[:7])
@@ -125,7 +134,7 @@ for year in set(df_res.index.year):
             #     make_timeline(df_flw_1min_temp.index,
             #                   df_flw_1min_temp["y_cut_diff"], f'flw_diff_{today}_temp3', annot_dfds=annot_dfds[:1])
 
-            #     df_flw_raw_temp = df_flw_raw.query(
+            #     df_flw_raw_temp = df_flw_raw_1min.query(
             #         '@window_min3 <= index and index <= @window_max3')
             #     make_timeline(df_flw_raw_temp.index,
             #                   df_flw_raw_temp["followers_count"], f'flw_raw_{today}_temp3', annot_dfds=annot_dfds[:1])
@@ -138,14 +147,14 @@ for year in set(df_res.index.year):
             #     make_timeline(df_flw_1min_temp.index,
             #                   df_flw_1min_temp["y_cut_diff"], f'flw_diff_{today}_temp4', annot_dfds=annot_dfds[:9])
 
-            #     df_flw_raw_temp = df_flw_raw.query(
+            #     df_flw_raw_temp = df_flw_raw_1min.query(
             #         '@window_min3 <= index and index <= @window_max3')
             #     make_timeline(df_flw_raw_temp.index,
             #                   df_flw_raw_temp["followers_count"], f'flw_raw_{today}_temp4', annot_dfds=[])
 
             #     window_min3 = datetime(2023, 1, 4, 11)
             #     window_max3 = datetime(2023, 1, 4, 16)
-            #     df_flw_raw_temp = df_flw_raw.query(
+            #     df_flw_raw_temp = df_flw_raw_1min.query(
             #         '@window_min3 <= index and index <= @window_max3')
             #     make_timeline(df_flw_raw_temp.index,
             #                   df_flw_raw_temp["followers_count"], f'flw_raw_{today}_temp5', annot_dfds=[])
