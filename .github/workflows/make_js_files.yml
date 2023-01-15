@@ -1,6 +1,6 @@
 name: "make js files"
 on:
-  workflow_dispath:
+  workflow_dispatch:
   repository_dispatch:
     types: [get_js]
 ## scheduled at every hour
