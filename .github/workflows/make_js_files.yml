@@ -10,6 +10,8 @@ on:
 jobs:
   job1:
     runs-on: ubuntu-latest
+    env:
+      JS_NAME: twt_data
     steps:
       - uses: actions/checkout@v3
 
@@ -44,6 +46,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           if-no-files-found: error
-          path: |
-            ./*.csv
-            ./*.png
+          path: ./{{ env.JS_NAME }}.js

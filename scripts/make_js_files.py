@@ -3,13 +3,17 @@ import pandas as pd
 from statsmodels.tsa.seasonal import STL
 import sys
 from make_js import make_js
+import os
 
 
 def index_UTC_to_JST(df):
     return df.index.to_series().apply(lambda x: x + timedelta(hours=9))
 
 
-outputter = make_js("test_name")
+js_name = os.environ.get("JS_NAME")
+if js_name is None:
+    js_name = "twt_data"
+outputter = make_js(js_name)
 
 # read data from csv
 df_flw_1min = pd.read_csv("result_cut_dif.csv",
