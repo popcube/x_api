@@ -1,4 +1,4 @@
-name: "main flow"
+name: "make js files"
 on:
   workfow_dispath:
   repository_dispatch:
