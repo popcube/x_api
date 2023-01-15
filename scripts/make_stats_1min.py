@@ -77,7 +77,7 @@ outputter.write_js(stl_trend[stl_trend.index > init_ts], "trend_15min")
 outputter.write_js(df_raw["followers_count"], "raw_15min")
 outputter.write_js(df_flw["y_cut_diff"], "cut_diff_15min")
 del outputter
-sys.exit(1)
+# sys.exit(1)
 
 df_twt_index_str = " ".join(df_twt.index.to_series().apply(str))
 
