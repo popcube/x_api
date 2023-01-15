@@ -7,22 +7,14 @@ class make_js:
     def __init__(self, js_name):
         self.output_js = f'./{js_name}.js'
         with open(self.output_js, "w") as f:
-            f.write("const twt_data = [\n")
-
-    def __del__(self):
-        with open(self.output_js, "a") as f:
-            f.writelines([
-                "];\n",
-                "export default twt_data;\n"
-            ])
+            f.write("const twt_data = {\n")
 
     def write_js(self, in_ds, data_name):
 
         data_count = len(in_ds)
         with open(self.output_js, "a") as f:
             f.writelines([
-                "    {\n",
-                '        name: "' + data_name + '",\n',
+                "    " + data_name + ": {\n",
                 "        x: [\n",
                 "            "
             ])
@@ -40,7 +32,14 @@ class make_js:
                 "        ],\n",
                 "    },\n"
             ])
-            print(f'{data_count} data are written')
+            print(f'{data_count} data are written to {self.output_js}')
+
+    def __del__(self):
+        with open(self.output_js, "a") as f:
+            f.writelines([
+                "};\n",
+                "export default twt_data;\n"
+            ])
 
     @staticmethod
     def timestamp_to_str(ts):

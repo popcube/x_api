@@ -1,0 +1,49 @@
+name: "main flow"
+on:
+  workfow_dispath:
+  repository_dispatch:
+    types: [get_js]
+## scheduled at every hour
+##  schedule:
+##    - cron: '29 * * * *'
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: setup
+        run: |
+          npm install twitter-api-sdk
+       
+      - run: |
+          npm start
+           
+          ls -la
+        env:
+          BEARER_TOKEN: ${{ secrets.TWT_BEARER_TOKEN }}
+          ACC_KEY: ${{ secrets.AWS_DYN_ACC_KEY }}
+          SEC_ACC_KEY: ${{ secrets.AWS_DYN_SEC_ACC_KEY }}
+      
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+        
+      - name: main run
+        run: |
+          sudo apt-get update
+          sudo apt-get install fonts-ipaexfont
+          pip install matplotlib
+          pip install pandas
+          pip install statsmodels
+
+          python ./scripts/see_res_1min.py
+          python ./scripts/make_js_files.py
+
+      - uses: actions/upload-artifact@v3
+        with:
+          if-no-files-found: error
+          path: |
+            ./*.csv
+            ./*.png
