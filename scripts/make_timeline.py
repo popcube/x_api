@@ -174,7 +174,7 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
         plt.plot(x, y, marker='o', markerfacecolor='black', markeredgewidth=0,
                  markersize=4, linewidth=0, label=y_label_temp)
 
-        if interp:
+        if interp and len(x) >= 4:
             X_Y_Spline = make_interp_spline(
                 list(map(lambda ix: ix.timestamp(), x)), y)
             X_ = [min(x) + i * 0.001 * (max(x) - min(x)) for i in range(1001)]
