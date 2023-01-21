@@ -22,10 +22,10 @@ export const scanDyn = async (dynObj) => {
             returnData = returnData.concat(scannedData.Items);
             if (!Object.keys(scannedData["LastEvaluatedKey"]).length) {
                 console.log("data succcessfully scanned. count: " + scannedData["Count"] + ", done!");
+                break;
             }
             else {
                 console.log("data succcessfully scanned. count: " + scannedData["Count"] + ", pagenating...");
-                break;
             }
         } else {
             console.log("ERROR at scan");
