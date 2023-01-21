@@ -35,5 +35,5 @@ export const scanDyn = async (dynObj) => {
         dynObj["ExclusiveStartKey"] = scannedData["LastEvaluatedKey"]
 
     }
-    return scannedData;
+    return returnData;
 }
