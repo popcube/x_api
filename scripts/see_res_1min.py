@@ -128,6 +128,11 @@ def adjust_bulk():
     global y_cut_all
     # global y_dif
     global adjusted_idxs
+    global nan_idxs
+
+    # if abs(len(adjustee_idxs["plus"]) - len(adjustee_idxs["minus"])) > 1:
+    #     nan_idxs.append(max(adjustee_idxs["plus"] + adjustee_idxs["minus"]))
+    #     init_bulk()
 
     if len(adjustee_idxs["plus"]) > 0 and len(adjustee_idxs["minus"]) > 0:
         adjusted_idxs = set(
@@ -198,8 +203,8 @@ print(
 # print(len(x), len(y_dif), len(y_cut))
 
 ###### Chart creaation part ######
-make_timeline(x_dif, [0] + [y[i+1] - y[i]
-              for i in range(len(y)-1)], "y_dif", y0=True, nan_idxs=nan_idxs, adjusted_idxs=adjusted_idxs)
+make_timeline(x_dif, y_dif, "y_dif", y0=True,
+              nan_idxs=nan_idxs, adjusted_idxs=adjusted_idxs)
 make_timeline(x_dif, y_cut_dif, "y_cut_dif", tl=True, y0=True)
 make_timeline(x, y, "y_raw")
 make_timeline(x, y, "y_raw_annot", nan_idxs=nan_idxs,

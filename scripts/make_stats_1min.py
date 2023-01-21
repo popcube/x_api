@@ -8,7 +8,7 @@ import sys
 
 from make_js import make_js
 
-outputter = make_js("test_name")
+# outputter = make_js("test_name")
 
 
 df_flw_1min = pd.read_csv("result_cut_dif.csv",
@@ -34,11 +34,17 @@ df_twt.index = df_twt.index.to_series().apply(
 today = "2023-01-09"
 make_timeline(df_flw_raw_1min.loc[today].index,
               df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
-today = "2022-12-23"
+today = "2023-01-20"
 make_timeline(df_flw_raw_1min.loc[today].index,
               df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
 make_timeline(df_flw_1min.loc[today].index,
               df_flw_1min.loc[today].iloc[:, 0], "flw_cut_1min_" + today + "_temp", annot_dfds=df_twt.loc[today])
+today = "2022-12-30"
+make_timeline(df_flw_raw_1min.loc[today].index,
+              df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
+make_timeline(df_flw_1min.loc[today].index,
+              df_flw_1min.loc[today].iloc[:, 0], "flw_cut_1min_" + today + "_temp", annot_dfds=df_twt.loc[today])
+print(df_twt.loc[today]["url"].to_list())
 # sys.exit(0)
 
 df_flw = df_flw_1min.resample(
@@ -73,11 +79,11 @@ make_timeline(stl_trend[stl_trend.index > init_ts].index,
               stl_trend[stl_trend.index > init_ts], 'trend_diff', y_label="増減量（/分）トレンド")
 
 
-outputter.write_js(stl_trend[stl_trend.index > init_ts], "trend_15min")
-outputter.write_js(df_raw["followers_count"], "raw_15min")
-outputter.write_js(df_flw["y_cut_diff"], "cut_diff_15min")
-del outputter
-# sys.exit(1)
+# outputter.write_js(stl_trend[stl_trend.index > init_ts], "trend_15min")
+# outputter.write_js(df_raw["followers_count"], "raw_15min")
+# outputter.write_js(df_flw["y_cut_diff"], "cut_diff_15min")
+# del outputter
+sys.exit(1)
 
 df_twt_index_str = " ".join(df_twt.index.to_series().apply(str))
 

@@ -15,6 +15,25 @@ export const sendDyn = (dynObj) => {
 }
 
 export const scanDyn = async (dynObj) => {
-    const scannedData = await client.scan(dynObj);
+    var returnData = [];
+    while (true) {
+        const scannedData = await client.scan(dynObj);
+        if (scannedData["$metadata"].httpStatusCode == "200") {
+            returnData = returnData.concat(scannedData.Items);
+            if (!Object.keys(scannedData["LastEvaluatedKey"]).length) {
+                console.log("data succcessfully scanned. count: " + dynScan["Count"] + ", done!");
+            }
+            else {
+                console.log("data succcessfully scanned. count: " + dynScan["Count"] + ", pagenating...");
+                break;
+            }
+        } else {
+            console.log("ERROR at scan");
+            console.log(JSON.stringify(dynScan, null, 2));
+            throw new Error('ERROR at scan');
+        }
+        dynObj["ExclusiveStartKey"] = scannedData["LastEvaluatedKey"]
+
+    }
     return scannedData;
 }
