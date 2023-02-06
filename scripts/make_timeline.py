@@ -97,7 +97,6 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
         plt.xticks(rotation=90)
 
     plt.gca().xaxis.set_minor_locator(mdates.HourLocator(byhour=xaxis_minor_byhour))
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d\n%a'))
     plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
 
     plt.gca().yaxis.set_major_locator(
@@ -207,13 +206,22 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
             plt.axvline(x=al, ymin=0, ymax=1,
                         linestyle="dotted", color=cm_colors[ci])
 
-    for i, x_fill_pair in enumerate(x_fill_pairs):
-        if i == 0:
-            plt.gca().fill_between(x_fill_pair, *ylim,
-                                   fc="#BCECE0", zorder=0, label="17時-23時の時間帯")
+    label_flgs = [True, True]
+    for x_fill_pair in x_fill_pairs:
+        fc = ""
+        label = None
+        if x_fill_pair[0].weekday() == 5 or x_fill_pair[0].weekday() == 6:
+            fc = "#FCCBE2"
+            if label_flgs[1]:
+                label = "土日 17時-23時"
+                label_flgs[1] = False
         else:
-            plt.gca().fill_between(x_fill_pair, *ylim,
-                                   fc="#BCECE0", zorder=0)
+            fc = "#BCECE0"
+            if label_flgs[0]:
+                label = "平日 17時-23時"
+                label_flgs[0] = False
+
+        plt.gca().fill_between(x_fill_pair, *ylim, fc=fc, zorder=0, label=label)
 
     plt.legend(prop={"family": ["IPAexGothic"]})
 
