@@ -34,12 +34,13 @@ df_twt.index = df_twt.index.to_series().apply(
 today = "2023-01-09"
 make_timeline(df_flw_raw_1min.loc[today].index,
               df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
-today = "2023-01-20"
+print(df_twt.loc[today]["url"].to_list())
+today = "2023-01-27 10"
 make_timeline(df_flw_raw_1min.loc[today].index,
               df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
 make_timeline(df_flw_1min.loc[today].index,
               df_flw_1min.loc[today].iloc[:, 0], "flw_cut_1min_" + today + "_temp", annot_dfds=df_twt.loc[today])
-today = "2022-12-30"
+today = "2023-02-16 06"
 make_timeline(df_flw_raw_1min.loc[today].index,
               df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
 make_timeline(df_flw_1min.loc[today].index,

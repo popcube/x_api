@@ -97,7 +97,8 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
         plt.xticks(rotation=90)
 
     plt.gca().xaxis.set_minor_locator(mdates.HourLocator(byhour=xaxis_minor_byhour))
-    plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
+    if not (len(xaxis_minor_byhour) == 1 and xaxis_minor_byhour[0] == 0):
+        plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
 
     plt.gca().yaxis.set_major_locator(
         ticker.MultipleLocator(max(5*((max(y) - min(y))//60), 1)))

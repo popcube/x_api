@@ -7,6 +7,28 @@ from statistics import mean
 
 from make_timeline import make_timeline
 
+
+def show_data_stats(time_data):
+    minutes_range = (time_data[-1] - time_data[0]).total_seconds() / 60
+    data_count = len(time_data)
+    data_diffs = [time_data[i] - time_data[i-1]
+                  for i in range(1, len(time_data))]
+    data_diff_max = max(data_diffs)
+    data_diff_min = min(data_diffs)
+    diff_max_date = time_data[data_diffs.index(data_diff_max)]
+    diff_min_date = time_data[data_diffs.index(data_diff_min)]
+
+    print()
+    print("########## data stats ##########")
+    print(f'data count: {data_count}, data range: {minutes_range:.2f} min')
+    print(
+        f'minimum diff: {data_diff_min.total_seconds():.2f} sec at {diff_min_date.isoformat()}')
+    print(
+        f'maximum diff: {data_diff_max.total_seconds():.2f} sec at {diff_max_date.isoformat()}')
+    print("################################")
+    print()
+
+
 with open("./results.csv") as f:
     rd = list(csv.reader(f))[1:]
 
@@ -17,6 +39,8 @@ data.sort(key=lambda x: x[0])
 x = [d[0] for d in data]
 y = [d[1] for d in data]
 
+show_data_stats(x)
+# sys.exit(0)
 # 12/25 3:00 -
 # x = [d[0] for d in data if d[0] > datetime(2022, 12, 25, 3, 0, 0)]
 # y = [d[1] for d in data if d[0] > datetime(2022, 12, 25, 3, 0, 0)]
@@ -24,7 +48,7 @@ y = [d[1] for d in data]
 ####################
 # cut value define #
 y_cut_min = -5.5   #
-y_cut_max = 12.5   #
+y_cut_max = 10.5   #
 ####################
 
 y_dif = [0] + [(y[i] - y[i-1]) * 60 / (x[i]-x[i-1]).total_seconds()
@@ -72,11 +96,12 @@ if False:
     sys.exit(1)
 
 plt.figure(figsize=(15, 8))
-plt.hist(y_dif, range=(-50, 50), bins=100, label="元の増減量")
+plt.hist(y_dif, log=True, range=(-50, 50), bins=100, label="元の増減量")
 plt.legend(prop={"family": ["IPAexGothic"]})
 plt.savefig("./ori_dif.png")
 
-plt.hist(y_dif_cut, range=(-50, 50), bins=100, label="うち、有効な増減量")
+plt.hist(y_dif_cut, log=True,
+         range=(-50, 50), bins=100, label="うち、有効な増減量")
 plt.legend(prop={"family": ["IPAexGothic"]})
 plt.savefig("./cut_dif.png")
 plt.close()
@@ -93,15 +118,12 @@ adjusted_idxs = set()
 
 
 def yd_valid(yd):
-    # global y_cut_min
-    # global y_cut_max
     return (y_cut_min <= yd and yd <= y_cut_max)
 
 
 def init_bulk():
     global y_base_inc
-    # global y_cut_all
-    # global adjustee_idxs
+    global adjustee_idxs
 
     y_base_inc = y_base_inc_def
     adjustee_idxs["plus"].clear()
@@ -154,47 +176,60 @@ def adjust_bulk():
         y_cut_all = y_dif[max(adjustee_idxs["plus"])] - y_base_inc
 
 
+last_memory_timestamp = []
+noise_threshold = 10 * 60
 for i, yd in enumerate(y_dif):
+
+    # 振動ノイズをその他ノイズに判定するため、前回の振動ノイズ発生時間を記録する
+    # 判定閾値は10分
+    if len(last_memory_timestamp) == 1:
+        if (x_dif[i] - last_memory_timestamp[0]).total_seconds() > noise_threshold:
+            if_adjustee_not_used()
+            init_bulk()
+            y_cut_all = y_cut_max - y_cut_min - 2 * y_base_inc_def
+
     # 増減量通常時
     if yd_valid(yd):
         y_cut_dif.append(yd)
 
-    # 減少量超過時
-    elif yd < y_cut_min:
-        if yd_valid(yd + y_cut_all):
-            adjustee_idxs["minus"].append(i)
-            adjust_bulk()
-            y_cut_dif.append(yd + y_cut_all)
-        else:
-            y_cut_dif.append(y_base_inc_def)
+    else:
+        last_memory_timestamp = [x_dif[i]]
+        # 減少量超過時
+        if yd < y_cut_min:
+            if yd_valid(yd + y_cut_all):
+                adjustee_idxs["minus"].append(i)
+                adjust_bulk()
+                y_cut_dif.append(yd + y_cut_all)
+            else:
+                y_cut_dif.append(y_base_inc_def)
 
-            # print(
-            #     f"exceeded minus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
-            # print(adjustee_idxs)
+                # print(
+                #     f"exceeded minus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
+                # print(adjustee_idxs)
 
-            if_adjustee_not_used()
+                if_adjustee_not_used()
 
-            init_bulk()
-            y_cut_all = - (yd - y_base_inc)
-            adjustee_idxs["minus"].append(i)
+                init_bulk()
+                y_cut_all = - (yd - y_base_inc)
+                adjustee_idxs["minus"].append(i)
 
-    # 増加量超過時
-    elif y_cut_max < yd:
-        if yd_valid(yd - y_cut_all):
-            adjustee_idxs["plus"].append(i)
-            adjust_bulk()
-            y_cut_dif.append(yd - y_cut_all)
-        else:
-            y_cut_dif.append(y_base_inc_def)
+        # 増加量超過時
+        elif y_cut_max < yd:
+            if yd_valid(yd - y_cut_all):
+                adjustee_idxs["plus"].append(i)
+                adjust_bulk()
+                y_cut_dif.append(yd - y_cut_all)
+            else:
+                y_cut_dif.append(y_base_inc_def)
 
-            # print(
-            #     f"exceeded plus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
-            # print(adjustee_idxs)
-            if_adjustee_not_used()
+                # print(
+                #     f"exceeded plus in y_cut_all {y_cut_all}, y_base_inc, {y_base_inc}, x {x[i].isoformat()}")
+                # print(adjustee_idxs)
+                if_adjustee_not_used()
 
-            init_bulk()
-            y_cut_all = yd - y_base_inc
-            adjustee_idxs["plus"].append(i)
+                init_bulk()
+                y_cut_all = yd - y_base_inc
+                adjustee_idxs["plus"].append(i)
 
 if_adjustee_not_used()
 
