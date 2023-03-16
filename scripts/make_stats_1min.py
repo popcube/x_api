@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pandas as pd
 from statsmodels.tsa.seasonal import STL
 
@@ -7,6 +7,19 @@ from make_timeline import make_timeline
 import sys
 
 from make_js import make_js
+
+
+def if_day_in_index(dt, df_res):
+    for year in set(df_res.index.year):
+        month_list = set(df_res.loc[str(year)].index.month)
+        for month in month_list:
+            day_list = set(df_res.loc[f'{year}-{month}'].index.day)
+            for day in day_list:
+                today = f'{year}-{month:02d}-{day:02d}'
+                if dt.strftime("%Y-%m-%d") == today:
+                    return True
+    else:
+        return False
 
 # outputter = make_js("test_name")
 
@@ -35,21 +48,34 @@ df_twt.index = df_twt.index.to_series().apply(
 # make_timeline(df_flw_raw_1min.loc[today].index,
 #               df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
 # print(df_twt.loc[today]["url"].to_list())
-today = "2023-02-27"
+today = datetime.now(tz=timezone(offset=timedelta(
+    hours=9), name='JST')).strftime("%Y-%m-%d")
+if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_twt):
+    make_timeline(df_flw_raw_1min.loc[today].index,
+                  df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
+    print(df_twt.loc[today]["url"].to_list())
 make_timeline(df_flw_raw_1min.loc[today].index,
-              df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
+              df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "vanilla")
+# make_timeline(df_flw_1min.loc[today].index,
+#               df_flw_1min.loc[today].iloc[:, 0], "flw_cut_1min_" + today + "_temp", annot_dfds=df_twt.loc[today])
+today = (datetime.now(tz=timezone(offset=timedelta(hours=9),
+         name='JST')) + timedelta(days=-1)).strftime("%Y-%m-%d")
+print(datetime.strptime(today, "%Y-%m-%d"))
+if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_twt):
+    make_timeline(df_flw_raw_1min.loc[today].index,
+                  df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
+    print(df_twt.loc[today]["url"].to_list())
 make_timeline(df_flw_raw_1min.loc[today].index,
-              df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today, annot_dfds=pd.Series())
+              df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
+# make_timeline(df_flw_1min.loc[today].index,
+#               df_flw_1min.loc[today].iloc[:, 0], "flw_cut_1min_" + today + "_temp", annot_dfds=df_twt.loc[today])
+today = "2023-03"
+make_timeline(df_flw_raw_1min.loc[today].index,
+              df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
 make_timeline(df_flw_1min.loc[today].index,
               df_flw_1min.loc[today].iloc[:, 0], "flw_cut_1min_" + today + "_temp", annot_dfds=df_twt.loc[today])
 print(df_twt.loc[today]["url"].to_list())
-today = "2023-02-28"
-make_timeline(df_flw_raw_1min.loc[today].index,
-              df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
-make_timeline(df_flw_1min.loc[today].index,
-              df_flw_1min.loc[today].iloc[:, 0], "flw_cut_1min_" + today + "_temp", annot_dfds=df_twt.loc[today])
-print(df_twt.loc[today]["url"].to_list())
-# sys.exit(0)
+sys.exit(0)
 
 df_flw = df_flw_1min.resample(
     rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
