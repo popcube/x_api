@@ -75,7 +75,7 @@ make_timeline(df_flw_raw_1min.loc[today].index,
 make_timeline(df_flw_1min.loc[today].index,
               df_flw_1min.loc[today].iloc[:, 0], "flw_cut_1min_" + today + "_temp", annot_dfds=df_twt.loc[today])
 print(df_twt.loc[today]["url"].to_list())
-sys.exit(0)
+# sys.exit(0)
 
 df_flw = df_flw_1min.resample(
     rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
@@ -133,7 +133,7 @@ make_timeline(df_flw_raw_1min[df_flw_raw_1min.index > init_ts].index,
 # outputter.write_js(df_raw["followers_count"], "raw_15min")
 # outputter.write_js(df_flw["y_cut_diff"], "cut_diff_15min")
 # del outputter
-sys.exit(0)
+# sys.exit(0)
 
 df_twt_index_str = " ".join(df_twt.index.to_series().apply(str))
 
