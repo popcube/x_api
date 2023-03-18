@@ -5,7 +5,8 @@ import { sendDyn, scanDyn } from "./dyn_api.js"
 import fs from "fs"
 
 const scanParam = { TableName: "twt_main_flwers" };
-const userNames = ["pj_sekai", "bang_dream_gbp", "genshin_7"]
+// const userNames = ["pj_sekai", "bang_dream_gbp", "genshin_7"];
+const userNames = ["bang_dream_gbp", "genshin_7"];
 
 for (const userName of userNames) {
     const flwObj = await getFollowers(userName);
@@ -16,6 +17,7 @@ for (const userName of userNames) {
 
     console.log("User id: " + flwObj.data.id);
     const twtArr = await getTweets(flwObj.data.id);
+    console.log(twtArr)
     console.log(JSON.stringify(twtArr.slice(-1, twtArr.length), null, 2));
     console.log("Tweet count size: " + twtArr.length);
 
