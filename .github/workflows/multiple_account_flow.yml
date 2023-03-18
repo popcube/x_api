@@ -1,5 +1,8 @@
-name: tweet get test
+name: "multiple account flw"
 on: workflow_dispatch
+## scheduled at every hour
+##  schedule:
+##    - cron: '29 * * * *'
 
 jobs:
   job1:
@@ -12,11 +15,13 @@ jobs:
           npm install twitter-api-sdk
        
       - run: |
-          npm start
+          node ./src/index_2.js
            
           ls -la
         env:
           BEARER_TOKEN: ${{ secrets.TWT_BEARER_TOKEN }}
+          ACC_KEY: ${{ secrets.AWS_DYN_ACC_KEY }}
+          SEC_ACC_KEY: ${{ secrets.AWS_DYN_SEC_ACC_KEY }}
 
       - uses: actions/upload-artifact@v3
         with:
