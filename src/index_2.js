@@ -7,13 +7,13 @@ import fs from "fs"
 const scanParam = { TableName: "twt_main_flwers" };
 const userNames = ["pj_sekai", "bang_dream_gbp", "genshin_7"]
 
-const flwObj = await getFollowers(userName);
-/* DEPRECATED to be deleted*/
-// const dynObj = await makeFollowersDynObj(flwObj)
-// sendDyn(dynObj);
-/* DEPRECATED to be deleted*/
-
 for (const userName of userNames) {
+    const flwObj = await getFollowers(userName);
+    /* DEPRECATED to be deleted*/
+    // const dynObj = await makeFollowersDynObj(flwObj)
+    // sendDyn(dynObj);
+    /* DEPRECATED to be deleted*/
+
     console.log("User id: " + flwObj.data.id);
     const twtArr = await getTweets(flwObj.data.id);
     console.log(JSON.stringify(twtArr.slice(-1, twtArr.length), null, 2));
