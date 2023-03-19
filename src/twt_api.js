@@ -26,7 +26,8 @@ export const getFollowers = async (userName) => {
         console.log("Followers data received at " + new Date().toISOString().slice(0, -2));
         return userObj;
     } catch (error) {
-        console.log("twitter api get request error", error);
+        console.log("twitter api findUserByUsername request error");
+        throw (error);
     }
 }
 
@@ -46,7 +47,7 @@ export const getTweets = async (id) => {
         }
         return resArr;
     } catch (error) {
-        console.log("twitter api get request error");
-        throw (error)
+        console.log("twitter api usersIdTweets request error");
+        throw (error);
     }
 }
