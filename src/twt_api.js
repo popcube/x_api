@@ -31,7 +31,7 @@ export const getFollowers = async (userName) => {
     }
 }
 
-export const getTweets = async (id) => {
+export const getTweets = async (id, paginate = false) => {
     try {
         delete paramsTweets["pagination_token"];
         var tweetObj = await client.tweets.usersIdTweets(id, paramsTweets);
@@ -39,11 +39,13 @@ export const getTweets = async (id) => {
         const resArr = tweetObj.data;
         console.log("Tweets data received at " + new Date().toISOString().slice(0, -2));
         // console.log("meta: " + JSON.stringify(tweetObj.meta, null, 2))
-        while (tweetObj.meta.next_token) {
-            paramsTweets["pagination_token"] = tweetObj.meta.next_token;
-            var tweetObj = await client.tweets.usersIdTweets(id, paramsTweets);
-            resArr.push(...tweetObj.data);
-            console.log("paginating... until tweets created at " + tweetObj.data[tweetObj.data.length - 1].created_at);
+        if (pagenate) {
+            while (tweetObj.meta.next_token) {
+                paramsTweets["pagination_token"] = tweetObj.meta.next_token;
+                var tweetObj = await client.tweets.usersIdTweets(id, paramsTweets);
+                resArr.push(...tweetObj.data);
+                console.log("paginating... until tweets created at " + tweetObj.data[tweetObj.data.length - 1].created_at);
+            }
         }
         return resArr;
     } catch (error) {
