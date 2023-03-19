@@ -73,5 +73,5 @@ jobs:
           path: |
             ./*.csv
             ./*.png
-          name: ${{ matrix.account }} data
+          name: ${{ matrix.account }}_data
       

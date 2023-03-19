@@ -55,7 +55,7 @@ if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_twt):
                   df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
     print(df_twt.loc[today]["url"].to_list())
 make_timeline(df_flw_raw_1min.loc[today].index,
-              df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "vanilla")
+              df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
 # make_timeline(df_flw_1min.loc[today].index,
 #               df_flw_1min.loc[today].iloc[:, 0], "flw_cut_1min_" + today + "_temp", annot_dfds=df_twt.loc[today])
 today = (datetime.now(tz=timezone(offset=timedelta(hours=9),
@@ -91,16 +91,18 @@ plt.close()
 
 stl_r = stl_series.resid
 stl_trend = stl_series.trend
+df_res = pd.DataFrame(stl_r)
 
 # make_timeline(stl_r.index, stl_r, "dif_err", y_label="増減量残差")
 
+# ツイートリストの最初とトレンド時系列の最初の時間を揃える（揃えなくていいか）
+# init_ts = max(df_twt.index[0], df_flw.index[0])
 
-init_ts = max(df_twt.index[0], df_flw.index[0])
+# df_twt = df_twt[df_twt.index > init_ts]
+# df_flw = df_flw[df_flw.index > init_ts]
+# df_raw = df_raw[df_raw.index > init_ts]
+# df_res = df_res.query('index > @init_ts')
 
-df_twt = df_twt[df_twt.index > init_ts]
-df_flw = df_flw[df_flw.index > init_ts]
-df_raw = df_raw[df_raw.index > init_ts]
-df_res = pd.DataFrame(stl_r).query('index > @init_ts')
 df_res.columns = ["res"]
 print(df_res)
 
@@ -108,26 +110,26 @@ make_timeline(df_res.index, df_res["res"], 'res_diff', y_label="増減量残差"
 make_timeline(stl_trend[stl_trend.index > init_ts].index,
               stl_trend[stl_trend.index > init_ts], 'trend_diff', y_label="増減量（/分）トレンド")
 
-event_timestamps = pd.Series(index=[
-    datetime(2022, 12, 19, 21),
-    datetime(2022, 12, 21, 15), datetime(2022, 12, 29, 21),
-    datetime(2022, 12, 31, 15), datetime(2023, 1, 8, 21),
-    datetime(2023, 1, 10, 15), datetime(2023, 1, 19, 21),
-    datetime(2023, 1, 21, 15), datetime(2023, 1, 29, 21),
-    datetime(2023, 1, 31, 15), datetime(2023, 2, 8, 21),
-    datetime(2023, 2, 10, 15), datetime(2023, 2, 17, 21),
-    datetime(2023, 2, 19, 15)
-], dtype='int')
-make_timeline(stl_trend[stl_trend.index > init_ts].index,
-              stl_trend[stl_trend.index > init_ts],
-              'trend_diff_annot',
-              y_label="増減量（/分）トレンド",
-              annot_dfds=event_timestamps)
-make_timeline(df_flw_raw_1min[df_flw_raw_1min.index > init_ts].index,
-              df_flw_raw_1min[df_flw_raw_1min.index > init_ts].iloc[:, 0],
-              'raw_1min_eventannot',
-              y_label="フォロワー数推移",
-              annot_dfds=event_timestamps)
+# event_timestamps = pd.Series(index=[
+#     datetime(2022, 12, 19, 21),
+#     datetime(2022, 12, 21, 15), datetime(2022, 12, 29, 21),
+#     datetime(2022, 12, 31, 15), datetime(2023, 1, 8, 21),
+#     datetime(2023, 1, 10, 15), datetime(2023, 1, 19, 21),
+#     datetime(2023, 1, 21, 15), datetime(2023, 1, 29, 21),
+#     datetime(2023, 1, 31, 15), datetime(2023, 2, 8, 21),
+#     datetime(2023, 2, 10, 15), datetime(2023, 2, 17, 21),
+#     datetime(2023, 2, 19, 15)
+# ], dtype='int')
+# make_timeline(stl_trend[stl_trend.index > init_ts].index,
+#               stl_trend[stl_trend.index > init_ts],
+#               'trend_diff_annot',
+#               y_label="増減量（/分）トレンド",
+#               annot_dfds=event_timestamps)
+# make_timeline(df_flw_raw_1min[df_flw_raw_1min.index > init_ts].index,
+#               df_flw_raw_1min[df_flw_raw_1min.index > init_ts].iloc[:, 0],
+#               'raw_1min_eventannot',
+#               y_label="フォロワー数推移",
+#               annot_dfds=event_timestamps)
 
 # outputter.write_js(stl_trend[stl_trend.index > init_ts], "trend_15min")
 # outputter.write_js(df_raw["followers_count"], "raw_15min")
