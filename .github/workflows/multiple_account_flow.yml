@@ -5,17 +5,17 @@ on: workflow_dispatch
 ##    - cron: '29 * * * *'
 
 jobs:
-  job1:
+  get_data:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
+      
       - name: setup
         run: |
           npm install twitter-api-sdk
-       
+
       - run: |
-          node ./src/index_2.js
+          npm start_2
            
           ls -la
         env:
@@ -26,6 +26,49 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           if-no-files-found: error
+          name: csv_data
+          path: |
+            ./*.csv
+
+  make_figures:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        account: [pj_sekai, bang_dream_gbp, Genshin_7]
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Download figs
+        uses: actions/download-artifact@v3
+        with:
+          name: csv_data
+          path: ./
+      
+      - name: setup
+        run: |
+          rename _%{{ matrix.account }}.csv .csv *.csv
+        
+      - name: main run
+        continue-on-error: true
+        run: |
+          sudo apt-get update
+          sudo apt-get install fonts-ipaexfont
+          pip install matplotlib
+          pip install pandas
+          pip install statsmodels
+
+          python ./scripts/see_res_1min.py
+          python ./scripts/make_stats_1min.py
+
+      - uses: actions/upload-artifact@v3
+        with:
+          if-no-files-found: error
           path: |
             ./*.csv
             ./*.png
+          name: ${{ matrix.account }} data
+      

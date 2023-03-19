@@ -5,7 +5,7 @@ import { sendDyn, scanDyn } from "./dyn_api.js"
 import fs from "fs"
 
 const scanParam = { TableName: "twt_main_flwers" };
-const userNames = ["pj_sekai", "bang_dream_gbp", "genshin_7"];
+const userNames = ["pj_sekai", "bang_dream_gbp", "Genshin_7"];
 
 async function main() {
     // FOR SKIPPING LOOP
