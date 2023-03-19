@@ -1,4 +1,4 @@
-name: "main flow"
+name: "single account flow"
 on: workflow_dispatch
 ## scheduled at every hour
 ##  schedule:
