@@ -53,7 +53,9 @@ async function main() {
 
     for (const userName of userNames) {
         const outputCsv = dynScan.reduce((prev, curr) => {
-            prev += `${curr["fetch_time"]["S"]},${curr["followers_count"]["N"]}\n`;
+            if (curr["accout"]["S"] == userName) {
+                prev += `${curr["fetch_time"]["S"]},${curr["followers_count"]["N"]}\n`;
+            }
             return prev;
         }, 'fetch_time,followers_count\n');
         fs.writeFileSync(`./results_${userName}.csv`, outputCsv);
