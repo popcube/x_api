@@ -3,7 +3,7 @@ import pandas as pd
 from statsmodels.tsa.seasonal import STL
 
 from matplotlib import pyplot as plt
-from make_timeline import make_timeline
+from make_timeline import make_multi_timeline
 import sys
 
 from make_js import make_js
@@ -109,9 +109,6 @@ print(df_res)
 
 make_timeline(df_res.index, df_res["res"], 'res_diff', y_label="増減量残差")
 make_timeline(stl_trend.index, stl_trend, 'trend_diff', y_label="増減量（/分）トレンド")
-
-stl_trend.to_csv("trend_diff.csv")
-stl_r.to_csv("res_diff.csv")
 
 # event_timestamps = pd.Series(index=[
 #     datetime(2022, 12, 19, 21),

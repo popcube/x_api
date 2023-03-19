@@ -26,7 +26,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           if-no-files-found: error
-          name: csv_data
+          name: raw_csvs
           path: |
             ./*.csv
 
@@ -43,11 +43,9 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Download figs
-        uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v3
         with:
-          name: csv_data
-          path: ./
+          name: raw_csvs
       
       - name: setup
         run: |
@@ -76,4 +74,30 @@ jobs:
             ./*.csv
             ./*.png
           name: ${{ matrix.account }}_data
+
+  make_merged_figure:
+    needs: make_figures
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - uses: actions/download-artifact@v3
+
+      - name: setup
+        run: |
+          for datapath in $(find ./  -maxdepth 1 -type d -name '*_data'  -exec basename "{}" ";"); do
+            echo ${datapath}" directory found"
+            cd ./$datapath
+            mv trend_diff.csv ../trend_diff_${datapath%_data}.csv            
+            mv res_diff.csv ../res_diff_${datapath%_data}.csv
+          done
+
+          cd ${{ github.workspace }}
+
+          ls -la
+
       

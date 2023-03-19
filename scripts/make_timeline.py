@@ -10,8 +10,9 @@ import os
 
 account = os.environ.get("ACCOUNT")
 if account is None:
-    print("account env could not be read")
-    sys.exit(1)
+    account = ""
+else:
+    account = f"（@{account}）"
 
 
 def make_fill_pairs(x_in):
@@ -51,7 +52,16 @@ def make_fill_pairs(x_in):
 # タイムラインチャート作成
 
 
-def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=[], annot_dfds=False, y_label="", interp=False):
+def make_timeline(
+    x, y, figname,
+    tl=False,
+    y0=False,
+    nan_idxs=[],
+    adjusted_idxs=[],
+    annot_dfds=False,
+    y_label="",
+    interp=False
+):
 
     plt.figure(figsize=(15, 8))
 
@@ -63,9 +73,9 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
     plt.scatter(x, y, marker='None')
 
     if type(annot_dfds) is bool:
-        plt.title(f"公式ツイッター（@{account}）フォロワー数観測", fontname="IPAexGothic")
+        plt.title(f"公式ツイッター{account}フォロワー数観測", fontname="IPAexGothic")
     else:
-        plt.title(f"公式ツイッター（@{account}）フォロワー数観測",
+        plt.title(f"公式ツイッター{account}フォロワー数観測",
                   fontname="IPAexGothic", y=1, pad=45)
 
     xaxis_minor_interval_presets = [1, 2, 3, 4,
@@ -212,6 +222,113 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
             })
             plt.axvline(x=al, ymin=0, ymax=1,
                         linestyle="dotted", color=cm_colors[ci])
+
+    label_flgs = [True, True]
+    for x_fill_pair in x_fill_pairs:
+        fc = ""
+        label = None
+        if x_fill_pair[0].weekday() == 5 or x_fill_pair[0].weekday() == 6:
+            fc = "#FCCBE2"
+            if label_flgs[1]:
+                label = "土日 17時-23時"
+                label_flgs[1] = False
+        else:
+            fc = "#BCECE0"
+            if label_flgs[0]:
+                label = "平日 17時-23時"
+                label_flgs[0] = False
+
+        plt.gca().fill_between(x_fill_pair, *ylim, fc=fc, zorder=0, label=label)
+
+    plt.legend(prop={"family": ["IPAexGothic"]})
+
+    # ローカル実行ならグラフ表示、Actions実行ならグラフ保存
+    if len(sys.argv) > 1:
+        if len(sys.argv) == 2 and sys.argv[1] == "local":
+            plt.show()
+            return
+
+    plt.savefig(f'./{figname}.png')
+    print(f'./{figname}.png is saved!')
+    plt.close()
+
+
+def make_multi_timeline(
+    xys, figname,
+    y_label=None,
+    y_labels=None
+):
+
+    plt.figure(figsize=(15, 8))
+    plt.title(f"公式ツイッター{account}フォロワー数観測", fontname="IPAexGothic")
+
+    for x, y in xys:
+        plt.scatter(x, y, marker='None')
+
+    xyx = [xy[0] for xy in xys]
+    x_range = max(xyx) - min(xyx)
+
+    xaxis_minor_interval_presets = [1, 2, 3, 4,
+                                    6, 8, 12] + [24 * i for i in range(1, 100)]
+    xaxis_minor_interval = max(
+        int(x_range.total_seconds()) // (40 * 60 * 60), 1)
+    for i, xaxis_minor_interval_preset in enumerate(xaxis_minor_interval_presets):
+        if xaxis_minor_interval < xaxis_minor_interval_preset:
+            if i == 0:
+                xaxis_minor_interval = xaxis_minor_interval_presets[0]
+                break
+            else:
+                xaxis_minor_interval = xaxis_minor_interval_presets[i-1]
+                break
+
+    xaxis_minor_byhour = [0]
+    if xaxis_minor_interval < 24:
+        xaxis_minor_byhour = [xaxis_minor_interval *
+                              i for i in range(24 // xaxis_minor_interval)]
+
+    xaxis_major_loc = mdates.RRuleLocator(mdates.rrulewrapper(
+        mdates.DAILY, byhour=11, byminute=30))
+    plt.gca().xaxis.set_major_locator(xaxis_major_loc)
+    if x_range.days <= 20:
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d\n%a'))
+    elif x_range.days <= 40:
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d\n%a'))
+        plt.xticks(rotation=90)
+    else:
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+        plt.xticks(rotation=90)
+
+    plt.gca().xaxis.set_minor_locator(mdates.HourLocator(byhour=xaxis_minor_byhour))
+    if not (len(xaxis_minor_byhour) == 1 and xaxis_minor_byhour[0] == 0):
+        plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
+
+    plt.gca().yaxis.set_major_locator(
+        ticker.MultipleLocator(max(5*((max(y) - min(y))//60), 1)))
+    plt.gca().yaxis.set_minor_locator(
+        ticker.MultipleLocator(max((max(y) - min(y))//60, 1) * 1))
+    plt.gca().yaxis.set_major_formatter(
+        ticker.ScalarFormatter(useOffset=False, useMathText=False))
+    plt.gca().yaxis.get_major_formatter().set_scientific(False)
+
+    plt.gca().tick_params(axis='x', which='major', length=14, color="white")
+
+    x_fill_pairs = make_fill_pairs(xyx)
+
+    if y_label:
+        plt.gca().set_ylabel(y_label, fontname="IPAexGothic")
+    else:
+        plt.gca().set_ylabel("フォロワー数増減量推移", fontname="IPAexGothic")
+
+    # この処理時点でのy軸描画範囲 {最小値、最大値}
+    ylim = plt.gca().get_ylim()
+
+    if not y_labels:
+        y_labels = ["データ" + str(i) for i in range(len(xys))]
+
+    cm_colors = plt.cm.get_cmap("Dark2").colors
+    for i, xy in enumerate(xys):
+        ci = i % len(cm_colors)
+        plt.plot(x, y, c=cm_colors[ci], zorder=1, label=y_labels[i])
 
     label_flgs = [True, True]
     for x_fill_pair in x_fill_pairs:
