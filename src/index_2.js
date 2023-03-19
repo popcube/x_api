@@ -49,11 +49,11 @@ async function main() {
     }
 
     const dynScan = await scanDyn(scanParam);
-    console.log(dynScan);
+    // console.log(dynScan);
 
     for (const userName of userNames) {
         const outputCsv = dynScan.reduce((prev, curr) => {
-            if (curr["accout"]["S"] == userName) {
+            if (curr["account"]["S"] == userName) {
                 prev += `${curr["fetch_time"]["S"]},${curr["followers_count"]["N"]}\n`;
             }
             return prev;
