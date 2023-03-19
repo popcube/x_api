@@ -5,7 +5,13 @@ import matplotlib.ticker as ticker
 import sys
 import pandas as pd
 from scipy.interpolate import make_interp_spline
-import numpy as np
+# import numpy as np
+import os
+
+account = os.environ.get("ACCOUNT")
+if account is None:
+    print("account env could not be read")
+    sys.exit(1)
 
 
 def make_fill_pairs(x_in):
@@ -57,9 +63,9 @@ def make_timeline(x, y, figname, tl=False, y0=False, nan_idxs=[], adjusted_idxs=
     plt.scatter(x, y, marker='None')
 
     if type(annot_dfds) is bool:
-        plt.title("プロセカ公式ツイッター（@pj_sekai）フォロワー数観測", fontname="IPAexGothic")
+        plt.title(f"公式ツイッター（@{account}）フォロワー数観測", fontname="IPAexGothic")
     else:
-        plt.title("プロセカ公式ツイッター（@pj_sekai）フォロワー数観測",
+        plt.title(f"公式ツイッター（@{account}）フォロワー数観測",
                   fontname="IPAexGothic", y=1, pad=45)
 
     xaxis_minor_interval_presets = [1, 2, 3, 4,

@@ -96,19 +96,19 @@ df_res = pd.DataFrame(stl_r)
 # make_timeline(stl_r.index, stl_r, "dif_err", y_label="増減量残差")
 
 # ツイートリストの最初とトレンド時系列の最初の時間を揃える（揃えなくていいか）
-# init_ts = max(df_twt.index[0], df_flw.index[0])
+init_ts = max(df_twt.index[0], df_flw.index[0])
 
 # df_twt = df_twt[df_twt.index > init_ts]
 # df_flw = df_flw[df_flw.index > init_ts]
 # df_raw = df_raw[df_raw.index > init_ts]
 # df_res = df_res.query('index > @init_ts')
+# stl_trend = stl_trend[stl_trend.index > init_ts]
 
 df_res.columns = ["res"]
 print(df_res)
 
 make_timeline(df_res.index, df_res["res"], 'res_diff', y_label="増減量残差")
-make_timeline(stl_trend[stl_trend.index > init_ts].index,
-              stl_trend[stl_trend.index > init_ts], 'trend_diff', y_label="増減量（/分）トレンド")
+make_timeline(stl_trend.index, stl_trend, 'trend_diff', y_label="増減量（/分）トレンド")
 
 # event_timestamps = pd.Series(index=[
 #     datetime(2022, 12, 19, 21),

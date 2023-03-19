@@ -66,6 +66,8 @@ jobs:
 
           python ./scripts/see_res_1min.py
           python ./scripts/make_stats_1min.py
+        env:
+          ACCOUNT: ${{ matrix.account }}
 
       - uses: actions/upload-artifact@v3
         with:
