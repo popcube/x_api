@@ -51,7 +51,9 @@ jobs:
       
       - name: setup
         run: |
-          rename _%{{ matrix.account }}.csv .csv *.csv
+          for fname in *_${{ matrix.account }}.csv; do
+            mv $fname ${fname%_${{ matrix.account }}.csv}.csv
+          done
         
       - name: main run
         continue-on-error: true
