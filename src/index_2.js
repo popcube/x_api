@@ -9,7 +9,7 @@ const userNames = ["pj_sekai", "bang_dream_gbp", "genshin_7"];
 
 async function main() {
     // FOR SKIPPING LOOP
-    userNames.splice(0);
+    // userNames.splice(0);
 
     for (const userName of userNames) {
         const flwObj = await getFollowers(userName);

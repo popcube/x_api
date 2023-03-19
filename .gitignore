@@ -1,5 +1,6 @@
 # library
 /node_modules/
+/node_modules.zip
 
 # cache
 __pycache__/
