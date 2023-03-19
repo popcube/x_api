@@ -32,8 +32,9 @@ export const getFollowers = async (userName) => {
 
 export const getTweets = async (id) => {
     try {
+        delete paramsTweets["pagination_token"];
         var tweetObj = await client.tweets.usersIdTweets(id, paramsTweets);
-        console.log(tweetObj);
+        // console.log(tweetObj);
         const resArr = tweetObj.data;
         console.log("Tweets data received at " + new Date().toISOString().slice(0, -2));
         // console.log("meta: " + JSON.stringify(tweetObj.meta, null, 2))
