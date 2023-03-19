@@ -5,8 +5,8 @@ import { sendDyn, scanDyn } from "./dyn_api.js"
 import fs from "fs"
 
 const scanParam = { TableName: "twt_main_flwers" };
-// const userNames = ["pj_sekai", "bang_dream_gbp", "genshin_7"];
-const userNames = ["bang_dream_gbp", "genshin_7"];
+const userNames = ["pj_sekai", "bang_dream_gbp", "genshin_7"];
+// const userNames = ["bang_dream_gbp", "genshin_7"];
 
 for (const userName of userNames) {
     const flwObj = await getFollowers(userName);
