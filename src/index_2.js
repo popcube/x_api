@@ -17,7 +17,7 @@ for (const userName of userNames) {
 
     console.log("User id: " + flwObj.data.id);
     const twtArr = await getTweets(flwObj.data.id);
-    console.log(twtArr)
+    // console.log(typeof (twtArr))
     console.log(JSON.stringify(twtArr.slice(-1, twtArr.length), null, 2));
     console.log("Tweet count size: " + twtArr.length);
 
@@ -44,12 +44,14 @@ for (const userName of userNames) {
 
     // DO NOT DELETE BELOW
 
-    const dynScan = await scanDyn(scanParam);
+    if (false) {
+        const dynScan = await scanDyn(scanParam);
 
-    const outputCsv = dynScan.reduce((prev, curr) => {
-        prev += `${curr["fetch_time"]["S"]},${curr["followers_count"]["N"]}\n`;
-        return prev;
-    }, 'fetch_time,followers_count\n');
-    fs.writeFileSync(`./results_${userName}.csv`, outputCsv);
+        const outputCsv = dynScan.reduce((prev, curr) => {
+            prev += `${curr["fetch_time"]["S"]},${curr["followers_count"]["N"]}\n`;
+            return prev;
+        }, 'fetch_time,followers_count\n');
+        fs.writeFileSync(`./results_${userName}.csv`, outputCsv);
+    }
 
 }
