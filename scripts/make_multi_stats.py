@@ -5,6 +5,7 @@ from statsmodels.tsa.seasonal import STL
 from matplotlib import pyplot as plt
 from make_timeline import make_multi_timeline
 import sys
+import os
 
 from make_js import make_js
 
@@ -24,9 +25,29 @@ def if_day_in_index(dt, df_res):
 # outputter = make_js("test_name")
 
 
-df_flw_1min = pd.read_csv("result_cut_dif.csv",
-                          index_col="time", parse_dates=True)
-df_flw_1min.sort_index(inplace=True)
+dfs_trend = []
+dfs_res = []
+accounts = []
+
+for f in os.listdir("./"):
+    if f.startswith("trend_diff_") and f.endswith(".csv"):
+        dfs_trend.append(pd.read_csv("result_cut_dif.csv",
+                                     index_col="time", parse_dates=True))
+        accounts.append(f[len("trend_diff_"):-1*len(".csv")])
+    if f.startswith("res_diff_") and f.endswith(".csv"):
+        dfs_res.append(pd.read_csv("result_cut_dif.csv",
+                                   index_col="time", parse_dates=True))
+
+# df_flw_1min = pd.read_csv("result_cut_dif.csv",
+#                           index_col="time", parse_dates=True)
+# df_flw_1min.sort_index(inplace=True)
+# def make_multi_timeline(
+#     dfs, figname,
+#     y_label=None,
+#     y_labels=None
+# ):
+make_multi_timeline(dfs_trend, "トレンドまとめ", "フォロワー数トレンド", accounts)
+make_multi_timeline(dfs_trend, "残差まとめ", "フォロワー数残差", accounts)
 
 # outputter.write_js(df_flw_1min.loc["2022-12-28"]
 #                    ["y_cut_diff"], "sample_data")

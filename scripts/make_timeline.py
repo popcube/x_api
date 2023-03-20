@@ -254,7 +254,7 @@ def make_timeline(
 
 
 def make_multi_timeline(
-    xys, figname,
+    dfs, figname,
     y_label=None,
     y_labels=None
 ):
@@ -262,11 +262,15 @@ def make_multi_timeline(
     plt.figure(figsize=(15, 8))
     plt.title(f"公式ツイッター{account}フォロワー数観測", fontname="IPAexGothic")
 
-    for x, y in xys:
-        plt.scatter(x, y, marker='None')
+    for df in dfs:
+        plt.scatter(df.index, df.iloc[:, 0], marker='None')
 
-    xyx = [xy[0] for xy in xys]
-    x_range = max(xyx) - min(xyx)
+    xyx = [min([min(df.index.to_list()) for df in dfs]),
+           max([max(df.index.to_list()) for df in dfs])]
+    xyy = [min([min(df.iloc[:, 0].to_list()) for df in dfs]),
+           max([max(df.iloc[:, 0].to_list()) for df in dfs])]
+    x_range = xyx[1] - xyx[0]
+    y_range = xyy[1] - xyy[0]
 
     xaxis_minor_interval_presets = [1, 2, 3, 4,
                                     6, 8, 12] + [24 * i for i in range(1, 100)]
@@ -303,9 +307,9 @@ def make_multi_timeline(
         plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
 
     plt.gca().yaxis.set_major_locator(
-        ticker.MultipleLocator(max(5*((max(y) - min(y))//60), 1)))
+        ticker.MultipleLocator(max(5*(y_range//60), 1)))
     plt.gca().yaxis.set_minor_locator(
-        ticker.MultipleLocator(max((max(y) - min(y))//60, 1) * 1))
+        ticker.MultipleLocator(max(y_range//60, 1) * 1))
     plt.gca().yaxis.set_major_formatter(
         ticker.ScalarFormatter(useOffset=False, useMathText=False))
     plt.gca().yaxis.get_major_formatter().set_scientific(False)
@@ -323,12 +327,12 @@ def make_multi_timeline(
     ylim = plt.gca().get_ylim()
 
     if not y_labels:
-        y_labels = ["データ" + str(i) for i in range(len(xys))]
+        y_labels = ["データ" + str(i) for i in range(len(dfs))]
 
     cm_colors = plt.cm.get_cmap("Dark2").colors
-    for i, xy in enumerate(xys):
+    for i, df in enumerate(dfs):
         ci = i % len(cm_colors)
-        plt.plot(x, y, c=cm_colors[ci], zorder=1, label=y_labels[i])
+        plt.plot(df.index, df.iloc[:, 0], c=cm_colors[ci], zorder=1, label=y_labels[i])
 
     label_flgs = [True, True]
     for x_fill_pair in x_fill_pairs:
