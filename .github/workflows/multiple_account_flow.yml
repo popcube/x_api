@@ -89,14 +89,11 @@ jobs:
 
       - name: setup
         run: |
-          for datapath in $(find ./  -maxdepth 1 -type d -name '*_data'  -exec basename "{}" ";"); do
-            echo ${datapath}" directory found"
-            cd ./$datapath
-            mv trend_diff.csv ../trend_diff_${datapath%_data}.csv            
-            mv res_diff.csv ../res_diff_${datapath%_data}.csv
+          for datapath in $(find ./  -maxdepth 1 -type d -name '*_data'); do
+            echo ${datapath}" folder found!"
+            mv ${datapath}/trend_diff.csv ./trend_diff_${datapath%_data}.csv            
+            mv ${datapath}/trend_diff.csv ./res_diff_${datapath%_data}.csv
           done
-
-          cd ${{ github.workspace }}
 
           ls -la
 
