@@ -89,12 +89,30 @@ jobs:
 
       - name: setup
         run: |
-          for datapath in $(find ./  -maxdepth 1 -type d -name '*_data'); do
-            echo ${datapath}" folder found!"
-            mv ${datapath}/trend_diff.csv ./trend_diff_${datapath%_data}.csv            
-            mv ${datapath}/trend_diff.csv ./res_diff_${datapath%_data}.csv
+          sudo apt-get update
+          sudo apt-get install fonts-ipaexfont
+          pip install matplotlib
+          pip install pandas
+
+          for datadir in $(find ./  -maxdepth 1 -type d -name '*_data' -exec basename "{}" ";"); do
+            echo ${datadir}" folder found!"
+            mv ./${datadir}/trend_diff.csv ./trend_diff_${datadir%_data}.csv            
+            mv ./${datapath}/trend_diff.csv ./res_diff_${datadir%_data}.csv
           done
 
           ls -la
+      
+      - name: main
+        run: |
+          python make_multi_stats.py
+
+      - uses: actions/upload-artifact@v3
+        with:
+          if-no-files-found: error
+          name: multi_data_figures
+          path: |
+            ./*.png
+
+
 
       
