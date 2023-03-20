@@ -41,5 +41,6 @@ for f in os.listdir("./"):
 #     y_labels=None
 # ):
 make_multi_timeline(dfs_trend, "トレンドまとめ",
-                    y_label="フォロワー数トレンド", y_labels=accounts)
-make_multi_timeline(dfs_trend, "残差まとめ", y_label="フォロワー数残差", y_labels=accounts)
+                    y_label="フォロワー数トレンド（増減数/分）", y_labels=accounts)
+make_multi_timeline(
+    dfs_res, "残差まとめ", y_label="フォロワー数残差（増減数/分）", y_labels=accounts)
