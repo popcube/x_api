@@ -15,7 +15,7 @@ jobs:
           npm install twitter-api-sdk
        
       - run: |
-          npm start
+          node ./src/index_old.js
            
           ls -la
         env:
