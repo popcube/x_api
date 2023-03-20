@@ -27,12 +27,10 @@ accounts = []
 
 for f in os.listdir("./"):
     if f.startswith("trend_diff_") and f.endswith(".csv"):
-        dfs_trend.append(pd.read_csv("result_cut_dif.csv",
-                                     index_col="time", parse_dates=True))
+        dfs_trend.append(pd.read_csv(f, index_col="time", parse_dates=True))
         accounts.append(f[len("trend_diff_"):-1*len(".csv")])
     if f.startswith("res_diff_") and f.endswith(".csv"):
-        dfs_res.append(pd.read_csv("result_cut_dif.csv",
-                                   index_col="time", parse_dates=True))
+        dfs_res.append(pd.read_csv(f, index_col="time", parse_dates=True))
 
 # df_flw_1min = pd.read_csv("result_cut_dif.csv",
 #                           index_col="time", parse_dates=True)
