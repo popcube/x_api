@@ -7,11 +7,9 @@ const client = new AWS.DynamoDB({
   region: "ap-northeast-1"
 });
 
-const sendDyn = (dynObj) => {
-  client.putItem(dynObj, function (err, data) {
-    if (err) console.log(err);
-    // else console.log("Data successfully sent at " + dynObj.Item.fetch_time.S)
-  });
+const sendDyn = async (dynObj) => {
+  const res = await client.putItem(dynObj);
+  return res;
 }
 
 const scanDyn = async (dynObj) => {
@@ -73,7 +71,7 @@ const main = async () => {
   console.log("send item starting: " + JSON.stringify(dynScan[0]));
   for (const i in dynScan) {
     sendParam["Item"] = dynScan[i];
-    // sendDyn(sendParam);
+    await sendDyn(sendParam);
     if (i % 1000 == 0) {
       console.log(JSON.stringify(sendParam))
       console.log(i + " items sent");
