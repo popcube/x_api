@@ -9,4 +9,7 @@ jobs:
       - run: |
           npm install @aws-sdk/client-dynamodb
           node ./scripts/temp_migration_script.js
+        env:
+          ACC_KEY: ${{ secrets.AWS_DYN_ACC_KEY }}
+          SEC_ACC_KEY: ${{ secrets.AWS_DYN_SEC_ACC_KEY }}
         
