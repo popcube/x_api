@@ -7,5 +7,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
+          npm install @aws-sdk/client-dynamodb
           node ./scripts/temp_migration_script.js
         
