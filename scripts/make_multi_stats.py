@@ -32,6 +32,12 @@ for f in os.listdir("./"):
     if f.startswith("res_diff_") and f.endswith(".csv"):
         dfs_res.append(pd.read_csv(f, index_col="time", parse_dates=True))
 
+# pj_sekaiのみ過去データが多いので、マージグラフでその部分を大雑把に除く
+dfs_trend_xmin = max([min(df.index) for df in dfs_trend])
+
+dfs_trend = [df[df.index >= dfs_trend_xmin] for df in dfs_trend]
+dfs_res = [df[df.index >= dfs_trend_xmin] for df in dfs_res]
+
 # df_flw_1min = pd.read_csv("result_cut_dif.csv",
 #                           index_col="time", parse_dates=True)
 # df_flw_1min.sort_index(inplace=True)
