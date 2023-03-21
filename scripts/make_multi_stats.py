@@ -28,7 +28,7 @@ accounts = []
 for f in os.listdir("./"):
     if f.startswith("trend_diff_") and f.endswith(".csv"):
         dfs_trend.append(pd.read_csv(f, index_col="time", parse_dates=True))
-        accounts.append(f[len("trend_diff_"):-1*len(".csv")])
+        accounts.append("@" + f[len("trend_diff_"):-1*len(".csv")])
     if f.startswith("res_diff_") and f.endswith(".csv"):
         dfs_res.append(pd.read_csv(f, index_col="time", parse_dates=True))
 
@@ -40,7 +40,7 @@ for f in os.listdir("./"):
 #     y_label=None,
 #     y_labels=None
 # ):
-make_multi_timeline(dfs_trend, "トレンドまとめ",
-                    y_label="フォロワー数トレンド（増減数/分）", y_labels=accounts)
+make_multi_timeline(dfs_trend, "trend_multi",
+                    y_label="フォロワー数推移トレンド（増減数/分）", y_labels=accounts)
 make_multi_timeline(
-    dfs_res, "残差まとめ", y_label="フォロワー数残差（増減数/分）", y_labels=accounts)
+    dfs_res, "res_multi", y_label="フォロワー数推移残差（増減数/分）", y_labels=accounts)

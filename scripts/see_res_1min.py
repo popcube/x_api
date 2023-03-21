@@ -3,9 +3,12 @@ from matplotlib import pyplot as plt
 from datetime import datetime, timedelta
 import pandas as pd
 import sys
+import os
 from statistics import mean
 
 from make_timeline import make_timeline
+
+account = os.environ.get("ACCOUNT")
 
 
 def show_data_stats(time_data):
@@ -47,8 +50,15 @@ show_data_stats(x)
 
 ####################
 # cut value define #
-y_cut_min = -5.5   #
-y_cut_max = 10.5   #
+y_cut_min = -5.5
+y_cut_max = 10.5
+if account == "Genshin_7":
+    y_cut_min = -5.5
+    y_cut_max = 10.5
+elif account == "bang_dream_gbp":
+    y_cut_min = -11.0
+    y_cut_max = 17.0
+
 ####################
 
 y_dif = [0] + [(y[i] - y[i-1]) * 60 / (x[i]-x[i-1]).total_seconds()
