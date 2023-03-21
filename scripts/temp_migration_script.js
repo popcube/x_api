@@ -43,7 +43,7 @@ const scanParam = { TableName: "twt_api_1min" };
 const userName = "pj_sekai"
 const sendParam = { TableName: "twt_main_flwers", Item: {} };
 
-export const handler = async (event) => {
+const main = async () => {
   // TODO implement
   const dynScan = await scanDyn(scanParam);
   console.log("whole data length: " + dynScan.length);
@@ -85,3 +85,6 @@ export const handler = async (event) => {
   };
   return response;
 };
+
+
+main();
