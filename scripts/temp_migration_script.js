@@ -73,9 +73,10 @@ const main = async () => {
   console.log("send item starting: " + JSON.stringify(dynScan[0]));
   for (const i in dynScan) {
     sendParam["Item"] = dynScan[i];
-    sendDyn(sendParam);
+    // sendDyn(sendParam);
     if (i % 1000 == 0) {
-      console.log(i + "items sent");
+      console.log(JSON.stringify(sendParam))
+      console.log(i + " items sent");
     }
   }
 
