@@ -8,7 +8,7 @@ const queryParam = {
   KeyConditions: {
     account: {
       ComparisonOperator: "EQ",
-      AttributeValueList: { S: "pj_sekai" }
+      AttributeValueList: [{ S: "pj_sekai" }]
     }
   }
 }
