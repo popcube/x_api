@@ -5,18 +5,33 @@ import { sendDyn, scanDyn } from "./dyn_api.js"
 import fs from "fs"
 
 const scanParam = { TableName: "twt_main_flwers" };
+const queryParam = (acc) => {
+    return {
+        ...scanParam,
+        KeyConditions: {
+            account: {
+                ComparisonOperator: "EQ",
+                AttributeValueList: [{ S: acc }]
+            }
+        }
+    }
+}
+
 const userNames = ["pj_sekai", "bang_dream_gbp", "Genshin_7"];
 
-async function main() {
+async function main(account = undefined) {
     // FOR SKIPPING LOOP
     // userNames.splice(0);
+    if (typeof (account) != undefined) {
+        userNames.splice(0, userNames.length, account);
+    }
 
     for (const userName of userNames) {
         const flwObj = await getFollowers(userName);
-        /* DEPRECATED to be deleted*/
+        /* to be deleted*/
         // const dynObj = await makeFollowersDynObj(flwObj)
         // sendDyn(dynObj);
-        /* DEPRECATED to be deleted*/
+        /* to be deleted*/
 
         console.log("User id: " + flwObj.data.id);
         const twtArr = await getTweets(flwObj.data.id);
@@ -43,12 +58,12 @@ async function main() {
             prev += `${curr.created_at.slice(0, -2)},${referenced},https://twitter.com/${userName}/status/${curr.id}\n`;
             return prev;
         }, 'time,referenced,url\n');
-        fs.writeFileSync(`./twtResults_${userName}.csv`, twtCsv);
+        fs.writeFileSync(len(userNames) > 1 ? `./twtResults_${userName}.csv` : "./twtResults.csv", twtCsv);
 
         // DO NOT DELETE BELOW
     }
 
-    const dynScan = await scanDyn(scanParam);
+    const dynScan = typeof (account) != undefined ? await queryDyn(queryParam(account)) : await scanDyn(scanParam);
     // console.log(dynScan);
 
     for (const userName of userNames) {
@@ -58,8 +73,8 @@ async function main() {
             }
             return prev;
         }, 'fetch_time,followers_count\n');
-        fs.writeFileSync(`./results_${userName}.csv`, outputCsv);
+        fs.writeFileSync(len(userNames) > 1 ? `./results_${userName}.csv` : "./results.csv", outputCsv);
     }
 }
 
-main()
+main(process.env["ACCOUNT"]);
