@@ -3,7 +3,15 @@ import fs from "fs"
 
 // DO NOT DELETE BELOW
 
-const queryParam = { TableName: "twt_main_flwers", account: "pj_sekai" };
+const queryParam = {
+  TableName: "twt_main_flwers",
+  KeyConditions: {
+    account: {
+      ComparisonOperator: "EQ",
+      AttributeValueList: { S: "pj_sekai" }
+    }
+  }
+}
 
 const dynQuery = await queryDyn(queryParam);
 
