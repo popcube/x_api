@@ -27,8 +27,8 @@ const makeFollowersDynObj = (twtObj) => {
     })
 };
 
-const scanParam = { TableName: "twt_api_1min" };
-const userName = "pj_sekai"
+const scanParam = { TableName: "twt_main_flwers" };
+const userName = process.env["ACCOUNT"]
 
 const flwObj = await getFollowers(userName);
 /* DEPRECATED to be deleted*/

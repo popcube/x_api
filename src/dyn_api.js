@@ -37,3 +37,27 @@ export const scanDyn = async (dynObj) => {
     }
     return returnData;
 }
+
+export const queryDyn = async (dynObj) => {
+    const returnData = [];
+    while (true) {
+        const scannedData = await client.query(dynObj);
+        if (scannedData["$metadata"].httpStatusCode == "200") {
+            returnData.push(...scannedData.Items);
+            if (!scannedData["LastEvaluatedKey"]) {
+                console.log("data succcessfully scanned. count: " + scannedData["Count"] + ", done!");
+                break;
+            }
+            else {
+                console.log("data succcessfully scanned. count: " + scannedData["Count"] + ", pagenating...");
+            }
+        } else {
+            console.log("ERROR at scan");
+            console.log(JSON.stringify(scannedData, null, 2));
+            throw new Error('ERROR at scan');
+        }
+        dynObj["ExclusiveStartKey"] = scannedData["LastEvaluatedKey"]
+
+    }
+    return returnData;
+}
