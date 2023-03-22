@@ -1,15 +1,16 @@
 name: "single account flow"
-on: workflow_dispatch
-  inputs:
-    account:
-      description: 'select twitter account name'
-      required: true
-      default: 'pj_sekai'
-      type: choice
-      options:
-      - pj_sekai
-      - bang_dream_gbp
-      - Genshin_7
+on:
+  workflow_dispatch:
+    inputs:
+      account:
+        description: 'select twitter account name'
+        required: true
+        default: 'pj_sekai'
+        type: choice
+        options:
+        - pj_sekai
+        - bang_dream_gbp
+        - Genshin_7
 ## scheduled at every hour
 ##  schedule:
 ##    - cron: '29 * * * *'
