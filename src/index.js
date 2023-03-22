@@ -22,7 +22,7 @@ const userNames = ["pj_sekai", "bang_dream_gbp", "Genshin_7"];
 async function main(account = undefined) {
     // FOR SKIPPING LOOP
     // userNames.splice(0);
-    if (typeof (account) != undefined) {
+    if (typeof (account) != "undefined") {
         userNames.splice(0, userNames.length, account);
     }
     console.log(userNames);
@@ -65,7 +65,7 @@ async function main(account = undefined) {
         // DO NOT DELETE BELOW
     }
 
-    const dynScan = typeof (account) != undefined ? await queryDyn(queryParam(account)) : await scanDyn(scanParam);
+    const dynScan = typeof (account) != "undefined" ? await queryDyn(queryParam(account)) : await scanDyn(scanParam);
     // console.log(dynScan);
 
     for (const userName of userNames) {
