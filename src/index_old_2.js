@@ -3,7 +3,7 @@ import fs from "fs"
 
 // DO NOT DELETE BELOW
 
-queryParam = { TableName: "twt_main_flwers", account: "pj_sekai" };
+const queryParam = { TableName: "twt_main_flwers", account: "pj_sekai" };
 
 const dynQuery = await queryDyn(queryParam);
 
