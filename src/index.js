@@ -60,7 +60,7 @@ async function main(account = undefined) {
             prev += `${curr.created_at.slice(0, -2)},${referenced},https://twitter.com/${userName}/status/${curr.id}\n`;
             return prev;
         }, 'time,referenced,url\n');
-        fs.writeFileSync(len(userNames) > 1 ? `./twtResults_${userName}.csv` : "./twtResults.csv", twtCsv);
+        fs.writeFileSync(userNames.length > 1 ? `./twtResults_${userName}.csv` : "./twtResults.csv", twtCsv);
 
         // DO NOT DELETE BELOW
     }
@@ -75,7 +75,7 @@ async function main(account = undefined) {
             }
             return prev;
         }, 'fetch_time,followers_count\n');
-        fs.writeFileSync(len(userNames) > 1 ? `./results_${userName}.csv` : "./results.csv", outputCsv);
+        fs.writeFileSync(userNames.length > 1 ? `./results_${userName}.csv` : "./results.csv", outputCsv);
     }
 }
 
