@@ -256,8 +256,8 @@ make_timeline(x, y, "y_raw_annot", nan_idxs=nan_idxs,
               adjusted_idxs=adjusted_idxs)
 
 y_cut = [0]
-for yd in y_cut_dif[1:]:
-    y_cut.append(y_cut[-1] + yd)
+for i, yd in enumerate(y_cut_dif[1:]):
+    y_cut.append(y_cut[-1] + yd * (x[i+1] - x[i]).total_seconds() / 60)
 make_timeline(x, y_cut, "y_cut")
 
 if len(sys.argv) > 1:

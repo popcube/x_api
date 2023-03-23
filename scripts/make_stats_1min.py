@@ -44,6 +44,24 @@ df_twt.sort_index(inplace=True)
 df_twt.index = df_twt.index.to_series().apply(
     lambda x: x + timedelta(hours=9))
 
+
+def get_y_cut(today):
+
+    x_in = df_flw_1min.loc[today].index.to_list()
+    x_res = [df_flw_raw_1min.loc[today].index[0]]
+    for i in range(len(x_in) - 1):
+        x_res.append(x_in[i] + (x_in[i+1] - x_in[i]) / 2)
+    x_res.append(df_flw_raw_1min.loc[today].index[-1])
+
+    y_in = df_flw_1min.loc[today].iloc[:, 0].to_list()
+    y_res = [0]
+    for i, yd in enumerate(y_in):
+        y_res.append(y_res[-1] + yd * (x_res[i+1] -
+                     x_res[i]).total_seconds() / 60)
+
+    return x_res, y_res
+
+
 # today = "2023-01-09"
 # make_timeline(df_flw_raw_1min.loc[today].index,
 #               df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
@@ -56,8 +74,10 @@ if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_twt):
     print(df_twt.loc[today]["url"].to_list())
 make_timeline(df_flw_raw_1min.loc[today].index,
               df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
-# make_timeline(df_flw_1min.loc[today].index,
-#               df_flw_1min.loc[today].iloc[:, 0], "flw_cut_1min_" + today + "_temp", annot_dfds=df_twt.loc[today])
+y_cut_x, y_cut_y = get_y_cut(today)
+# print(len(y_cut_x), len(y_cut_y))
+# sys.exit(1)
+make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + today + "_temp")
 today = (datetime.now(tz=timezone(offset=timedelta(hours=9),
          name='JST')) + timedelta(days=-1)).strftime("%Y-%m-%d")
 print(datetime.strptime(today, "%Y-%m-%d"))
@@ -67,13 +87,14 @@ if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_twt):
     print(df_twt.loc[today]["url"].to_list())
 make_timeline(df_flw_raw_1min.loc[today].index,
               df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
-# make_timeline(df_flw_1min.loc[today].index,
-#               df_flw_1min.loc[today].iloc[:, 0], "flw_cut_1min_" + today + "_temp", annot_dfds=df_twt.loc[today])
-today = "2023-03"
+y_cut_x, y_cut_y = get_y_cut(today)
+make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + today + "_temp")
+today = datetime.now(tz=timezone(offset=timedelta(
+    hours=9), name='JST')).strftime("%Y-%m")
 make_timeline(df_flw_raw_1min.loc[today].index,
               df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
-make_timeline(df_flw_1min.loc[today].index,
-              df_flw_1min.loc[today].iloc[:, 0], "flw_cut_1min_" + today + "_temp", annot_dfds=df_twt.loc[today])
+y_cut_x, y_cut_y = get_y_cut(today)
+make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + today + "_temp")
 print(df_twt.loc[today]["url"].to_list())
 # sys.exit(0)
 
