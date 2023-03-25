@@ -136,6 +136,7 @@ make_timeline(stl_season.index, stl_season,
 
 stl_trend.to_csv("trend_diff.csv")
 stl_r.to_csv("res_diff.csv")
+stl_season.to_csv("season_diff.csv")
 
 # event_timestamps = pd.Series(index=[
 #     datetime(2022, 12, 19, 21),
