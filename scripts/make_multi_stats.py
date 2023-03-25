@@ -30,13 +30,13 @@ for f in os.listdir("./"):
     if f.endswith(".csv"):
         if f.startswith("trend_diff_"):
             dfs_trend.append(pd.read_csv(f, index_col="time", parse_dates=True, header=0, names=[
-                             f[len("trend_diff_"):-1*len(".csv")]]))
+                             "time", f[len("trend_diff_"):-1*len(".csv")]]))
         if f.startswith("res_diff_"):
             dfs_res.append(pd.read_csv(f, index_col="time", parse_dates=True, header=0, names=[
-                           f[len("res_diff_"):-1*len(".csv")]]))
+                           "time", f[len("res_diff_"):-1*len(".csv")]]))
         if f.startswith("season_diff_"):
-            dfs_season.append(pd.read_csv(f, index_col="time", parse_dates=True), header=0, names=[
-                              f[len("season_diff_"):-1*len(".csv")]])
+            dfs_season.append(pd.read_csv(f, index_col="time", parse_dates=True, header=0, names=[
+                              "time", f[len("season_diff_"):-1*len(".csv")]]))
 
 # pj_sekaiのみ過去データが多いので、マージグラフでその部分を大雑把に除く
 dfs_trend_xmin = max([min(df.index) for df in dfs_trend])
