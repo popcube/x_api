@@ -112,6 +112,7 @@ plt.close()
 
 stl_r = stl_series.resid
 stl_trend = stl_series.trend
+stl_season = stl_series.seasonal
 df_res = pd.DataFrame(stl_r)
 
 # make_timeline(stl_r.index, stl_r, "dif_err", y_label="増減量残差")
@@ -130,6 +131,8 @@ print(df_res)
 
 make_timeline(df_res.index, df_res["res"], 'res_diff', y_label="増減量残差")
 make_timeline(stl_trend.index, stl_trend, 'trend_diff', y_label="増減量（/分）トレンド")
+make_timeline(stl_season.index, stl_season,
+              'season_diff', y_label="増減量（/分）周期性成分")
 
 stl_trend.to_csv("trend_diff.csv")
 stl_r.to_csv("res_diff.csv")

@@ -2,6 +2,7 @@ import pandas as pd
 from make_timeline import make_multi_timeline
 import sys
 import os
+from datetime import datetime
 
 from make_js import make_js
 
@@ -23,20 +24,30 @@ def if_day_in_index(dt, df_res):
 
 dfs_trend = []
 dfs_res = []
+dfs_season = []
 accounts = []
 
 for f in os.listdir("./"):
-    if f.startswith("trend_diff_") and f.endswith(".csv"):
-        dfs_trend.append(pd.read_csv(f, index_col="time", parse_dates=True))
-        accounts.append("@" + f[len("trend_diff_"):-1*len(".csv")])
-    if f.startswith("res_diff_") and f.endswith(".csv"):
-        dfs_res.append(pd.read_csv(f, index_col="time", parse_dates=True))
+    if f.endswith(".csv"):
+        if f.startswith("trend_diff_"):
+            dfs_trend.append(pd.read_csv(
+                f, index_col="time", parse_dates=True))
+            accounts.append("@" + f[len("trend_diff_"):-1*len(".csv")])
+        if f.startswith("res_diff_"):
+            dfs_res.append(pd.read_csv(f, index_col="time", parse_dates=True))
+        if f.startswith("season_diff_"):
+            dfs_season.append(pd.read_csv(
+                f, index_col="time", parse_dates=True))
 
 # pj_sekaiのみ過去データが多いので、マージグラフでその部分を大雑把に除く
 dfs_trend_xmin = max([min(df.index) for df in dfs_trend])
 
 dfs_trend = [df[df.index >= dfs_trend_xmin] for df in dfs_trend]
 dfs_res = [df[df.index >= dfs_trend_xmin] for df in dfs_res]
+
+# seasonalは当月のみ
+this_month = datetime.now().strftime("%Y-%m")
+dfs_season = [df.loc[this_month] for df in dfs_season]
 
 # df_flw_1min = pd.read_csv("result_cut_dif.csv",
 #                           index_col="time", parse_dates=True)
@@ -50,3 +61,5 @@ make_multi_timeline(dfs_trend, "trend_multi",
                     y_label="フォロワー数推移トレンド（増減数/分）", y_labels=accounts)
 make_multi_timeline(
     dfs_res, "res_multi", y_label="フォロワー数推移残差（増減数/分）", y_labels=accounts)
+make_multi_timeline(
+    dfs_season, "season_multi", y_label=f"フォロワー数推移周期性成分（増減数/分）{this_month}", y_labels=accounts)

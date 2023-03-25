@@ -97,8 +97,9 @@ jobs:
 
           for datadir in $(find ./  -maxdepth 1 -type d -name '*_data' -exec basename "{}" ";"); do
             echo ${datadir}" folder found!"
-            mv ./${datadir}/trend_diff.csv ./trend_diff_${datadir%_data}.csv            
-            mv ./${datadir}/res_diff.csv ./res_diff_${datadir%_data}.csv
+            mv ./${datadir}/trend_diff.csv ./trend_diff_${datadir%_data}.csv
+            mv ./${datadir}/res_diff.csv ./res_diff_${datadir%_data}.csv            
+            mv ./${datadir}/season_diff.csv ./season_diff_${datadir%_data}.csv
           done
 
           ls -la
