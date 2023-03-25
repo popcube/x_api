@@ -25,19 +25,18 @@ def if_day_in_index(dt, df_res):
 dfs_trend = []
 dfs_res = []
 dfs_season = []
-accounts = []
 
 for f in os.listdir("./"):
     if f.endswith(".csv"):
         if f.startswith("trend_diff_"):
-            dfs_trend.append(pd.read_csv(
-                f, index_col="time", parse_dates=True))
-            accounts.append("@" + f[len("trend_diff_"):-1*len(".csv")])
+            dfs_trend.append(pd.read_csv(f, index_col="time", parse_dates=True, header=0, names=[
+                             f[len("trend_diff_"):-1*len(".csv")]]))
         if f.startswith("res_diff_"):
-            dfs_res.append(pd.read_csv(f, index_col="time", parse_dates=True))
+            dfs_res.append(pd.read_csv(f, index_col="time", parse_dates=True, header=0, names=[
+                           f[len("res_diff_"):-1*len(".csv")]]))
         if f.startswith("season_diff_"):
-            dfs_season.append(pd.read_csv(
-                f, index_col="time", parse_dates=True))
+            dfs_season.append(pd.read_csv(f, index_col="time", parse_dates=True), header=0, names=[
+                              f[len("season_diff_"):-1*len(".csv")]])
 
 # pj_sekaiのみ過去データが多いので、マージグラフでその部分を大雑把に除く
 dfs_trend_xmin = max([min(df.index) for df in dfs_trend])
@@ -58,8 +57,8 @@ dfs_season = [df[df.index >= (datetime.now() + timedelta(days=-10))]
 #     y_labels=None
 # ):
 make_multi_timeline(dfs_trend, "trend_multi",
-                    y_label="フォロワー数推移トレンド（増減数/分）", y_labels=accounts)
+                    y_label="フォロワー数推移トレンド（増減数/分）", y_labels=[df.columns[0] for df in dfs_trend])
 make_multi_timeline(
-    dfs_res, "res_multi", y_label="フォロワー数推移残差（増減数/分）", y_labels=accounts)
+    dfs_res, "res_multi", y_label="フォロワー数推移残差（増減数/分）", y_labels=[df.columns[0] for df in dfs_res])
 make_multi_timeline(
-    dfs_season, "season_multi", y_label="フォロワー数推移周期性成分（増減数/分）", y_labels=accounts)
+    dfs_season, "season_multi", y_label="フォロワー数推移周期性成分（増減数/分）", y_labels=[df.columns[0] for df in dfs_season])
