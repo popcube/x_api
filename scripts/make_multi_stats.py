@@ -62,4 +62,4 @@ make_multi_timeline(dfs_trend, "trend_multi",
 make_multi_timeline(
     dfs_res, "res_multi", y_label="フォロワー数推移残差（増減数/分）", y_labels=accounts)
 make_multi_timeline(
-    dfs_season, "season_multi", y_label=f"フォロワー数推移周期性成分（増減数/分）{this_month}", y_labels=accounts)
+    dfs_season, "season_multi", y_label="フォロワー数推移周期性成分（増減数/分）", y_labels=accounts)
