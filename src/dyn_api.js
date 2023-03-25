@@ -25,7 +25,7 @@ export const scanDyn = async (dynObj) => {
                 break;
             }
             else {
-                console.log("data succcessfully scanned. count: " + scannedData["Count"] + ", pagenating...");
+                console.log("data succcessfully scanned. count: " + scannedData["Count"] + ", paginating...");
             }
         } else {
             console.log("ERROR at scan");
@@ -49,7 +49,7 @@ export const queryDyn = async (dynObj) => {
                 break;
             }
             else {
-                console.log("data succcessfully scanned. count: " + scannedData["Count"] + ", pagenating...");
+                console.log("data succcessfully scanned. count: " + scannedData["Count"] + ", paginating...");
             }
         } else {
             console.log("ERROR at scan");
