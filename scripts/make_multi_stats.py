@@ -2,7 +2,7 @@ import pandas as pd
 from make_timeline import make_multi_timeline
 import sys
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from make_js import make_js
 
@@ -45,9 +45,9 @@ dfs_trend_xmin = max([min(df.index) for df in dfs_trend])
 dfs_trend = [df[df.index >= dfs_trend_xmin] for df in dfs_trend]
 dfs_res = [df[df.index >= dfs_trend_xmin] for df in dfs_res]
 
-# seasonalは当月のみ
-this_month = datetime.now().strftime("%Y-%m")
-dfs_season = [df.loc[this_month] for df in dfs_season]
+# seasonalは直近10日のみ
+dfs_season = [df[df.index >= (datetime.now() + timedelta(days=-10))]
+              for df in dfs_season]
 
 # df_flw_1min = pd.read_csv("result_cut_dif.csv",
 #                           index_col="time", parse_dates=True)
