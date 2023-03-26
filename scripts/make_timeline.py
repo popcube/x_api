@@ -295,7 +295,7 @@ def make_multi_timeline(
         plt.gca().xaxis.set_major_locator(xaxis_major_loc)
     else:
         # every Monday
-        plt.gca().xaxis.set_minor_locator(mdates.WeekdayLocator(byweekday=0))
+        plt.gca().xaxis.set_major_locator(mdates.WeekdayLocator(byweekday=0))
 
     if x_range.days <= 20:
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d\n%a'))

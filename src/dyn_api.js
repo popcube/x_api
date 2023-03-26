@@ -45,16 +45,16 @@ export const queryDyn = async (dynObj) => {
         if (scannedData["$metadata"].httpStatusCode == "200") {
             returnData.push(...scannedData.Items);
             if (!scannedData["LastEvaluatedKey"]) {
-                console.log("data succcessfully scanned. count: " + scannedData["Count"] + ", done!");
+                console.log("data succcessfully queried. count: " + scannedData["Count"] + ", done!");
                 break;
             }
             else {
-                console.log("data succcessfully scanned. count: " + scannedData["Count"] + ", paginating...");
+                console.log("data succcessfully queried. count: " + scannedData["Count"] + ", paginating...");
             }
         } else {
-            console.log("ERROR at scan");
+            console.log("ERROR at query");
             console.log(JSON.stringify(scannedData, null, 2));
-            throw new Error('ERROR at scan');
+            throw new Error('ERROR at query');
         }
         dynObj["ExclusiveStartKey"] = scannedData["LastEvaluatedKey"]
 
