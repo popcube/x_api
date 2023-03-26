@@ -5,8 +5,28 @@ from statsmodels.tsa.seasonal import STL
 from matplotlib import pyplot as plt
 from make_timeline import make_timeline
 import sys
+import os
 
 from make_js import make_js
+from get_event_table import get_event_table
+
+
+def unit_to_color(unit):
+    unit_color = {
+        "vs": "#33CCBB",
+        "l/n": "#4455DD",
+        "mmj": "#88DD44",
+        "vbs": "#EE1166",
+        "wxs": "#FF9900",
+        "n25": "#884499",
+        "mix": "#696969"
+    }
+    return unit_color[unit]
+
+
+account = os.environ.get("ACCOUNT")
+if not account:
+    account = "pj_sekai"
 
 
 def if_day_in_index(dt, df_res):
@@ -129,10 +149,25 @@ init_ts = max(df_twt.index[0], df_flw.index[0])
 df_res.columns = ["res"]
 print(df_res)
 
-make_timeline(df_res.index, df_res["res"], 'res_diff', y_label="増減量残差")
-make_timeline(stl_trend.index, stl_trend, 'trend_diff', y_label="増減量（/分）トレンド")
-make_timeline(stl_season.index, stl_season,
-              'season_diff', y_label="増減量（/分）周期性成分")
+event_table = None
+if account == "pj_sekai":
+    event_table = get_event_table()
+    # event_table = event_table[event_table["ユニット"] != "mix"]
+    event_table = event_table[["ユニット", "開始日", "終了日", "参加人数"]]
+    event_table["color"] = event_table["ユニット"].apply(unit_to_color)
+    event_table.columns = ["unit", "start_date",
+                           "end_date", "participants", "color"]
+    # print(event_table.head(5))
+
+
+# print(event_table.head(30))
+
+make_timeline(df_res.index, df_res["res"], 'res_diff',
+              y_label="増減量残差")
+make_timeline(stl_trend.index, stl_trend, 'trend_diff',
+              y_label="増減量（/分）トレンド", event_hline=event_table)
+make_timeline(stl_season.index, stl_season, 'season_diff',
+              y_label="増減量（/分）周期成分")
 
 stl_trend.to_csv("trend_diff.csv")
 stl_r.to_csv("res_diff.csv")

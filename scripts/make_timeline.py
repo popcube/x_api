@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from matplotlib import pyplot as plt
+from matplotlib.lines import Line2D
 import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
 import sys
@@ -7,6 +8,7 @@ import pandas as pd
 from scipy.interpolate import make_interp_spline
 # import numpy as np
 import os
+
 
 account = os.environ.get("ACCOUNT")
 if account is None:
@@ -60,7 +62,8 @@ def make_timeline(
     adjusted_idxs=[],
     annot_dfds=False,
     y_label="",
-    interp=False
+    interp=False,
+    event_hline=None
 ):
 
     plt.figure(figsize=(15, 8))
@@ -72,16 +75,22 @@ def make_timeline(
 
     plt.scatter(x, y, marker='None')
 
-    if type(annot_dfds) is bool:
-        plt.title(f"公式ツイッター{account}フォロワー数観測", fontname="IPAexGothic")
-    else:
+    if event_hline is not None:
+        plt.title(f"公式ツイッター{account}フォロワー数＆イベント参加人数観測",
+                  fontname="IPAexGothic", y=1, pad=45)
+    elif type(annot_dfds) is not bool:
         plt.title(f"公式ツイッター{account}フォロワー数観測",
                   fontname="IPAexGothic", y=1, pad=45)
+    else:
+        plt.title(f"公式ツイッター{account}フォロワー数観測", fontname="IPAexGothic")
+
+    x_range = max(x) - min(x)
+    y_range = max(y) - min(y)
 
     xaxis_minor_interval_presets = [1, 2, 3, 4,
                                     6, 8, 12] + [24 * i for i in range(1, 100)]
     xaxis_minor_interval = max(
-        int((max(x) - min(x)).total_seconds()) // (40 * 60 * 60), 1)
+        int(x_range.total_seconds()) // (40 * 60 * 60), 1)
     for i, xaxis_minor_interval_preset in enumerate(xaxis_minor_interval_presets):
         if xaxis_minor_interval < xaxis_minor_interval_preset:
             if i == 0:
@@ -98,14 +107,19 @@ def make_timeline(
     if xaxis_minor_interval < 24:
         xaxis_minor_byhour = [xaxis_minor_interval *
                               i for i in range(24 // xaxis_minor_interval)]
-    # print(max(x) - min(x))
-    # print(xaxis_minor_interval)
-    xaxis_major_loc = mdates.RRuleLocator(mdates.rrulewrapper(
-        mdates.DAILY, byhour=11, byminute=30))
-    plt.gca().xaxis.set_major_locator(xaxis_major_loc)
-    if (max(x) - min(x)).days <= 20:
+    if x_range.days <= 90:
+        xaxis_major_loc = mdates.RRuleLocator(mdates.rrulewrapper(
+            mdates.DAILY, byhour=11, byminute=30))
+        plt.gca().xaxis.set_major_locator(xaxis_major_loc)
+    else:
+        # every Monday
+        xaxis_major_loc = mdates.RRuleLocator(mdates.rrulewrapper(
+            mdates.DAILY, byweekday=0, byhour=11, byminute=30))
+        plt.gca().xaxis.set_major_locator(xaxis_major_loc)
+
+    if x_range.days <= 20:
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d\n%a'))
-    elif (max(x) - min(x)).days <= 40:
+    elif x_range.days <= 40:
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d\n%a'))
         plt.xticks(rotation=90)
     else:
@@ -117,9 +131,9 @@ def make_timeline(
         plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
 
     plt.gca().yaxis.set_major_locator(
-        ticker.MultipleLocator(max(5*((max(y) - min(y))//60), 1)))
+        ticker.MultipleLocator(max(5*(y_range//60), 1)))
     plt.gca().yaxis.set_minor_locator(
-        ticker.MultipleLocator(max((max(y) - min(y))//60, 1) * 1))
+        ticker.MultipleLocator(max(y_range//60, 1) * 1))
     plt.gca().yaxis.set_major_formatter(
         ticker.ScalarFormatter(useOffset=False, useMathText=False))
     plt.gca().yaxis.get_major_formatter().set_scientific(False)
@@ -193,7 +207,7 @@ def make_timeline(
         if interp and len(x) >= 4:
             X_Y_Spline = make_interp_spline(
                 list(map(lambda ix: ix.timestamp(), x)), y)
-            X_ = [min(x) + i * 0.001 * (max(x) - min(x)) for i in range(1001)]
+            X_ = [min(x) + i * 0.001 * x_range for i in range(1001)]
             X_ = list(map(lambda ix: ix.timestamp(), X_))
             Y_ = X_Y_Spline(X_)
             # print(x[:5])
@@ -241,6 +255,46 @@ def make_timeline(
         plt.gca().fill_between(x_fill_pair, *ylim, fc=fc, zorder=0, label=label)
 
     plt.legend(prop={"family": ["IPAexGothic"]})
+
+    # イベント開催期間追記用
+    if event_hline is not None:
+        ax2 = plt.gca().twinx()
+        event_hline = event_hline[(event_hline["start_date"] <= max(x)) & (
+            min(x) <= event_hline["end_date"])]
+        start_cond = event_hline["start_date"] <= min(x)
+        end_cond = event_hline["end_date"] >= max(x)
+        event_hline.loc[start_cond, "start_date"] = event_hline["start_date"][start_cond].apply(
+            lambda xx: max(min(x), xx))
+        event_hline.loc[end_cond, "end_date"] = event_hline["end_date"][end_cond].apply(
+            lambda xx: min(max(x), xx))
+        ax2.hlines(event_hline["participants"], xmin=event_hline["start_date"],
+                   xmax=event_hline["end_date"], colors=event_hline["color"], linewidth=7)
+        # for ei in event_hline.index:
+        #     eh = event_hline.loc[ei]
+        #     ax2.axhline(eh["participants"], xmin=eh["start_date"],
+        #                 xmax=eh["end_date"], color=eh["color"], label=eh["unit"])
+
+        ax2.yaxis.set_major_formatter(
+            ticker.ScalarFormatter(useOffset=False, useMathText=False))
+        ax2.yaxis.get_major_formatter().set_scientific(False)
+        ax2.set_ylabel("イベント参加人数", fontname="IPAexGothic")
+
+        eh_set_for_legend = event_hline.drop_duplicates(subset="unit")
+        proxy_artists = [Line2D([0, 1], [0, 1], color=eh_set_for_legend.loc[ei, "color"])
+                         for ei in eh_set_for_legend.index]
+        unit_names = {
+            "vs": "バチャシン",
+            "l/n": "レオニ",
+            "mmj": "モモジャン",
+            "vbs": "ビビバス",
+            "wxs": "ワンダショ",
+            "n25": "ニーゴ",
+            "mix": "混合"
+        }
+        proxy_labels = eh_set_for_legend["unit"].map(unit_names)
+
+        plt.legend(proxy_artists, proxy_labels, loc="lower left", ncol=10, bbox_to_anchor=(
+            0, 1), edgecolor="white", prop={"family": ["IPAexGothic"]})
 
     # ローカル実行ならグラフ表示、Actions実行ならグラフ保存
     if len(sys.argv) > 1:
@@ -295,7 +349,9 @@ def make_multi_timeline(
         plt.gca().xaxis.set_major_locator(xaxis_major_loc)
     else:
         # every Monday
-        plt.gca().xaxis.set_major_locator(mdates.WeekdayLocator(byweekday=0))
+        xaxis_major_loc = mdates.RRuleLocator(mdates.rrulewrapper(
+            mdates.DAILY, byweekday=0, byhour=11, byminute=30))
+        plt.gca().xaxis.set_major_locator(xaxis_major_loc)
 
     if x_range.days <= 20:
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d\n%a'))
