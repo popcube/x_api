@@ -46,6 +46,7 @@ jobs:
           sudo apt-get install fonts-ipaexfont
           pip install matplotlib
           pip install pandas
+          pip install scipy
           pip install lxml
           pip install html5lib
           pip install bs4
