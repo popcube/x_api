@@ -65,6 +65,7 @@ jobs:
           pip install html5lib
           pip install bs4
           pip install requests
+          pip install statsmodels
 
           python ./scripts/see_res_1min.py
           python ./scripts/make_stats_1min.py
