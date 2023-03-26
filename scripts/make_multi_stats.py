@@ -57,8 +57,8 @@ dfs_season = [df[df.index >= (datetime.now() + timedelta(days=-10))]
 #     y_labels=None
 # ):
 make_multi_timeline(dfs_trend, "trend_multi",
-                    y_label="フォロワー数推移トレンド（増減数/分）", y_labels=[df.columns[0] for df in dfs_trend])
+                    y_label="フォロワー数推移トレンド（増減数/分）", y_labels=["@" + df.columns[0] for df in dfs_trend])
 make_multi_timeline(
-    dfs_res, "res_multi", y_label="フォロワー数推移残差（増減数/分）", y_labels=[df.columns[0] for df in dfs_res])
+    dfs_res, "res_multi", y_label="フォロワー数推移残差（増減数/分）", y_labels=["@" + df.columns[0] for df in dfs_res])
 make_multi_timeline(
-    dfs_season, "season_multi", y_label="フォロワー数推移周期性成分（増減数/分）", y_labels=[df.columns[0] for df in dfs_season])
+    dfs_season, "season_multi", y_label="フォロワー数推移周期性成分（増減数/分）", y_labels=["@" + df.columns[0] for df in dfs_season])

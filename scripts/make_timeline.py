@@ -289,10 +289,14 @@ def make_multi_timeline(
     if xaxis_minor_interval < 24:
         xaxis_minor_byhour = [xaxis_minor_interval *
                               i for i in range(24 // xaxis_minor_interval)]
+    if x_range.days <= 90:
+        xaxis_major_loc = mdates.RRuleLocator(mdates.rrulewrapper(
+            mdates.DAILY, byhour=11, byminute=30))
+        plt.gca().xaxis.set_major_locator(xaxis_major_loc)
+    else:
+        # every Monday
+        plt.gca().xaxis.set_minor_locator(mdates.WeekdayLocator(byweekday=0))
 
-    xaxis_major_loc = mdates.RRuleLocator(mdates.rrulewrapper(
-        mdates.DAILY, byhour=11, byminute=30))
-    plt.gca().xaxis.set_major_locator(xaxis_major_loc)
     if x_range.days <= 20:
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d\n%a'))
     elif x_range.days <= 40:
@@ -332,7 +336,8 @@ def make_multi_timeline(
     cm_colors = plt.cm.get_cmap("Dark2").colors
     for i, df in enumerate(dfs):
         ci = i % len(cm_colors)
-        plt.plot(df.index, df.iloc[:, 0], c=cm_colors[ci], zorder=1, label=y_labels[i])
+        plt.plot(df.index, df.iloc[:, 0],
+                 c=cm_colors[ci], zorder=1, label=y_labels[i])
 
     label_flgs = [True, True]
     for x_fill_pair in x_fill_pairs:
