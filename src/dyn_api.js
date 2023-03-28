@@ -1,4 +1,6 @@
 import * as AWS from "@aws-sdk/client-dynamodb";
+import { setTimeout } from 'node:timers/promises';
+
 const client = new AWS.DynamoDB({
     credentials: {
         accessKeyId: process.env.ACC_KEY,
@@ -33,7 +35,7 @@ export const scanDyn = async (dynObj) => {
             throw new Error('ERROR at scan');
         }
         dynObj["ExclusiveStartKey"] = scannedData["LastEvaluatedKey"]
-
+        await setTimeout(1000);
     }
     return returnData;
 }
@@ -57,7 +59,7 @@ export const queryDyn = async (dynObj) => {
             throw new Error('ERROR at query');
         }
         dynObj["ExclusiveStartKey"] = scannedData["LastEvaluatedKey"]
-
+        await setTimeout(1000);
     }
     return returnData;
 }
