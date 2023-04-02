@@ -123,6 +123,7 @@ y_base_inc_def = mean(y_dif_cut)
 y_base_inc = y_base_inc_def
 y_cut_all = y_cut_max - y_cut_min - 2 * y_base_inc_def
 adjustee_idxs = {"plus": [], "minus": []}
+outlier_idxs = {"plus": [], "minus": []}
 nan_idxs = []
 adjusted_idxs = set()
 
@@ -223,6 +224,8 @@ for i, yd in enumerate(y_dif):
                 y_cut_all = - (yd - y_base_inc)
                 adjustee_idxs["minus"].append(i)
 
+            outlier_idxs["minus"].append(i)
+
         # 増加量超過時
         elif y_cut_max < yd:
             if yd_valid(yd - y_cut_all):
@@ -240,6 +243,45 @@ for i, yd in enumerate(y_dif):
                 init_bulk()
                 y_cut_all = yd - y_base_inc
                 adjustee_idxs["plus"].append(i)
+
+            outlier_idxs["plus"].append(i)
+
+        if len(outlier_idxs["plus"]) > 0 and len(outlier_idxs["minus"]) > 0:
+            outlier_idxs["plus"].clear()
+            outlier_idxs["minus"].clear()
+
+        if len(outlier_idxs["plus"]) > 0:
+            if outlier_idxs["plus"][0] < i - 10:
+                outlier_idxs["plus"].pop(0)
+        if len(outlier_idxs["minus"]) > 0:
+            if outlier_idxs["minus"][0] < i - 10:
+                outlier_idxs["minus"].pop(0)
+
+        if len(outlier_idxs["minus"]) >= 5:
+            # minus_trend = mean([y_dif[oi] for oi in outlier_idxs["minus"]])
+            # for oi in outlier_idxs["minus"]:
+            #     if not yd_valid(y_dif[oi] - minus_trend):
+            #         break
+            # else:
+            for oi in outlier_idxs["minus"]:
+                if len(y_cut_dif) != oi:
+                    y_cut_dif[oi] = y_dif[oi]
+                if oi in nan_idxs:
+                    nan_idxs.remove(oi)
+
+        if len(outlier_idxs["plus"]) >= 5:
+            # plus_trend = mean([y_dif[oi] for oi in outlier_idxs["plus"]])
+            # print([y_dif[oi] for oi in outlier_idxs["plus"]])
+            # for oi in outlier_idxs["plus"]:
+            #     if not yd_valid(y_dif[oi] - plus_trend):
+            #         break
+            # else:
+            for oi in outlier_idxs["plus"]:
+                if len(y_cut_dif) != oi:
+                    y_cut_dif[oi] = y_dif[oi]
+                if oi in nan_idxs:
+                    nan_idxs.remove(oi)
+
 
 if_adjustee_not_used()
 
