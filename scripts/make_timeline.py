@@ -63,7 +63,8 @@ def make_timeline(
     annot_dfds=False,
     y_label="",
     interp=False,
-    event_hline=None
+    event_hline=None,
+    ylim=None
 ):
 
     plt.figure(figsize=(15, 8))
@@ -155,6 +156,8 @@ def make_timeline(
         if y0:
             plt.gca().fill_between(x, [max(0, ym) for ym in y_mean60], [
                 0] * len(y_mean60), fc="cyan")
+    if ylim is not None:
+        plt.gca().set_ylim(bottom=ylim["bottom"], top=ylim["top"])
 
     # 差分表示のときはnan部を点で表現
     if 'dif' in figname:

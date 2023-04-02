@@ -66,7 +66,7 @@ y_dif = [0] + [(y[i] - y[i-1]) * 60 / (x[i]-x[i-1]).total_seconds()
 x_dif = [x[0]] + [x[i] + (x[i+1] - x[i])/2 for i in range(len(x)-1)]
 y_dif_cut = [d for d in y_dif if y_cut_min <= d and d <= y_cut_max]
 print(f'mean before cut: {mean(y_dif):.2f}')
-print(f'mean after cut: {mean(y_dif_cut):.2f}')
+# print(f'mean after cut: {mean(y_dif_cut):.2f}')
 
 if False:
     ydct = [d for d in y_dif if -1 <= d and d <= 6]
@@ -292,7 +292,8 @@ print(
 ###### Chart creaation part ######
 make_timeline(x_dif, y_dif, "y_dif", y0=True,
               nan_idxs=nan_idxs, adjusted_idxs=adjusted_idxs)
-make_timeline(x_dif, y_cut_dif, "y_cut_dif", tl=True, y0=True)
+make_timeline(x_dif, y_cut_dif, "y_cut_dif", tl=True, y0=True,
+              ylim=dict(top=y_cut_max, bottom=y_cut_min))
 make_timeline(x, y, "y_raw")
 make_timeline(x, y, "y_raw_annot", nan_idxs=nan_idxs,
               adjusted_idxs=adjusted_idxs)
