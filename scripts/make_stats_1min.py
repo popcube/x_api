@@ -162,15 +162,15 @@ if account == "pj_sekai":
 
 # print(event_table.head(30))
 
-# stl_r = stl_r[stl_r.index > pd.Timestamp('today') + timedelta(days=-10)]
-# stl_season = stl_season[stl_season.index >
-#                         pd.Timestamp('today') + timedelta(days=-10)]
+stl_r_10days = stl_r[stl_r.index > pd.Timestamp('today') + timedelta(days=-10)]
+stl_season_10days = stl_season[stl_season.index >
+                               pd.Timestamp('today') + timedelta(days=-10)]
 
-make_timeline(stl_r.index, stl_r, 'res_diff',
+make_timeline(stl_r_10days.index, stl_r_10days, 'res_diff',
               y_label="増減量残差", ylim=dict(bottom=-5, top=5))
 make_timeline(stl_trend.index, stl_trend, 'trend_diff',
               y_label="増減量（/分）トレンド", event_hline=event_table)
-make_timeline(stl_season.index, stl_season, 'season_diff',
+make_timeline(stl_season_10days.index, stl_season_10days, 'season_diff',
               y_label="増減量（/分）周期成分")
 
 stl_trend.to_csv("trend_diff.csv")
