@@ -199,6 +199,14 @@ for i, yd in enumerate(y_dif):
             init_bulk()
             y_cut_all = y_cut_max - y_cut_min - 2 * y_base_inc_def
 
+    # 外れ値データ保持は10分前まで
+    if len(outlier_idxs["plus"]) > 0:
+        if outlier_idxs["plus"][0] < i - 10:
+            outlier_idxs["plus"].pop(0)
+    if len(outlier_idxs["minus"]) > 0:
+        if outlier_idxs["minus"][0] < i - 10:
+            outlier_idxs["minus"].pop(0)
+
     # 増減量通常時
     if yd_valid(yd):
         y_cut_dif.append(yd)
@@ -254,13 +262,6 @@ for i, yd in enumerate(y_dif):
         if len(outlier_idxs["plus"]) > 0 and len(outlier_idxs["minus"]) > 0:
             outlier_idxs["plus"].clear()
             outlier_idxs["minus"].clear()
-
-        if len(outlier_idxs["plus"]) > 0:
-            if outlier_idxs["plus"][0] < i - 10:
-                outlier_idxs["plus"].pop(0)
-        if len(outlier_idxs["minus"]) > 0:
-            if outlier_idxs["minus"][0] < i - 10:
-                outlier_idxs["minus"].pop(0)
 
         if len(outlier_idxs["minus"]) >= 5:
             # minus_trend = mean([y_dif[oi] for oi in outlier_idxs["minus"]])

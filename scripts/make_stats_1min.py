@@ -86,8 +86,8 @@ def get_y_cut(today):
 # make_timeline(df_flw_raw_1min.loc[today].index,
 #               df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
 # print(df_twt.loc[today]["url"].to_list())
-today = datetime.now(tz=timezone(offset=timedelta(
-    hours=9), name='JST')).strftime("%Y-%m-%d")
+dt_today = datetime.now(tz=timezone(offset=timedelta(hours=9), name='JST'))
+today = dt_today.strftime("%Y-%m-%d")
 if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_twt):
     make_timeline(df_flw_raw_1min.loc[today].index,
                   df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
@@ -98,8 +98,7 @@ y_cut_x, y_cut_y = get_y_cut(today)
 # print(len(y_cut_x), len(y_cut_y))
 # sys.exit(1)
 make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + today + "_temp")
-today = (datetime.now(tz=timezone(offset=timedelta(hours=9),
-         name='JST')) + timedelta(days=-1)).strftime("%Y-%m-%d")
+today = (dt_today + timedelta(days=-1)).strftime("%Y-%m-%d")
 print(datetime.strptime(today, "%Y-%m-%d"))
 if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_twt):
     make_timeline(df_flw_raw_1min.loc[today].index,
@@ -109,8 +108,7 @@ make_timeline(df_flw_raw_1min.loc[today].index,
               df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
 y_cut_x, y_cut_y = get_y_cut(today)
 make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + today + "_temp")
-today = datetime.now(tz=timezone(offset=timedelta(
-    hours=9), name='JST')).strftime("%Y-%m")
+today = dt_today.strftime("%Y-%m")
 make_timeline(df_flw_raw_1min.loc[today].index,
               df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
 y_cut_x, y_cut_y = get_y_cut(today)
@@ -140,7 +138,7 @@ df_res = pd.DataFrame(stl_r)
 # make_timeline(stl_r.index, stl_r, "dif_err", y_label="増減量残差")
 
 # ツイートリストの最初とトレンド時系列の最初の時間を揃える（揃えなくていいか）
-init_ts = max(df_twt.index[0], df_flw.index[0])
+# init_ts = max(df_twt.index[0], df_flw.index[0])
 
 # df_twt = df_twt[df_twt.index > init_ts]
 # df_flw = df_flw[df_flw.index > init_ts]
@@ -148,8 +146,8 @@ init_ts = max(df_twt.index[0], df_flw.index[0])
 # df_res = df_res.query('index > @init_ts')
 # stl_trend = stl_trend[stl_trend.index > init_ts]
 
-df_res.columns = ["res"]
-print(df_res)
+# df_res.columns = ["res"]
+# print(df_res)
 
 event_table = None
 if account == "pj_sekai":
@@ -164,8 +162,12 @@ if account == "pj_sekai":
 
 # print(event_table.head(30))
 
-make_timeline(df_res.index, df_res["res"], 'res_diff',
-              y_label="増減量残差")
+stl_r = stl_r[stl_r.index > pd.Timestamp('today') + timedelta(days=-10)]
+stl_season = stl_season[stl_season.index >
+                        pd.Timestamp('today') + timedelta(days=-10)]
+
+make_timeline(stl_r.index, stl_r, 'res_diff',
+              y_label="増減量残差", ylim=dict(bottom=-5, top=5))
 make_timeline(stl_trend.index, stl_trend, 'trend_diff',
               y_label="増減量（/分）トレンド", event_hline=event_table)
 make_timeline(stl_season.index, stl_season, 'season_diff',
