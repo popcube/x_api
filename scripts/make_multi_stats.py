@@ -42,11 +42,12 @@ for f in os.listdir("./"):
 dfs_trend_xmin = max([min(df.index) for df in dfs_trend])
 
 dfs_trend = [df[df.index >= dfs_trend_xmin] for df in dfs_trend]
-dfs_res = [df[df.index >= dfs_trend_xmin] for df in dfs_res]
 
-# seasonalは直近10日のみ
+# seasonal, resは直近10日のみ
 dfs_season = [df[df.index >= (datetime.now() + timedelta(days=-10))]
               for df in dfs_season]
+dfs_res = [df[df.index >= (datetime.now() + timedelta(days=-10))]
+           for df in dfs_res]
 
 # df_flw_1min = pd.read_csv("result_cut_dif.csv",
 #                           index_col="time", parse_dates=True)

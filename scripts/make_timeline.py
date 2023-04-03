@@ -313,7 +313,8 @@ def make_timeline(
 def make_multi_timeline(
     dfs, figname,
     y_label=None,
-    y_labels=None
+    y_labels=None,
+    ylim=None
 ):
 
     plt.figure(figsize=(15, 8))
@@ -380,6 +381,8 @@ def make_multi_timeline(
     plt.gca().tick_params(axis='x', which='major', length=14, color="white")
 
     x_fill_pairs = make_fill_pairs(xyx)
+    if ylim is not None:
+        plt.gca().set_ylim(bottom=ylim["bottom"], top=ylim["top"])
 
     if y_label:
         plt.gca().set_ylabel(y_label, fontname="IPAexGothic")
