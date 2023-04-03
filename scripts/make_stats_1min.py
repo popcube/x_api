@@ -26,7 +26,7 @@ def unit_to_color(unit):
 
 account = os.environ.get("ACCOUNT")
 if not account:
-    account = "pj_sekai"
+    account = ""
 
 
 def if_day_in_index(dt, df_res):
@@ -122,7 +122,9 @@ df_flw = df_flw_1min.resample(
     rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
 df_raw = df_flw_raw_1min.resample(
     rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
-
+# print(df_flw)
+# df_flw.to_csv("test.csv")
+# sys.exit(1)
 
 stl = STL(df_flw['y_cut_diff'], period=24*4, robust=True)
 stl_series = stl.fit()

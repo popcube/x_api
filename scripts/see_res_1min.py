@@ -202,6 +202,11 @@ for i, yd in enumerate(y_dif):
     # 増減量通常時
     if yd_valid(yd):
         y_cut_dif.append(yd)
+        # if x_dif[i].month == 4 and x_dif[i].day == 3 and x_dif[i].hour == 5 and (x_dif[i].minute >= 37):
+        #     print(len(nan_idxs), i, x_dif[i])
+        #     print(adjustee_idxs)
+        #     print(outlier_idxs)
+        #     print(yd, y_cut_min, y_cut_max)
 
     else:
         last_memory_timestamp = [x_dif[i]]
@@ -309,5 +314,21 @@ if len(sys.argv) > 1:
 
 df = pd.DataFrame([x_dif, y_cut_dif]).T
 df.columns = ["time", "y_cut_diff"]
+
+# nan_idxsで15分以上の間隔ができないよう修正
+ni = 0
+ni_prev = ni
+while ni < len(nan_idxs) - 1:
+    ni += 1
+    if nan_idxs[ni] > nan_idxs[ni-1] + 1:
+        ni_prev = ni
+        continue
+    if (x[nan_idxs[ni]] - x[nan_idxs[ni_prev]]).total_seconds() > 14*60:
+        print(
+            f"nan_idx {nan_idxs[ni]} ({x_dif[nan_idxs[ni]].isoformat()}) is removed due to no-15-minute-gap rule!")
+        del nan_idxs[ni]
+        ni_prev = ni
+
 df.drop(nan_idxs, inplace=True)
 df.to_csv("./result_cut_dif.csv", index=False)
+print("result_cut_dif.csv is saved!")
