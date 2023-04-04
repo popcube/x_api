@@ -417,6 +417,7 @@ def make_multi_timeline(
                 label_flgs[0] = False
 
         plt.gca().fill_between(x_fill_pair, *ylim, fc=fc, zorder=0, label=label)
+    plt.axhline(y=0, linestyle="dotted")
 
     plt.legend(prop={"family": ["IPAexGothic"]})
 
