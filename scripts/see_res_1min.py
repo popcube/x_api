@@ -324,8 +324,8 @@ while ni < len(nan_idxs) - 1:
     if (x[nan_idxs[ni]] - x[nan_idxs[ni_prev]]).total_seconds() > 14*60:
         print(
             f"nan_idx {nan_idxs[ni]} ({x_dif[nan_idxs[ni]].isoformat()}) is removed due to no-15-minute-gap rule!")
+        y_cut_dif[nan_idxs[ni]] = y_base_inc_def
         del nan_idxs[ni]
-        y_cut_dif[ni] = y_base_inc_def
         ni_prev = ni
 
 df = pd.DataFrame([x_dif, y_cut_dif]).T
