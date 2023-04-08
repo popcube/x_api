@@ -313,9 +313,6 @@ if len(sys.argv) > 1:
     if len(sys.argv) == 2 and sys.argv[1] == "local":
         sys.exit(0)
 
-df = pd.DataFrame([x_dif, y_cut_dif]).T
-df.columns = ["time", "y_cut_diff"]
-
 # nan_idxsで15分以上の間隔ができないよう修正
 ni = 0
 ni_prev = ni
@@ -328,7 +325,11 @@ while ni < len(nan_idxs) - 1:
         print(
             f"nan_idx {nan_idxs[ni]} ({x_dif[nan_idxs[ni]].isoformat()}) is removed due to no-15-minute-gap rule!")
         del nan_idxs[ni]
+        y_cut_dif[ni] = y_base_inc_def
         ni_prev = ni
+
+df = pd.DataFrame([x_dif, y_cut_dif]).T
+df.columns = ["time", "y_cut_diff"]
 
 df.drop(nan_idxs, inplace=True)
 df.to_csv("./result_cut_dif.csv", index=False)
