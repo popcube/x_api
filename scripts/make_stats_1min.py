@@ -171,7 +171,7 @@ make_timeline(stl_r_10days.index, stl_r_10days, 'res_diff',
 make_timeline(stl_trend.index, stl_trend, 'trend_diff',
               y_label="増減量（/分）トレンド", event_hline=event_table)
 make_timeline(stl_season_10days.index, stl_season_10days, 'season_diff',
-              y_label="増減量（/分）周期成分")
+              y_label="増減量（/分）周期成分", ylim=dict(bottom=-5, top=5))
 
 stl_trend.to_csv("trend_diff.csv")
 stl_r.to_csv("res_diff.csv")
