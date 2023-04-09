@@ -92,8 +92,9 @@ if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_twt):
     make_timeline(df_flw_raw_1min.loc[today].index,
                   df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
     print(df_twt.loc[today]["url"].to_list())
-make_timeline(df_flw_raw_1min.loc[today].index,
-              df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
+else:
+    make_timeline(df_flw_raw_1min.loc[today].index,
+                  df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
 y_cut_x, y_cut_y = get_y_cut(today)
 # print(len(y_cut_x), len(y_cut_y))
 # sys.exit(1)
@@ -104,8 +105,9 @@ if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_twt):
     make_timeline(df_flw_raw_1min.loc[today].index,
                   df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
     print(df_twt.loc[today]["url"].to_list())
-make_timeline(df_flw_raw_1min.loc[today].index,
-              df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
+else:
+    make_timeline(df_flw_raw_1min.loc[today].index,
+                  df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
 y_cut_x, y_cut_y = get_y_cut(today)
 make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + today + "_temp")
 today = dt_today.strftime("%Y-%m")
