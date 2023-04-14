@@ -257,10 +257,13 @@ def make_timeline(
 
         plt.gca().fill_between(x_fill_pair, *ylim, fc=fc, zorder=0, label=label)
 
-    plt.legend(prop={"family": ["IPAexGothic"]})
+    if event_hline is None:
+        plt.legend(prop={"family": ["IPAexGothic"]})
 
     # イベント開催期間追記用
-    if event_hline is not None:
+    else:
+        plt.legend(loc="lower right", bbox_to_anchor=(
+            1, 1), prop={"family": ["IPAexGothic"]})
         ax2 = plt.gca().twinx()
         event_hline = event_hline[(event_hline["start_date"] <= max(x)) & (
             min(x) <= event_hline["end_date"])]
