@@ -304,6 +304,13 @@ make_timeline(x, y, "y_raw")
 make_timeline(x, y, "y_raw_annot", nan_idxs=nan_idxs,
               adjusted_idxs=adjusted_idxs)
 
+x_dif_10days = [xd for xd in x_dif if xd >=
+                datetime.now() + timedelta(days=-10)]
+y_cut_dif_10days = [ycd for ycd in y_cut_dif if ycd >=
+                    datetime.now() + timedelta(days=-10)]
+make_timeline(x_dif_10days, y_cut_dif_10days, "y_cut_dif_10days", tl=True, y0=True,
+              ylim=dict(top=y_cut_max, bottom=y_cut_min))
+
 y_cut = [0]
 for i, yd in enumerate(y_cut_dif[1:]):
     y_cut.append(y_cut[-1] + yd * (x[i+1] - x[i]).total_seconds() / 60)
