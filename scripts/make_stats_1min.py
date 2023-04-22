@@ -71,7 +71,10 @@ def get_y_cut(today):
     x_res = [df_flw_raw_1min.loc[today].index[0]]
     for i in range(len(x_in) - 1):
         x_res.append(x_in[i] + (x_in[i+1] - x_in[i]) / 2)
-    x_res.append(df_flw_raw_1min.loc[today].index[-1])
+    if df_flw_raw_1min.loc[today].index[-1] > x_in[-1]:
+        x_res.append(df_flw_raw_1min.loc[today].index[-1])
+    else:
+        x_res.append(pd.Timestamp(today) + timedelta(days=1, seconds=-1))
 
     y_in = df_flw_1min.loc[today].iloc[:, 0].to_list()
     y_res = [0]
