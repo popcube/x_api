@@ -88,45 +88,50 @@ def get_y_cut(today):
 # print(df_twt.loc[today]["url"].to_list())
 dt_today = datetime.now(tz=timezone(offset=timedelta(hours=9), name='JST'))
 today = dt_today.strftime("%Y-%m-%d")
-if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_twt):
-    make_timeline(df_flw_raw_1min.loc[today].index,
-                  df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
-    print(df_twt.loc[today]["url"].to_list())
-else:
-    make_timeline(df_flw_raw_1min.loc[today].index,
-                  df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
-y_cut_x, y_cut_y = get_y_cut(today)
-# print(len(y_cut_x), len(y_cut_y))
-# sys.exit(1)
-make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + today + "_temp")
+if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_flw_raw_1min):
+    if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_twt):
+        make_timeline(df_flw_raw_1min.loc[today].index,
+                      df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
+        print(df_twt.loc[today]["url"].to_list())
+    else:
+        make_timeline(df_flw_raw_1min.loc[today].index,
+                      df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
+    y_cut_x, y_cut_y = get_y_cut(today)
+    # print(len(y_cut_x), len(y_cut_y))
+    # sys.exit(1)
+    make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + today + "_temp")
 today = (dt_today + timedelta(days=-1)).strftime("%Y-%m-%d")
 print(datetime.strptime(today, "%Y-%m-%d"))
-if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_twt):
-    make_timeline(df_flw_raw_1min.loc[today].index,
-                  df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
-    print(df_twt.loc[today]["url"].to_list())
-else:
+if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_flw_raw_1min):
+    if if_day_in_index(datetime.strptime(today, "%Y-%m-%d"), df_twt):
+        make_timeline(df_flw_raw_1min.loc[today].index,
+                      df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_temp", annot_dfds=df_twt.loc[today])
+        print(df_twt.loc[today]["url"].to_list())
+    else:
+        make_timeline(df_flw_raw_1min.loc[today].index,
+                      df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
+    y_cut_x, y_cut_y = get_y_cut(today)
+    make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + today + "_temp")
+today = dt_today.strftime("%Y-%m")
+if if_day_in_index(datetime.strptime(today, "%Y-%m"), df_flw_raw_1min):
     make_timeline(df_flw_raw_1min.loc[today].index,
                   df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
-y_cut_x, y_cut_y = get_y_cut(today)
-make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + today + "_temp")
-today = dt_today.strftime("%Y-%m")
-make_timeline(df_flw_raw_1min.loc[today].index,
-              df_flw_raw_1min.loc[today].iloc[:, 0], "flw_raw_" + today + "_vanilla")
-y_cut_x, y_cut_y = get_y_cut(today)
-make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + today + "_temp")
-print(df_twt.loc[today]["url"].to_list())
+    y_cut_x, y_cut_y = get_y_cut(today)
+    make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + today + "_temp")
+    print(df_twt.loc[today]["url"].to_list())
 # sys.exit(0)
 
 df_flw = df_flw_1min.resample(
     rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
+ds_flw = df_flw['y_cut_diff'].dropna()
 df_raw = df_flw_raw_1min.resample(
     rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
-# print(df_flw)
-# df_flw.to_csv("test.csv")
+ds_raw = df_raw['followers_count'].dropna()
+print(df_flw)
+df_flw.to_csv("test.csv")
 # sys.exit(1)
 
-stl = STL(df_flw['y_cut_diff'], period=24*4, robust=True)
+stl = STL(ds_flw, period=24*4, robust=True)
 stl_series = stl.fit()
 stl_series.plot()
 plt.savefig("./STL_decompose.png")
