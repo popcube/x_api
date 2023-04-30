@@ -8,6 +8,7 @@ from statistics import mean
 
 from make_timeline import make_timeline
 
+plt.rcParams["font.family"] = "IPAexGothic"
 account = os.environ.get("ACCOUNT")
 
 
@@ -107,12 +108,12 @@ if False:
 
 plt.figure(figsize=(15, 8))
 plt.hist(y_dif, log=True, range=(-50, 50), bins=100, label="元の増減量")
-plt.legend(prop={"family": ["IPAexGothic"]})
+plt.legend()
 plt.savefig("./ori_dif.png")
 
 plt.hist(y_dif_cut, log=True,
          range=(-50, 50), bins=100, label="うち、有効な増減量")
-plt.legend(prop={"family": ["IPAexGothic"]})
+plt.legend()
 plt.savefig("./cut_dif.png")
 plt.close()
 

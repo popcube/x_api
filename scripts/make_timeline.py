@@ -9,6 +9,7 @@ from scipy.interpolate import make_interp_spline
 # import numpy as np
 import os
 
+plt.rcParams["font.family"] = "IPAexGothic"
 
 account = os.environ.get("ACCOUNT")
 if account is None:
@@ -77,13 +78,11 @@ def make_timeline(
     plt.scatter(x, y, marker='None')
 
     if event_hline is not None:
-        plt.title(f"公式ツイッター{account}フォロワー数＆イベント参加人数観測",
-                  fontname="IPAexGothic", y=1, pad=45)
+        plt.title(f"公式ツイッター{account}フォロワー数＆イベント参加人数観測", y=1, pad=45)
     elif type(annot_dfds) is not bool:
-        plt.title(f"公式ツイッター{account}フォロワー数観測",
-                  fontname="IPAexGothic", y=1, pad=45)
+        plt.title(f"公式ツイッター{account}フォロワー数観測", y=1, pad=45)
     else:
-        plt.title(f"公式ツイッター{account}フォロワー数観測", fontname="IPAexGothic")
+        plt.title(f"公式ツイッター{account}フォロワー数観測", )
 
     x_range = max(x) - min(x)
     y_range = max(y) - min(y)
@@ -162,7 +161,7 @@ def make_timeline(
     # 差分表示のときはnan部を点で表現
     if 'dif' in figname:
         if len(y_label) == 0:
-            plt.gca().set_ylabel("フォロワー数増減量推移", fontname="IPAexGothic")
+            plt.gca().set_ylabel("フォロワー数増減量推移")
         plt.axhline(y=0, linestyle="dotted")
         if len(nan_idxs) > 0:
             plt.plot(
@@ -179,7 +178,7 @@ def make_timeline(
     # 実数表示の時はnan部を2点間の線で表現
     else:
         if len(y_label) == 0:
-            plt.gca().set_ylabel("フォロワー数推移", fontname="IPAexGothic")
+            plt.gca().set_ylabel("フォロワー数推移")
         for i, ni in enumerate(nan_idxs):
             if i == 0:
                 plt.plot([x[ni-1], x[ni]], [y[ni-1], y[ni]],
@@ -196,7 +195,7 @@ def make_timeline(
                          color="orange", zorder=20)
 
     if len(y_label) > 0:
-        plt.gca().set_ylabel(y_label, fontname="IPAexGothic")
+        plt.gca().set_ylabel(y_label)
 
     # この処理時点でのy軸描画範囲 {最小値、最大値}
     ylim = plt.gca().get_ylim()
@@ -258,12 +257,11 @@ def make_timeline(
         plt.gca().fill_between(x_fill_pair, *ylim, fc=fc, zorder=0, label=label)
 
     if event_hline is None:
-        plt.legend(prop={"family": ["IPAexGothic"]})
+        plt.legend()
 
     # イベント開催期間追記用
     else:
-        plt.legend(loc="lower right", bbox_to_anchor=(
-            1, 1), prop={"family": ["IPAexGothic"]})
+        plt.legend(loc="lower right", bbox_to_anchor=(1, 1))
         ax2 = plt.gca().twinx()
         event_hline = event_hline[(event_hline["start_date"] <= max(x)) & (
             min(x) <= event_hline["end_date"])]
@@ -283,7 +281,7 @@ def make_timeline(
         ax2.yaxis.set_major_formatter(
             ticker.ScalarFormatter(useOffset=False, useMathText=False))
         ax2.yaxis.get_major_formatter().set_scientific(False)
-        ax2.set_ylabel("イベント参加人数", fontname="IPAexGothic")
+        ax2.set_ylabel("イベント参加人数")
 
         eh_set_for_legend = event_hline.drop_duplicates(subset="unit")
         proxy_artists = [Line2D([0, 1], [0, 1], color=eh_set_for_legend.loc[ei, "color"])
@@ -300,7 +298,7 @@ def make_timeline(
         proxy_labels = eh_set_for_legend["unit"].map(unit_names)
 
         plt.legend(proxy_artists, proxy_labels, loc="lower left", ncol=10, bbox_to_anchor=(
-            0, 1), edgecolor="white", prop={"family": ["IPAexGothic"]})
+            0, 1), edgecolor="white")
 
     # ローカル実行ならグラフ表示、Actions実行ならグラフ保存
     if len(sys.argv) > 1:
@@ -321,7 +319,7 @@ def make_multi_timeline(
 ):
 
     plt.figure(figsize=(15, 8))
-    plt.title(f"公式ツイッター{account}フォロワー数観測", fontname="IPAexGothic")
+    plt.title(f"公式ツイッター{account}フォロワー数観測")
 
     for df in dfs:
         plt.scatter(df.index, df.iloc[:, 0], marker='None')
@@ -388,9 +386,9 @@ def make_multi_timeline(
         plt.gca().set_ylim(bottom=ylim["bottom"], top=ylim["top"])
 
     if y_label:
-        plt.gca().set_ylabel(y_label, fontname="IPAexGothic")
+        plt.gca().set_ylabel(y_label)
     else:
-        plt.gca().set_ylabel("フォロワー数増減量推移", fontname="IPAexGothic")
+        plt.gca().set_ylabel("フォロワー数増減量推移")
 
     # この処理時点でのy軸描画範囲 {最小値、最大値}
     ylim = plt.gca().get_ylim()
@@ -422,7 +420,7 @@ def make_multi_timeline(
         plt.gca().fill_between(x_fill_pair, *ylim, fc=fc, zorder=0, label=label)
     plt.axhline(y=0, linestyle="dotted")
 
-    plt.legend(prop={"family": ["IPAexGothic"]})
+    plt.legend()
 
     # ローカル実行ならグラフ表示、Actions実行ならグラフ保存
     if len(sys.argv) > 1:
