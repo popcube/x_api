@@ -54,7 +54,6 @@ jobs:
           done
         
       - name: main run
-        continue-on-error: true
         run: |
           sudo apt-get update
           sudo apt-get install fonts-ipaexfont
