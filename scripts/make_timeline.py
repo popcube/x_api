@@ -155,6 +155,8 @@ def make_timeline(
         if y0:
             plt.gca().fill_between(x, [max(0, ym) for ym in y_mean60], [
                 0] * len(y_mean60), fc="cyan")
+            plt.gca().fill_between(
+                x, [0] * len(y_mean60), [min(0, ym) for ym in y_mean60], fc="pink")
     if ylim is not None:
         plt.gca().set_ylim(bottom=ylim["bottom"], top=ylim["top"])
 

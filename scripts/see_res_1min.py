@@ -307,7 +307,7 @@ make_timeline(x, y, "y_raw_annot", nan_idxs=nan_idxs,
 
 x_dif_10days = [xd for xd in x_dif if xd >=
                 datetime.now() + timedelta(days=-10)]
-y_cut_dif_10days = [ycd for ycd in y_cut_dif[:len(x_dif_10days)]]
+y_cut_dif_10days = [ycd for ycd in y_cut_dif[-1 * len(x_dif_10days):]]
 make_timeline(x_dif_10days, y_cut_dif_10days, "y_cut_dif_10days", tl=True, y0=True,
               ylim=dict(top=y_cut_max, bottom=y_cut_min))
 
