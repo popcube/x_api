@@ -138,6 +138,7 @@ for iter_day in range(days):
                       df_flw_raw_1min_days.iloc[:, 0], "flw_raw_" + "31days" + "_vanilla")
         y_cut_x, y_cut_y = get_y_cut_days(days)
         make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + "31days" + "_temp")
+        break
 
 df_flw = df_flw_1min.resample(
     rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
@@ -177,6 +178,8 @@ make_timeline(stl_trend.index, stl_trend, 'trend_diff',
 make_timeline(stl_season_10days.index, stl_season_10days, 'season_diff',
               y_label="増減量（/分）周期成分", ylim=dict(bottom=-5, top=5))
 
-# stl_trend.to_csv("trend_diff.csv")
-# stl_r.to_csv("res_diff.csv")
-# stl_season.to_csv("season_diff.csv")
+# for merge figures
+if len(account) > 0:
+    stl_trend.to_csv("trend_diff.csv")
+    stl_r.to_csv("res_diff.csv")
+    stl_season.to_csv("season_diff.csv")
