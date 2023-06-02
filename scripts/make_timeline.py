@@ -274,7 +274,7 @@ def make_timeline(
         event_hline.loc[end_cond, "end_date"] = event_hline["end_date"][end_cond].apply(
             lambda xx: min(max(x), xx))
         ax2.hlines(event_hline["participants"], xmin=event_hline["start_date"],
-                   xmax=event_hline["end_date"], colors=event_hline["color"], linewidth=7)
+                   xmax=event_hline["end_date"], colors=event_hline["color"], linewidth=7, alpha=0.8)
         # for ei in event_hline.index:
         #     eh = event_hline.loc[ei]
         #     ax2.axhline(eh["participants"], xmin=eh["start_date"],

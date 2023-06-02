@@ -114,7 +114,9 @@ def get_y_cut_days(days):  # days: int
     return x_res, y_res
 
 
-for iter_day in range(32):
+days = 32
+
+for iter_day in range(days):
     iter_dt_today = dt_today + timedelta(days=-1 * iter_day)
     iter_today = iter_dt_today.strftime("%Y-%m-%d")
     if if_day_in_index(iter_dt_today, df_flw_raw_1min):
@@ -128,6 +130,7 @@ for iter_day in range(32):
         y_cut_x, y_cut_y = get_y_cut(iter_today)
         make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + iter_today + "_temp")
 
+# 以下forループはデータに含まれているか判定するためのもので、iteration目的ではない
 days = 32
 for iter_day in range(days):
     iter_dt_today = dt_today + timedelta(days=-1 * iter_day)
