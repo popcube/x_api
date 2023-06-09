@@ -8,25 +8,4 @@ jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - name: setup
-        run: |
-          npm install @aws-sdk/client-dynamodb
-       
-      - run: |
-          node ./src/index_old_2.js
-           
-          ls -la
-        env:
-          BEARER_TOKEN: ${{ secrets.TWT_BEARER_TOKEN }}
-          ACC_KEY: ${{ secrets.AWS_DYN_ACC_KEY }}
-          SEC_ACC_KEY: ${{ secrets.AWS_DYN_SEC_ACC_KEY }}
-          ACCOUNT: ${{ inputs.account }}
-
-      - uses: actions/upload-artifact@v3
-        with:
-          if-no-files-found: error
-          path: |
-            ./*.csv
-            ./*.png
+      - run: curl https://twitter.com/pj_sekai/status/1667051397773422594
