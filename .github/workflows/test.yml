@@ -9,5 +9,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          curl -XGET https://twitter.com/pj_sekai/status/1667051397773422594 \
-          -L
+          curl -XGET "https://twitter.com/pj_sekai/status/1667051397773422594"
