@@ -9,5 +9,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          curl -XGET -D- -H "User-Agent: Chrome" \
+          curl -b my.cookie -c my.cookie -L \
           "https://twitter.com/pj_sekai/status/1667051397773422594"
