@@ -22,7 +22,7 @@ jobs:
           mv ./docker_make/* ./
           ls -la
 
-          aws ecr-public get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin public.ecr.aws/z1y9t7d1
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/z1y9t7d1
 
           docker build -t some_selenium_pack .
           docker tag some_selenium_pack:latest public.ecr.aws/z1y9t7d1/some_selenium_pack:latest
