@@ -10,9 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      # - name: setup
-      #   run: |
-      #     npm install twitter-api-sdk
+      - name: setup
+        run: |
+          npm install
 
       - run: |
           npm start
