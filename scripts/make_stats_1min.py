@@ -63,10 +63,10 @@ df_flw_raw_1min.sort_index(inplace=True)
 df_flw_raw_1min.index = df_flw_raw_1min.index.to_series().apply(
     lambda x: x + timedelta(hours=9))
 
-df_twt = pd.read_csv("twtResults.csv", index_col="time", parse_dates=True, )
-df_twt.sort_index(inplace=True)
-df_twt.index = df_twt.index.to_series().apply(
-    lambda x: x + timedelta(hours=9))
+# df_twt = pd.read_csv("twtResults.csv", index_col="time", parse_dates=True, )
+# df_twt.sort_index(inplace=True)
+# df_twt.index = df_twt.index.to_series().apply(
+#     lambda x: x + timedelta(hours=9))
 
 
 def get_y_cut(today):
@@ -120,13 +120,13 @@ for iter_day in range(days):
     iter_dt_today = dt_today + timedelta(days=-1 * iter_day)
     iter_today = iter_dt_today.strftime("%Y-%m-%d")
     if if_day_in_index(iter_dt_today, df_flw_raw_1min):
-        if if_day_in_index(iter_dt_today, df_twt):
-            make_timeline(df_flw_raw_1min.loc[iter_today].index,
-                          df_flw_raw_1min.loc[iter_today].iloc[:, 0], "flw_raw_" + iter_today + "_temp", annot_dfds=df_twt.loc[iter_today])
-            print(df_twt.loc[iter_today]["url"].to_list())
-        else:
-            make_timeline(df_flw_raw_1min.loc[iter_today].index,
-                          df_flw_raw_1min.loc[iter_today].iloc[:, 0], "flw_raw_" + iter_today + "_vanilla")
+        # if if_day_in_index(iter_dt_today, df_twt):
+        #     make_timeline(df_flw_raw_1min.loc[iter_today].index,
+        #                   df_flw_raw_1min.loc[iter_today].iloc[:, 0], "flw_raw_" + iter_today + "_temp", annot_dfds=df_twt.loc[iter_today])
+        #     print(df_twt.loc[iter_today]["url"].to_list())
+        # else:
+        make_timeline(df_flw_raw_1min.loc[iter_today].index,
+                        df_flw_raw_1min.loc[iter_today].iloc[:, 0], "flw_raw_" + iter_today + "_vanilla")
         y_cut_x, y_cut_y = get_y_cut(iter_today)
         make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + iter_today + "_temp")
 

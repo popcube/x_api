@@ -8,3 +8,6 @@ __pycache__/
 # data files
 *.csv
 *.png
+
+# local files
+/python/
