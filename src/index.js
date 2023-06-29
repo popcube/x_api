@@ -1,6 +1,6 @@
 //Import package
 // import { Client, auth } from "twitter-api-sdk";
-import { getFollowers, getTweets } from "./twt_api.js"
+// import { getFollowers, getTweets } from "./twt_api.js"
 import { queryDyn, scanDyn } from "./dyn_api.js"
 import fs from "fs"
 
