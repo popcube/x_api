@@ -62,6 +62,11 @@ def frontend_api(acc_name, acc_id):
 
     r = requests.get(followers_url, cookies=cookie_dic,
                      params=queries, headers=header_dic)
+    print(r.text)
+    print()
+    print(r.headers)
+    print(r.status_code)
+    print(r.content)
     r_dic = json.loads(r.text)
     r_dic_data = r_dic["data"]["user"]["result"]["legacy"]
     # print(json.dumps(r_dic, indent=4))
