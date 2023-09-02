@@ -340,7 +340,7 @@ while ni < len(nan_idxs) - 1:
 df = pd.DataFrame([x_dif, y_cut_dif]).T
 df.columns = ["time", "y_cut_diff"]
 print(df["time"].dtype)
-print(dt["time"])
+print(df["time"])
 
 df.drop(nan_idxs, inplace=True)
 
