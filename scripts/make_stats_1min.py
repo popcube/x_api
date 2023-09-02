@@ -50,6 +50,10 @@ def if_day_in_index(dt, df_res):
 
 df_flw_1min = pd.read_csv("result_cut_dif.csv",
                           index_col="time", parse_dates=True)
+# TOBE DELETED debug line
+print(df_flw_1min.index)
+sys.exit(1)
+
 df_flw_1min.sort_index(inplace=True)
 
 # outputter.write_js(df_flw_1min.loc["2022-12-28"]
@@ -71,11 +75,11 @@ df_flw_raw_1min.index = df_flw_raw_1min.index.to_series().apply(
 
 def get_y_cut(today):
 
-    # debug line TOBE DELETED
-    print(df_flw_1min.index.to_list()[-10:])
-    print(type(df_flw_1min.index.to_list()[-1]))
-    print(today)
-    sys.exit(1)
+    # # debug line TOBE DELETED
+    # print(df_flw_1min.index.to_list()[-10:])
+    # print(type(df_flw_1min.index.to_list()[-1]))
+    # print(today)
+    # sys.exit(1)
 
     x_in = df_flw_1min.loc[today].index.to_list()
     x_res = [df_flw_raw_1min.loc[today].index[0]]
