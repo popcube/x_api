@@ -337,6 +337,7 @@ while ni < len(nan_idxs) - 1:
         del nan_idxs[ni]
         ni_prev = ni
 
+print(type(x_dif[0]))
 df = pd.DataFrame([x_dif, y_cut_dif]).T
 df.columns = ["time", "y_cut_diff"]
 print(df["time"].dtype)
