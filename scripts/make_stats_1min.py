@@ -48,8 +48,8 @@ def if_day_in_index(dt, df_res):
 # outputter = make_js("test_name")
 
 
-df_flw_1min = pd.read_csv("result_cut_dif.csv",
-                          index_col="time", parse_dates=True)
+df_flw_1min = pd.read_csv("result_cut_dif.csv", index_col="time")
+df_flw_1min.index = pd.to_datetime(df_flw_1min.index)
 # TOBE DELETED debug line
 print(df_flw_1min.index)
 sys.exit(1)
