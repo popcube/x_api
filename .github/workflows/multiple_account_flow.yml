@@ -61,6 +61,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install fonts-ipaexfont
+          pip install --upgrade pip --quiet
           pip install matplotlib --quiet
           pip install pandas --quiet
           pip install scipy --quiet
