@@ -339,12 +339,14 @@ while ni < len(nan_idxs) - 1:
 
 df = pd.DataFrame([x_dif, y_cut_dif]).T
 df.columns = ["time", "y_cut_diff"]
+print(df["time"].dtype)
+print(dt["time"])
 
 df.drop(nan_idxs, inplace=True)
 
 # this date format is needed to preserve the format
 # df.to_csv("./result_cut_dif.csv", index=False,
 #           date_format="%Y-%m-%d %H:%M:%S.%f")
-df["time"].dt.strftime("%Y-%m-%d %H:%M:%S.%f")
+# df["time"].dt.strftime("%Y-%m-%d %H:%M:%S.%f")
 df.to_csv("./result_cut_dif.csv", index=False)
 print("result_cut_dif.csv is saved!")
