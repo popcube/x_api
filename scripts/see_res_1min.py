@@ -36,6 +36,8 @@ def show_data_stats(time_data):
 with open("./results.csv") as f:
     rd = list(csv.reader(f))[1:]
 
+# change timestamp format to use in python
+# and read dynamodb data
 data = [[datetime.fromisoformat(
     d[0] + "0") + timedelta(hours=9), int(d[1])] for d in rd]
 data.sort(key=lambda x: x[0])
@@ -50,7 +52,7 @@ show_data_stats(x)
 # y = [d[1] for d in data if d[0] > datetime(2022, 12, 25, 3, 0, 0)]
 
 ####################
-# cut value define #
+# define cut value #
 y_cut_min = -5.5
 y_cut_max = 10.5
 if account == "Genshin_7":
@@ -302,8 +304,8 @@ make_timeline(x_dif, y_dif, "y_dif", y0=True,
 make_timeline(x_dif, y_cut_dif, "y_cut_dif", tl=True, y0=True,
               ylim=dict(top=y_cut_max, bottom=y_cut_min))
 make_timeline(x, y, "y_raw")
-make_timeline(x, y, "y_raw_annot", nan_idxs=nan_idxs,
-              adjusted_idxs=adjusted_idxs)
+# make_timeline(x, y, "y_raw_annot", nan_idxs=nan_idxs,
+#               adjusted_idxs=adjusted_idxs)
 
 x_dif_10days = [xd for xd in x_dif if xd >=
                 datetime.now() + timedelta(days=-10)]

@@ -51,8 +51,9 @@ def frontend_api(acc_name, tw_id):
     global gt
 
     if len(gt) == 0:
-        r = requests.get("https://twitter.com/" +
-                         acc_name + "/status/" + tw_id)
+        # whatever twitter post
+        r = requests.get(
+            "https://twitter.com/elonmusk/status/1695247110030119054")
         r_text = r.text
         gt = get_token_from_texts("gt", r_text)
     # print(r.text)
