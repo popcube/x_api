@@ -11,6 +11,11 @@ on:
         - pj_sekai
         - bang_dream_gbp
         - Genshin_7
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 ## scheduled at every hour
 ##  schedule:
 ##    - cron: '29 * * * *'
