@@ -342,7 +342,9 @@ df.columns = ["time", "y_cut_diff"]
 
 df.drop(nan_idxs, inplace=True)
 
-# this date_format is needed to preserve the format
-df.to_csv("./result_cut_dif.csv", index=False,
-          date_format="%Y-%m-%d %H:%M:%S.%f")
+# this date format is needed to preserve the format
+# df.to_csv("./result_cut_dif.csv", index=False,
+#           date_format="%Y-%m-%d %H:%M:%S.%f")
+df["time"].dt.strftime("%Y-%m-%d %H:%M:%S.%f")
+df.to_csv("./result_cut_dif.csv", index=False)
 print("result_cut_dif.csv is saved!")
