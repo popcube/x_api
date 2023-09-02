@@ -4,7 +4,7 @@ from statsmodels.tsa.seasonal import STL
 
 from matplotlib import pyplot as plt
 from make_timeline import make_timeline
-# import sys
+import sys
 import os
 
 # from make_js import make_js
@@ -72,7 +72,9 @@ df_flw_raw_1min.index = df_flw_raw_1min.index.to_series().apply(
 def get_y_cut(today):
 
     # debug line TOBE DELETED
-    print(df_flw_1min.index.to_list()[:-10])
+    print(df_flw_1min.index.to_list()[-10:])
+    print(today)
+    sys.exit(0)
 
     x_in = df_flw_1min.loc[today].index.to_list()
     x_res = [df_flw_raw_1min.loc[today].index[0]]
