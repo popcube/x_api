@@ -73,8 +73,9 @@ def get_y_cut(today):
 
     # debug line TOBE DELETED
     print(df_flw_1min.index.to_list()[-10:])
+    print(type(df_flw_1min.index.to_list()[-1]))
     print(today)
-    sys.exit(0)
+    sys.exit(1)
 
     x_in = df_flw_1min.loc[today].index.to_list()
     x_res = [df_flw_raw_1min.loc[today].index[0]]
