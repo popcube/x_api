@@ -71,6 +71,9 @@ df_flw_raw_1min.index = df_flw_raw_1min.index.to_series().apply(
 
 def get_y_cut(today):
 
+    # debug line TOBE DELETED
+    print(df_flw_1min.index.to_list()[:-10])
+
     x_in = df_flw_1min.loc[today].index.to_list()
     x_res = [df_flw_raw_1min.loc[today].index[0]]
     for i in range(len(x_in) - 1):
@@ -126,7 +129,7 @@ for iter_day in range(days):
         #     print(df_twt.loc[iter_today]["url"].to_list())
         # else:
         make_timeline(df_flw_raw_1min.loc[iter_today].index,
-                        df_flw_raw_1min.loc[iter_today].iloc[:, 0], "flw_raw_" + iter_today + "_vanilla")
+                      df_flw_raw_1min.loc[iter_today].iloc[:, 0], "flw_raw_" + iter_today + "_vanilla")
         y_cut_x, y_cut_y = get_y_cut(iter_today)
         make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + iter_today + "_temp")
 
