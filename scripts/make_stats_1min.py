@@ -8,7 +8,7 @@ import sys
 import os
 
 # from make_js import make_js
-from get_event_table import get_event_table
+from get_event_table import get_event_table, get_stream_table
 
 
 def unit_to_color(unit):
@@ -123,21 +123,103 @@ def get_y_cut_days(days):  # days: int
     return x_res, y_res
 
 
-days = 32
+days = 11
+iter_dt_days = [dt_today + timedelta(days=-1 * iter_day)
+                for iter_day in range(days)]
+iter_names = [iter_dt_today.strftime("%Y-%m-%d")
+              for iter_dt_today in iter_dt_days]
 
-for iter_day in range(days):
-    iter_dt_today = dt_today + timedelta(days=-1 * iter_day)
-    iter_today = iter_dt_today.strftime("%Y-%m-%d")
-    if if_day_in_index(iter_dt_today, df_flw_raw_1min):
+iter_table = pd.DataFrame()
+iter_table["desc"] = iter_names
+iter_table["date"] = iter_dt_days
+iter_table_backup = pd.DataFrame()
+
+event_table = None
+
+if account == "pj_sekai":
+    event_table = get_event_table()
+    event_table = event_table[["イベント名", "ユニット", "開始日", "終了日", "参加人数"]]
+    event_table["color"] = event_table["ユニット"].apply(unit_to_color)
+    event_table.columns = ["event_name", "unit", "start_date",
+                           "end_date", "participants", "color"]
+    stream_table = get_stream_table()
+    stream_table.columns = ["No", "date"]
+
+    cut_off_days = 94
+    cut_off_date = dt_today + timedelta(days=-1 * cut_off_days)
+
+    cut_event_table = event_table[event_table["start_date"] >= cut_off_date]
+    cut_event_table = cut_event_table[["event_name", "unit", "start_date"]]
+    # merge event_name and unit to create new description for event
+    cut_event_table = cut_event_table.apply(lambda x: pd.Series(
+        ["【" + x["unit"].upper() + " イベント】" + x["event_name"] + " start date", x["start_date"]]), axis=1)
+    cut_event_table.columns = ["desc", "date"]
+    # # print(cut_event_table["desc"])
+    # cut_event_table_yesterday = cut_event_table.apply(lambda x: x.index, axis=1)
+    cut_event_table_yesterday = cut_event_table.apply(lambda x: pd.Series(
+        [x["desc"][:-1*len("start date")] + "announcement date", x["date"] + timedelta(days=-1)]), axis=1)
+    cut_event_table_yesterday.columns = ["desc", "date"]
+
+    cut_stream_table = stream_table[stream_table["date"] >= cut_off_date]
+    cut_stream_table.loc[:, "No"] = cut_stream_table["No"].apply(
+        lambda x: "ワンダショちゃんねる " + x)
+    cut_stream_table.columns = ["desc", "date"]
+
+    merge_table = pd.concat(
+        [cut_event_table, cut_event_table_yesterday, cut_stream_table], ignore_index=True)
+    merge_table.sort_values("date", ignore_index=True, inplace=True)
+
+    # duplicated date list
+    dupe_dates = merge_table[merge_table.duplicated(subset=["date"])]["date"]
+    for dupe_date in dupe_dates:
+
+        # duplicated rows for the same date
+        dupe_rows = merge_table[merge_table["date"] == dupe_date]
+
+        # combine the description
+        dupe_row_desc = " and " .join(dupe_rows["desc"])
+
+        # set the description to the first duplicated row
+        # and delete the rest
+        dupe_row_index = dupe_rows.index
+        merge_table.loc[dupe_row_index[0], "desc"] = dupe_row_desc
+        merge_table.drop(dupe_row_index[1:], inplace=True, axis=0)
+
+        # add datetime info to description
+        merge_table.loc[:, "desc"] = merge_table["date"].apply(
+            lambda x: x.strftime("%Y-%m-%d ")) + merge_table["desc"]
+
+    # print(merge_table)
+    # print(merge_table[merge_table.duplicated(subset=["date"])])
+
+    temp_date_series = pd.concat(
+        [iter_table["date"], merge_table["date"]])
+    dupe_date_series = temp_date_series[temp_date_series.duplicated()]
+    for dupe_date in dupe_date_series:
+        iter_table = iter_table[iter_table["date"] != dupe_date]
+
+    iter_table = pd.concat([merge_table, iter_table], axis=0)
+    print(iter_table)
+    # print(merge_table.duplicated(subset=["date"]))
+
+    # dupe removal logic check
+    if len(iter_table[iter_table.duplicated(subset=["date"])]) != 0:
+        iter_table = iter_table_backup
+
+
+for iter_name, iter_dt_day in iter_table.values:
+    iter_name = iter_name.replace("/", "_")
+    iter_str_day = iter_dt_day.strftime("%Y-%m-%d")
+    if if_day_in_index(iter_dt_day, df_flw_raw_1min):
         # if if_day_in_index(iter_dt_today, df_twt):
         #     make_timeline(df_flw_raw_1min.loc[iter_today].index,
         #                   df_flw_raw_1min.loc[iter_today].iloc[:, 0], "flw_raw_" + iter_today + "_temp", annot_dfds=df_twt.loc[iter_today])
         #     print(df_twt.loc[iter_today]["url"].to_list())
         # else:
-        make_timeline(df_flw_raw_1min.loc[iter_today].index,
-                      df_flw_raw_1min.loc[iter_today].iloc[:, 0], "flw_raw_" + iter_today + "_vanilla")
-        y_cut_x, y_cut_y = get_y_cut(iter_today)
-        make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + iter_today + "_temp")
+        make_timeline(df_flw_raw_1min.loc[iter_str_day].index,
+                      df_flw_raw_1min.loc[iter_str_day].iloc[:, 0], "[raw] " + iter_name)
+        y_cut_x, y_cut_y = get_y_cut(iter_str_day)
+        make_timeline(y_cut_x, y_cut_y, "[filtered] " + iter_name)
 
 # 以下forループはデータに含まれているか判定するためのもので、iteration目的ではない
 days = 32
@@ -170,14 +252,6 @@ plt.close()
 stl_r = stl_series.resid
 stl_trend = stl_series.trend
 stl_season = stl_series.seasonal
-
-event_table = None
-if account == "pj_sekai":
-    event_table = get_event_table()
-    event_table = event_table[["ユニット", "開始日", "終了日", "参加人数"]]
-    event_table["color"] = event_table["ユニット"].apply(unit_to_color)
-    event_table.columns = ["unit", "start_date",
-                           "end_date", "participants", "color"]
 
 stl_r_10days = stl_r[stl_r.index > dt_today + timedelta(days=-10)]
 stl_season_10days = stl_season[stl_season.index >
