@@ -148,8 +148,8 @@ if account == "pj_sekai":
     cut_off_days = 94
     cut_off_date = dt_today + timedelta(days=-1 * cut_off_days)
 
-    cut_event_table = event_table[event_table["start_date"] >= cut_off_date]
-    cut_event_table = cut_event_table[["event_name", "unit", "start_date"]]
+    # cut_event_table = event_table[event_table["start_date"] >= cut_off_date]
+    cut_event_table = event_table[["event_name", "unit", "start_date"]]
     # merge event_name and unit to create new description for event
     cut_event_table = cut_event_table.apply(lambda x: pd.Series(
         ["【" + x["unit"].upper() + " イベント】" + x["event_name"] + " start date", x["start_date"]]), axis=1)
@@ -160,13 +160,13 @@ if account == "pj_sekai":
         [x["desc"][:-1*len("start date")] + "announcement date", x["date"] + timedelta(days=-1)]), axis=1)
     cut_event_table_yesterday.columns = ["desc", "date"]
 
-    cut_stream_table = stream_table[stream_table["date"] >= cut_off_date]
-    cut_stream_table.loc[:, "No"] = cut_stream_table["No"].apply(
+    # cut_stream_table = stream_table[stream_table["date"] >= cut_off_date]
+    stream_table.loc[:, "No"] = stream_table["No"].apply(
         lambda x: "ワンダショちゃんねる " + x)
-    cut_stream_table.columns = ["desc", "date"]
+    stream_table.columns = ["desc", "date"]
 
     merge_table = pd.concat(
-        [cut_event_table, cut_event_table_yesterday, cut_stream_table], ignore_index=True)
+        [cut_event_table, cut_event_table_yesterday, stream_table], ignore_index=True)
     merge_table.sort_values("date", ignore_index=True, inplace=True)
 
     # duplicated date list
@@ -185,9 +185,9 @@ if account == "pj_sekai":
         merge_table.loc[dupe_row_index[0], "desc"] = dupe_row_desc
         merge_table.drop(dupe_row_index[1:], inplace=True, axis=0)
 
-        # add datetime info to description
-        merge_table.loc[:, "desc"] = merge_table["date"].apply(
-            lambda x: x.strftime("%Y-%m-%d ")) + merge_table["desc"]
+    # add datetime info to description
+    merge_table.loc[:, "desc"] = merge_table["date"].apply(
+        lambda x: x.strftime("%Y-%m-%d ")) + merge_table["desc"]
 
     # print(merge_table)
     # print(merge_table[merge_table.duplicated(subset=["date"])])
@@ -198,41 +198,42 @@ if account == "pj_sekai":
     for dupe_date in dupe_date_series:
         iter_table = iter_table[iter_table["date"] != dupe_date]
 
-    iter_table = pd.concat([merge_table, iter_table], axis=0)
-    print(iter_table)
+    iter_table = pd.concat(
+        [merge_table[merge_table["date"] >= cut_off_date], iter_table], axis=0)
+    # print(iter_table)
     # print(merge_table.duplicated(subset=["date"]))
 
     # dupe removal logic check
     if len(iter_table[iter_table.duplicated(subset=["date"])]) != 0:
         iter_table = iter_table_backup
 
+if True:
+    for iter_name, iter_dt_day in iter_table.values:
+        iter_name = iter_name.replace("/", "_")
+        iter_str_day = iter_dt_day.strftime("%Y-%m-%d")
+        if if_day_in_index(iter_dt_day, df_flw_raw_1min):
+            # if if_day_in_index(iter_dt_today, df_twt):
+            #     make_timeline(df_flw_raw_1min.loc[iter_today].index,
+            #                   df_flw_raw_1min.loc[iter_today].iloc[:, 0], "flw_raw_" + iter_today + "_temp", annot_dfds=df_twt.loc[iter_today])
+            #     print(df_twt.loc[iter_today]["url"].to_list())
+            # else:
+            make_timeline(df_flw_raw_1min.loc[iter_str_day].index,
+                          df_flw_raw_1min.loc[iter_str_day].iloc[:, 0], "[raw] " + iter_name)
+            y_cut_x, y_cut_y = get_y_cut(iter_str_day)
+            make_timeline(y_cut_x, y_cut_y, "[filtered] " + iter_name)
 
-for iter_name, iter_dt_day in iter_table.values:
-    iter_name = iter_name.replace("/", "_")
-    iter_str_day = iter_dt_day.strftime("%Y-%m-%d")
-    if if_day_in_index(iter_dt_day, df_flw_raw_1min):
-        # if if_day_in_index(iter_dt_today, df_twt):
-        #     make_timeline(df_flw_raw_1min.loc[iter_today].index,
-        #                   df_flw_raw_1min.loc[iter_today].iloc[:, 0], "flw_raw_" + iter_today + "_temp", annot_dfds=df_twt.loc[iter_today])
-        #     print(df_twt.loc[iter_today]["url"].to_list())
-        # else:
-        make_timeline(df_flw_raw_1min.loc[iter_str_day].index,
-                      df_flw_raw_1min.loc[iter_str_day].iloc[:, 0], "[raw] " + iter_name)
-        y_cut_x, y_cut_y = get_y_cut(iter_str_day)
-        make_timeline(y_cut_x, y_cut_y, "[filtered] " + iter_name)
-
-# 以下forループはデータに含まれているか判定するためのもので、iteration目的ではない
-days = 32
-for iter_day in range(days):
-    iter_dt_today = dt_today + timedelta(days=-1 * iter_day)
-    if if_day_in_index(iter_dt_today, df_flw_raw_1min):
-        df_flw_raw_1min_days = df_flw_raw_1min[df_flw_raw_1min.index >
-                                               dt_today + timedelta(-1 * days)]
-        make_timeline(df_flw_raw_1min_days.index,
-                      df_flw_raw_1min_days.iloc[:, 0], "flw_raw_" + "31days" + "_vanilla")
-        y_cut_x, y_cut_y = get_y_cut_days(days)
-        make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + "31days" + "_temp")
-        break
+    # 以下forループはデータに含まれているか判定するためのもので、iteration目的ではない
+    days = 32
+    for iter_day in range(days):
+        iter_dt_today = dt_today + timedelta(days=-1 * iter_day)
+        if if_day_in_index(iter_dt_today, df_flw_raw_1min):
+            df_flw_raw_1min_days = df_flw_raw_1min[df_flw_raw_1min.index >
+                                                   dt_today + timedelta(-1 * days)]
+            make_timeline(df_flw_raw_1min_days.index,
+                          df_flw_raw_1min_days.iloc[:, 0], "flw_raw_" + "31days" + "_vanilla")
+            y_cut_x, y_cut_y = get_y_cut_days(days)
+            make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + "31days" + "_temp")
+            break
 
 df_flw = df_flw_1min.resample(
     rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
@@ -241,28 +242,57 @@ df_raw = df_flw_raw_1min.resample(
     rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
 ds_raw = df_raw['followers_count'].dropna()
 print(df_flw)
-df_flw.to_csv("test.csv")
+# df_flw.to_csv("test.csv")
 
 stl = STL(ds_flw, period=24*4, robust=True)
 stl_series = stl.fit()
 stl_series.plot()
-plt.savefig("./STL_decompose.png")
+# plt.savefig("./STL_decompose.png")
 plt.close()
 
 stl_r = stl_series.resid
 stl_trend = stl_series.trend
 stl_season = stl_series.seasonal
 
+event_table["start_date"] = event_table["start_date"].apply(
+    lambda x: x + timedelta(hours=15))
+event_table["end_date"] = event_table["end_date"].apply(
+    lambda x: x + timedelta(hours=21))
+
+# make_timeline(stl_trend.index, stl_trend, 'trend_diff',
+#               y_label="増減量（/分）トレンド", event_hline=event_table)
+
 stl_r_10days = stl_r[stl_r.index > dt_today + timedelta(days=-10)]
 stl_season_10days = stl_season[stl_season.index >
                                dt_today + timedelta(days=-10)]
+stl_trend_94_days = stl_trend[stl_trend.index > dt_today + timedelta(days=-94)]
+# merge_dates_94_days = merge_table[merge_table["date"]
+#                                   >= dt_today + timedelta(days=-94)]["date"]
+min_max_date_pairs = []
+for merge_date in merge_table["date"]:
+    # add date as date pair when the date is not the latter part in the pair
+    # the first value in the pair is at 00:00:00 while the second value is at 23:59:59
+    if merge_date + timedelta(days=-1) not in merge_table["date"].values:
+        min_max_date_pairs.append(
+            [merge_date, merge_date + timedelta(days=2, seconds=-1)])
+# print(min_max_date_pairs)
 
-make_timeline(stl_r_10days.index, stl_r_10days, 'res_diff',
-              y_label="増減量残差", ylim=dict(bottom=-5, top=5))
+trend_date_ranges = [stl_trend[(date_pairs[0] <= stl_trend.index) & (
+    stl_trend.index <= date_pairs[1])] for date_pairs in min_max_date_pairs]
+trend_date_idxmaxs = [(date_range.idxmax(), date_range.max())
+                      for date_range in trend_date_ranges if len(date_range) > 0]
+# print(trend_date_idxmaxs)
+
+
 make_timeline(stl_trend.index, stl_trend, 'trend_diff',
               y_label="増減量（/分）トレンド", event_hline=event_table)
-make_timeline(stl_season_10days.index, stl_season_10days, 'season_diff',
+make_timeline(stl_trend_94_days.index, stl_trend_94_days, 'trend_diff_94_days',
+              y_label="増減量（/分）トレンド", event_hline=event_table, data_annots=trend_date_idxmaxs)
+make_timeline(stl_r_10days.index, stl_r_10days, 'res_diff_10days',
+              y_label="増減量残差", ylim=dict(bottom=-5, top=5))
+make_timeline(stl_season_10days.index, stl_season_10days, 'season_diff_10days',
               y_label="増減量（/分）周期成分", ylim=dict(bottom=-5, top=5))
+
 
 # for merge figures
 if len(account) > 0:

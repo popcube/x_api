@@ -65,7 +65,8 @@ def make_timeline(
     y_label="",
     interp=False,
     event_hline=None,
-    ylim=None
+    ylim=None,
+    data_annots=[]
 ):
 
     plt.figure(figsize=(15, 8))
@@ -257,6 +258,14 @@ def make_timeline(
                 label_flgs[0] = False
 
         plt.gca().fill_between(x_fill_pair, *ylim, fc=fc, zorder=0, label=label)
+
+    # data annotation
+    if len(data_annots) > 0:
+        for data_annot in data_annots:
+            # print(data_annot)
+            plt.annotate(f"{data_annot[1]:5.3f}", xy=data_annot,
+                         horizontalalignment="center", verticalalignment="bottom", zorder=2)
+            # plt.show()
 
     if event_hline is None:
         plt.legend()
