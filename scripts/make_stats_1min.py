@@ -254,10 +254,11 @@ stl_r = stl_series.resid
 stl_trend = stl_series.trend
 stl_season = stl_series.seasonal
 
-event_table["start_date"] = event_table["start_date"].apply(
-    lambda x: x + timedelta(hours=15))
-event_table["end_date"] = event_table["end_date"].apply(
-    lambda x: x + timedelta(hours=21))
+if account == "pj_sekai":
+    event_table["start_date"] = event_table["start_date"].apply(
+        lambda x: x + timedelta(hours=15))
+    event_table["end_date"] = event_table["end_date"].apply(
+        lambda x: x + timedelta(hours=21))
 
 # make_timeline(stl_trend.index, stl_trend, 'trend_diff',
 #               y_label="増減量（/分）トレンド", event_hline=event_table)
