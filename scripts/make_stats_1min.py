@@ -135,6 +135,7 @@ iter_table["date"] = iter_dt_days
 iter_table_backup = pd.DataFrame()
 
 event_table = None
+merge_table = pd.DataFrame(columns=["desc", "date"])
 
 if account == "pj_sekai":
     event_table = get_event_table()
