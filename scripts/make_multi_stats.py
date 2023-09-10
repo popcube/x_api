@@ -39,7 +39,9 @@ for f in os.listdir("./"):
                               "time", f[len("season_diff_"):-1*len(".csv")]]))
 
 # pj_sekaiのみ過去データが多いので、マージグラフでその部分を大雑把に除く
-dfs_trend_xmin = max([min(df.index) for df in dfs_trend])
+# dfs_trend_xmin = max([min(df.index) for df in dfs_trend])
+# 過去6か月間に指定
+dfs_trend_xmin = datetime.now() + timedelta(days=-184)
 
 dfs_trend = [df[df.index >= dfs_trend_xmin] for df in dfs_trend]
 
