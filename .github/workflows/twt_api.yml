@@ -11,6 +11,7 @@ on:
         - pj_sekai
         - bang_dream_gbp
         - Genshin_7
+        - wds_game
 
 concurrency:
   group: ${{ github.workflow }}

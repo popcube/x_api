@@ -58,7 +58,7 @@ y_cut_max = 10.5
 if account == "Genshin_7":
     y_cut_min = -5.5
     y_cut_max = 13.5
-elif account == "bang_dream_gbp":
+elif account == "bang_dream_gbp" or account == "wds_game":
     y_cut_min = -11.0
     y_cut_max = 17.0
 
