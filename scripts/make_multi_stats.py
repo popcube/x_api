@@ -61,6 +61,6 @@ dfs_res = [df[df.index >= (datetime.now(
 make_multi_timeline(dfs_trend, "trend_multi",
                     y_label="フォロワー数推移トレンド（増減数/分）", y_labels=["@" + df.columns[0] for df in dfs_trend])
 make_multi_timeline(dfs_res, "res_multi", y_label="フォロワー数推移残差（増減数/分）", y_labels=[
-                    "@" + df.columns[0] + " + " + str(idx) for idx, df in enumerate(dfs_season)], ylim=dict(bottom=-5, top=5))
+                    "@" + df.columns[0] + " + " + str(idx) for idx, df in enumerate(dfs_res)], ylim=dict(bottom=-1, top=len(dfs_res)))
 make_multi_timeline(dfs_season, "season_multi", y_label="フォロワー数推移周期性成分（増減数/分）", y_labels=[
-                    "@" + df.columns[0] + " + " + str(idx) for idx, df in enumerate(dfs_season)], ylim=dict(bottom=-5, top=5))
+                    "@" + df.columns[0] + " + " + str(idx) for idx, df in enumerate(dfs_season)], ylim=dict(bottom=-5, top=len(dfs_season)))
