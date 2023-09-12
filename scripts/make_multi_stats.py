@@ -46,11 +46,10 @@ dfs_trend_xmin = datetime.now() + timedelta(days=-184)
 dfs_trend = [df[df.index >= dfs_trend_xmin] for df in dfs_trend]
 
 # seasonal, resは直近10日のみ
-dfs_season = [df[df.index >= (datetime.now() + timedelta(days=-10))]
-              for df in dfs_season]
-dfs_res = [df[df.index >= (datetime.now() + timedelta(days=-10))]
-           for df in dfs_res]
-
+dfs_season = [df[df.index >= (datetime.now(
+) + timedelta(days=-10))] + idx for idx, df in enumerate(dfs_season)]
+dfs_res = [df[df.index >= (datetime.now(
+) + timedelta(days=-10))] + idx for idx, df in enumerate(dfs_res)]
 # df_flw_1min = pd.read_csv("result_cut_dif.csv",
 #                           index_col="time", parse_dates=True)
 # df_flw_1min.sort_index(inplace=True)
@@ -61,7 +60,7 @@ dfs_res = [df[df.index >= (datetime.now() + timedelta(days=-10))]
 # ):
 make_multi_timeline(dfs_trend, "trend_multi",
                     y_label="フォロワー数推移トレンド（増減数/分）", y_labels=["@" + df.columns[0] for df in dfs_trend])
-make_multi_timeline(dfs_res, "res_multi", y_label="フォロワー数推移残差（増減数/分）",
-                    y_labels=["@" + df.columns[0] for df in dfs_res], ylim=dict(bottom=-5, top=5))
-make_multi_timeline(dfs_season, "season_multi", y_label="フォロワー数推移周期性成分（増減数/分）",
-                    y_labels=["@" + df.columns[0] for df in dfs_season], ylim=dict(bottom=-5, top=5))
+make_multi_timeline(dfs_res, "res_multi", y_label="フォロワー数推移残差（増減数/分）", y_labels=[
+                    "@" + df.columns[0] + " + " + str(idx) for idx, df in enumerate(dfs_season)], ylim=dict(bottom=-5, top=5))
+make_multi_timeline(dfs_season, "season_multi", y_label="フォロワー数推移周期性成分（増減数/分）", y_labels=[
+                    "@" + df.columns[0] + " + " + str(idx) for idx, df in enumerate(dfs_season)], ylim=dict(bottom=-5, top=5))

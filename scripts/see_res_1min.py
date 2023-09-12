@@ -67,7 +67,7 @@ elif account == "bang_dream_gbp" or account == "wds_game":
 y_dif = [0] + [(y[i] - y[i-1]) * 60 / (x[i]-x[i-1]).total_seconds()
                for i in range(1, len(y))]
 x_dif = [x[0]] + [x[i] + (x[i+1] - x[i])/2 for i in range(len(x)-1)]
-y_dif_cut = [d for d in y_dif if y_cut_min <= d and d <= y_cut_max]
+y_dif_cut = [d for d in y_dif if y_cut_min <= d <= y_cut_max]
 print(f'mean before cut: {mean(y_dif):.2f}')
 # print(f'mean after cut: {mean(y_dif_cut):.2f}')
 
@@ -132,7 +132,7 @@ adjusted_idxs = set()
 
 
 def yd_valid(yd):
-    return (y_cut_min <= yd and yd <= y_cut_max)
+    return (y_cut_min <= yd <= y_cut_max)
 
 
 def init_bulk():
