@@ -12,6 +12,7 @@ on:
         - bang_dream_gbp
         - Genshin_7
         - wds_game
+        - ensemble_stars
 
 concurrency:
   group: ${{ github.workflow }}

@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        account: [pj_sekai, bang_dream_gbp, Genshin_7, wds_game]
+        account: [pj_sekai, bang_dream_gbp, Genshin_7, wds_game, ensemble_stars]
     steps:
       - uses: actions/checkout@v3
 

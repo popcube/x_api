@@ -17,7 +17,7 @@ const queryParam = (acc) => {
     }
 }
 
-const userNames = ["pj_sekai", "bang_dream_gbp", "Genshin_7", "wds_game"];
+const userNames = ["pj_sekai", "bang_dream_gbp", "Genshin_7", "wds_game", "ensemble_stars"];
 
 async function main(account = undefined) {
     // FOR SKIPPING LOOP
