@@ -1,4 +1,4 @@
-name: "single account flow"
+name: "single account flw"
 on:
   workflow_dispatch:
     inputs:
@@ -30,14 +30,14 @@ jobs:
 
       - name: setup
         run: |
-          npm install twitter-api-sdk
+          npm install
        
       - run: |
           npm start
            
           ls -la
         env:
-          BEARER_TOKEN: ${{ secrets.TWT_BEARER_TOKEN }}
+          # BEARER_TOKEN: ${{ secrets.TWT_BEARER_TOKEN }}
           ACC_KEY: ${{ secrets.AWS_DYN_ACC_KEY }}
           SEC_ACC_KEY: ${{ secrets.AWS_DYN_SEC_ACC_KEY }}
           ACCOUNT: ${{ inputs.account }}
