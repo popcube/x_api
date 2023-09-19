@@ -47,9 +47,9 @@ dfs_trend = [df[df.index >= dfs_trend_xmin] for df in dfs_trend]
 
 # seasonal, resは直近10日のみ、かつ上下限-0.95、0.95を設定
 dfs_season = [df[df.index >= (datetime.now(
-) + timedelta(days=-10))].applymap(lambda x: min(max(x, -0.95), 0.95)) + idx*2 for idx, df in enumerate(dfs_season)]
+) + timedelta(days=-10))].map(lambda x: min(max(x, -0.95), 0.95)) + idx*2 for idx, df in enumerate(dfs_season)]
 dfs_res = [df[df.index >= (datetime.now(
-) + timedelta(days=-10))].applymap(lambda x: min(max(x, -0.95), 0.95)) + idx*2 for idx, df in enumerate(dfs_res)]
+) + timedelta(days=-10))].map(lambda x: min(max(x, -0.95), 0.95)) + idx*2 for idx, df in enumerate(dfs_res)]
 # df_flw_1min = pd.read_csv("result_cut_dif.csv",
 #                           index_col="time", parse_dates=True)
 # df_flw_1min.sort_index(inplace=True)
