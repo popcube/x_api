@@ -66,6 +66,7 @@ def make_timeline(
     interp=False,
     event_hline=None,
     ylim=None,
+    xlim=None,
     data_annots=[]
 ):
 
@@ -158,8 +159,11 @@ def make_timeline(
                 0] * len(y_mean60), fc="cyan")
             plt.gca().fill_between(
                 x, [0] * len(y_mean60), [min(0, ym) for ym in y_mean60], fc="pink")
+
     if ylim is not None:
         plt.gca().set_ylim(bottom=ylim["bottom"], top=ylim["top"])
+    if xlim is not None:
+        plt.gca().set_xlim(xlim["left"], xlim["right"])
 
     # 差分表示のときはnan部を点で表現
     if 'dif' in figname:
@@ -168,14 +172,14 @@ def make_timeline(
         plt.axhline(y=0, linestyle="dotted")
         if len(nan_idxs) > 0:
             plt.plot(
-                [x[ni] for ni in nan_idxs],
-                [y[ni] for ni in nan_idxs],
+                [x[ni] for ni in nan_idxs if ni < len(x)],
+                [y[ni] for ni in nan_idxs if ni < len(y)],
                 marker='o', color="blue", linewidth=0, zorder=20, label="無視されるデータ点"
             )
         if len(adjusted_idxs) > 0:
             plt.plot(
-                [x[ni] for ni in adjusted_idxs],
-                [y[ni] for ni in adjusted_idxs],
+                [x[ni] for ni in adjusted_idxs if ni < len(x)],
+                [y[ni] for ni in adjusted_idxs if ni < len(y)],
                 marker='o', color="orange", linewidth=0, zorder=20, label="平均化されるデータ点"
             )
     # 実数表示の時はnan部を2点間の線で表現

@@ -300,7 +300,9 @@ print(
 
 ###### Chart creaation part ######
 make_timeline(x_dif, y_dif, "y_dif", y0=True,
-              nan_idxs=nan_idxs, adjusted_idxs=adjusted_idxs)
+              nan_idxs=nan_idxs, adjusted_idxs=adjusted_idxs,
+              ylim={"top": 80, "bottom": -80},
+              xlim={"left": datetime.now() + timedelta(days=-10), "right": datetime.now()})
 make_timeline(x_dif, y_cut_dif, "y_cut_dif", tl=True, y0=True,
               ylim=dict(top=y_cut_max, bottom=y_cut_min))
 make_timeline(x, y, "y_raw")
