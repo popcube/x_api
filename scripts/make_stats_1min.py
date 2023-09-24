@@ -218,9 +218,9 @@ if True:
             #                   df_flw_raw_1min.loc[iter_today].iloc[:, 0], "flw_raw_" + iter_today + "_temp", annot_dfds=df_twt.loc[iter_today])
             #     print(df_twt.loc[iter_today]["url"].to_list())
             # else:
-            df_raw_day = df_flw_raw_1min.loc[iter_str_day]
+            df_raw_day = df_flw_raw_1min.loc[iter_str_day].iloc[:, 0]
             make_timeline(df_raw_day.index,
-                          df_raw_day.iloc[:, 0],
+                          df_raw_day,
                           "[raw] " + iter_name,
                           data_annots=((df_raw_day.idxmax(), df_raw_day.max(), "max"),
                                        (df_raw_day.idxmin(), df_raw_day.min(), "min")))
