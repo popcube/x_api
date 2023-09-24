@@ -291,8 +291,8 @@ trend_date_ranges = [stl_trend[(date_pairs[0] <= stl_trend.index) & (
 trend_date_idxmaxs = [(date_range.idxmax(), date_range.max(), "max")
                       for date_range in trend_date_ranges
                       if (len(date_range) > 0)
-                      and (date_range.idxmax() != date_range.iat[0, 0])
-                      and (date_range.idxmax() != date_range.iat[-1, 0])]
+                      and (date_range.idxmax() != date_range.iat[0])
+                      and (date_range.idxmax() != date_range.iat[-1])]
 # print(trend_date_idxmaxs)
 
 
