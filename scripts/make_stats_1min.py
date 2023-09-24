@@ -218,23 +218,30 @@ if True:
             #                   df_flw_raw_1min.loc[iter_today].iloc[:, 0], "flw_raw_" + iter_today + "_temp", annot_dfds=df_twt.loc[iter_today])
             #     print(df_twt.loc[iter_today]["url"].to_list())
             # else:
-            make_timeline(df_flw_raw_1min.loc[iter_str_day].index,
-                          df_flw_raw_1min.loc[iter_str_day].iloc[:, 0], "[raw] " + iter_name)
+            df_raw_day = df_flw_raw_1min.loc[iter_str_day]
+            make_timeline(df_raw_day.index,
+                          df_raw_day.iloc[:, 0],
+                          "[raw] " + iter_name,
+                          data_annots=((df_raw_day.idxmax(), df_raw_day.max(), "max"),
+                                       (df_raw_day.idxmin(), df_raw_day.min(), "min")))
             y_cut_x, y_cut_y = get_y_cut(iter_str_day)
             make_timeline(y_cut_x, y_cut_y, "[filtered] " + iter_name)
 
     # 以下forループはデータに含まれているか判定するためのもので、iteration目的ではない
-    days = 32
-    for iter_day in range(days):
-        iter_dt_today = dt_today + timedelta(days=-1 * iter_day)
-        if if_day_in_index(iter_dt_today, df_flw_raw_1min):
-            df_flw_raw_1min_days = df_flw_raw_1min[df_flw_raw_1min.index >
-                                                   dt_today + timedelta(-1 * days)]
-            make_timeline(df_flw_raw_1min_days.index,
-                          df_flw_raw_1min_days.iloc[:, 0], "flw_raw_" + "31days" + "_vanilla")
-            y_cut_x, y_cut_y = get_y_cut_days(days)
-            make_timeline(y_cut_x, y_cut_y, "y_cut_1min_" + "31days" + "_temp")
-            break
+days = 32
+for iter_day in range(days):
+    iter_dt_today = dt_today + timedelta(days=-1 * iter_day)
+    if if_day_in_index(iter_dt_today, df_flw_raw_1min):
+        df_flw_raw_1min_days = df_flw_raw_1min[df_flw_raw_1min.index >
+                                               dt_today + timedelta(-1 * days)]
+        make_timeline(df_flw_raw_1min_days.index,
+                      df_flw_raw_1min_days.iloc[:, 0],
+                      "[raw] 31days",
+                      data_annots=((df_flw_raw_1min_days.idxmax(), df_flw_raw_1min_days.max(), "max"),
+                                   (df_flw_raw_1min_days.idxmin(), df_flw_raw_1min_days.min(), "min")))
+        y_cut_x, y_cut_y = get_y_cut_days(days)
+        make_timeline(y_cut_x, y_cut_y, "[filtered] 31days")
+        break
 
 df_flw = df_flw_1min.resample(
     rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
@@ -281,8 +288,11 @@ for merge_date in merge_table["date"]:
 
 trend_date_ranges = [stl_trend[(date_pairs[0] <= stl_trend.index) & (
     stl_trend.index <= date_pairs[1])] for date_pairs in min_max_date_pairs]
-trend_date_idxmaxs = [(date_range.idxmax(), date_range.max())
-                      for date_range in trend_date_ranges if len(date_range) > 0]
+trend_date_idxmaxs = [(date_range.idxmax(), date_range.max(), "max")
+                      for date_range in trend_date_ranges
+                      if (len(date_range) > 0)
+                      and (date_range.idxmax() != date_range.iat[0, 0])
+                      and (date_range.idxmax() != date_range.iat[-1, 0])]
 # print(trend_date_idxmaxs)
 
 

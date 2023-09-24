@@ -67,7 +67,7 @@ def make_timeline(
     event_hline=None,
     ylim=None,
     xlim=None,
-    data_annots=[]
+    data_annots=()
 ):
 
     plt.figure(figsize=(15, 8))
@@ -267,8 +267,10 @@ def make_timeline(
     if len(data_annots) > 0:
         for data_annot in data_annots:
             # print(data_annot)
-            plt.annotate(f"{data_annot[1]:5.3f}", xy=data_annot,
-                         horizontalalignment="center", verticalalignment="bottom", zorder=2)
+            if len(data_annot) == 3:
+                va = "top" if data_annot[2] == "min" else "bottom"
+                plt.annotate(f"{data_annot[1]:5.3f}", xy=data_annot[:2],
+                             horizontalalignment="center", verticalalignment=va, zorder=2)
             # plt.show()
 
     if event_hline is None:
