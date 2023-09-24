@@ -233,9 +233,9 @@ for iter_day in range(days):
     iter_dt_today = dt_today + timedelta(days=-1 * iter_day)
     if if_day_in_index(iter_dt_today, df_flw_raw_1min):
         df_flw_raw_1min_days = df_flw_raw_1min[df_flw_raw_1min.index >
-                                               dt_today + timedelta(-1 * days)]
+                                               dt_today + timedelta(-1 * days)].iloc[:, 0]
         make_timeline(df_flw_raw_1min_days.index,
-                      df_flw_raw_1min_days.iloc[:, 0],
+                      df_flw_raw_1min_days,
                       "[raw] 31days",
                       data_annots=((df_flw_raw_1min_days.idxmax(), df_flw_raw_1min_days.max(), "max"),
                                    (df_flw_raw_1min_days.idxmin(), df_flw_raw_1min_days.min(), "min")))
