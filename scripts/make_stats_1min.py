@@ -208,7 +208,7 @@ if account == "pj_sekai":
     if len(iter_table[iter_table.duplicated(subset=["date"])]) != 0:
         iter_table = iter_table_backup
 
-if False:
+if True:
     for iter_name, iter_dt_day in iter_table.values:
         iter_name = iter_name.replace("/", "_")
         iter_str_day = iter_dt_day.strftime("%Y-%m-%d")
