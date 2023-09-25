@@ -208,7 +208,7 @@ if account == "pj_sekai":
     if len(iter_table[iter_table.duplicated(subset=["date"])]) != 0:
         iter_table = iter_table_backup
 
-if True:
+if False:
     for iter_name, iter_dt_day in iter_table.values:
         iter_name = iter_name.replace("/", "_")
         iter_str_day = iter_dt_day.strftime("%Y-%m-%d")
@@ -228,20 +228,20 @@ if True:
             make_timeline(y_cut_x, y_cut_y, "[filtered] " + iter_name)
 
     # 以下forループはデータに含まれているか判定するためのもので、iteration目的ではない
-days = 32
-for iter_day in range(days):
-    iter_dt_today = dt_today + timedelta(days=-1 * iter_day)
-    if if_day_in_index(iter_dt_today, df_flw_raw_1min):
-        df_flw_raw_1min_days = df_flw_raw_1min[df_flw_raw_1min.index >
-                                               dt_today + timedelta(-1 * days)].iloc[:, 0]
-        make_timeline(df_flw_raw_1min_days.index,
-                      df_flw_raw_1min_days,
-                      "[raw] 31days",
-                      data_annots=((df_flw_raw_1min_days.idxmax(), df_flw_raw_1min_days.max(), "max"),
-                                   (df_flw_raw_1min_days.idxmin(), df_flw_raw_1min_days.min(), "min")))
-        y_cut_x, y_cut_y = get_y_cut_days(days)
-        make_timeline(y_cut_x, y_cut_y, "[filtered] 31days")
-        break
+    days = 32
+    for iter_day in range(days):
+        iter_dt_today = dt_today + timedelta(days=-1 * iter_day)
+        if if_day_in_index(iter_dt_today, df_flw_raw_1min):
+            df_flw_raw_1min_days = df_flw_raw_1min[df_flw_raw_1min.index >
+                                                   dt_today + timedelta(-1 * days)].iloc[:, 0]
+            make_timeline(df_flw_raw_1min_days.index,
+                          df_flw_raw_1min_days,
+                          "[raw] 31days",
+                          data_annots=((df_flw_raw_1min_days.idxmax(), df_flw_raw_1min_days.max(), "max"),
+                                       (df_flw_raw_1min_days.idxmin(), df_flw_raw_1min_days.min(), "min")))
+            y_cut_x, y_cut_y = get_y_cut_days(days)
+            make_timeline(y_cut_x, y_cut_y, "[filtered] 31days")
+            break
 
 df_flw = df_flw_1min.resample(
     rule='15min', offset=timedelta(seconds=(15/2)*60)).mean()
@@ -291,10 +291,8 @@ trend_date_ranges = [stl_trend[(date_pairs[0] <= stl_trend.index) & (
 trend_date_idxmaxs = [(date_range.idxmax(), date_range.max(), "max")
                       for date_range in trend_date_ranges
                       if (len(date_range) > 0)
-                      and (date_range.idxmax() != date_range.iat[0])
-                      and (date_range.idxmax() != date_range.iat[-1])]
-# print(trend_date_idxmaxs)
-
+                      and (date_range.idxmax() != date_range.index[0])
+                      and (date_range.idxmax() != date_range.index[-1])]
 
 make_timeline(stl_trend.index, stl_trend, 'trend_diff',
               y_label="増減量（/分）トレンド", event_hline=event_table)
