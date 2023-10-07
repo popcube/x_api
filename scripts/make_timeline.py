@@ -132,16 +132,16 @@ def make_timeline(
     if not (len(xaxis_minor_byhour) == 1 and xaxis_minor_byhour[0] == 0):
         plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
 
-    plt.gca().yaxis.set_major_locator(
-        ticker.MultipleLocator(max(5*(y_range//60), 1)))
-    plt.gca().yaxis.set_minor_locator(
-        ticker.MultipleLocator(max(y_range//60, 1) * 1))
+    if y_range != 0:
+        plt.gca().yaxis.set_major_locator(
+            ticker.MultipleLocator(max(5*(y_range//60), 1)))
+        plt.gca().yaxis.set_minor_locator(
+            ticker.MultipleLocator(max(y_range//60, 1) * 1))
     plt.gca().yaxis.set_major_formatter(
         ticker.ScalarFormatter(useOffset=False, useMathText=False))
     plt.gca().yaxis.get_major_formatter().set_scientific(False)
 
     plt.gca().tick_params(axis='x', which='major', length=14, color="white")
-
     x_fill_pairs = make_fill_pairs(x)
 
     y_label_temp = y_label if len(y_label) > 0 else "元データ"
@@ -213,7 +213,7 @@ def make_timeline(
         plt.plot(x, y, marker='o', markerfacecolor='black', markeredgewidth=0,
                  markersize=4, linewidth=0, label=y_label_temp)
 
-        if interp and len(x) >= 4:
+        if interp and len(x) >= 4 and x_range != 0:
             X_Y_Spline = make_interp_spline(
                 list(map(lambda ix: ix.timestamp(), x)), y)
             X_ = [min(x) + i * 0.001 * x_range for i in range(1001)]
@@ -389,10 +389,11 @@ def make_multi_timeline(
     if not (len(xaxis_minor_byhour) == 1 and xaxis_minor_byhour[0] == 0):
         plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
 
-    plt.gca().yaxis.set_major_locator(
-        ticker.MultipleLocator(max(5*(y_range//60), 1)))
-    plt.gca().yaxis.set_minor_locator(
-        ticker.MultipleLocator(max(y_range//60, 1) * 1))
+    if y_range != 0:
+        plt.gca().yaxis.set_major_locator(
+            ticker.MultipleLocator(max(5*(y_range//60), 1)))
+        plt.gca().yaxis.set_minor_locator(
+            ticker.MultipleLocator(max(y_range//60, 1) * 1))
     plt.gca().yaxis.set_major_formatter(
         ticker.ScalarFormatter(useOffset=False, useMathText=False))
     plt.gca().yaxis.get_major_formatter().set_scientific(False)

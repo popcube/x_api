@@ -212,7 +212,7 @@ if True:
     for iter_name, iter_dt_day in iter_table.values:
         iter_name = iter_name.replace("/", "_")
         iter_str_day = iter_dt_day.strftime("%Y-%m-%d")
-        if if_day_in_index(iter_dt_day, df_flw_raw_1min):
+        if if_day_in_index(iter_dt_day, df_flw_raw_1min) and if_day_in_index(iter_dt_day, df_flw_1min):
             # if if_day_in_index(iter_dt_today, df_twt):
             #     make_timeline(df_flw_raw_1min.loc[iter_today].index,
             #                   df_flw_raw_1min.loc[iter_today].iloc[:, 0], "flw_raw_" + iter_today + "_temp", annot_dfds=df_twt.loc[iter_today])
