@@ -222,7 +222,7 @@ if True:
             make_timeline(df_raw_day.index,
                           df_raw_day,
                           "[raw] " + iter_name,
-                          data_annots=((df_raw_day.idxmax(), df_raw_day.max(), "max"),
+                          data_annots=((df_raw_day.idxmax(), df_raw_day.max(), "min"),
                                        (df_raw_day.idxmin(), df_raw_day.min(), "min")))
             y_cut_x, y_cut_y = get_y_cut(iter_str_day)
             make_timeline(y_cut_x, y_cut_y, "[filtered] " + iter_name)

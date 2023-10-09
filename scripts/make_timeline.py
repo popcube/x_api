@@ -275,7 +275,7 @@ def make_timeline(
             # plt.show()
 
     if event_hline is None:
-        plt.legend()
+        plt.legend().set(zorder=21)
 
     # イベント開催期間追記用
     else:
