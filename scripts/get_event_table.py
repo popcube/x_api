@@ -44,17 +44,32 @@ def get_event_table():
 
 
 def get_stream_table():
-    pjsekai_res = requests.get("https://pjsekai.com/?1c5f55649f")
+    # pjsekai_res = requests.get("https://pjsekai.com/?1c5f55649f")
 
-    a = pd.read_html(pjsekai_res.content, encoding="utf-8",
-                     attrs={"class": "style_table"})[0]
-    aa = a[["No", "配信日時"]]
-    aa.columns = ["No", "配信日時"]
-    aa = aa.drop_duplicates(ignore_index=True)
+    # a = pd.read_html(pjsekai_res.content, encoding="utf-8",
+    #                  attrs={"cellpadding": "2", "cellspacing": "2"})
+
+    # aa = a[["No", "配信日時"]]
+    # aa.columns = ["No", "配信日時"]
+    # aa = aa.drop_duplicates(ignore_index=True)
 
     # convert Japanese datetime string to datetime object
-    aa["配信日時"] = aa["配信日時"].apply(
-        lambda x: datetime.strptime(x[:x.index("(")], "%Y/%m/%d"))
+    # aa["配信日時"] = aa["配信日時"].apply(
+    #     lambda x: datetime.strptime(x[:x.index("(")], "%Y/%m/%d"))
+
+    aa = pd.DataFrame([
+        ["第27回", datetime(2022, 12, 16)],
+        ["第28回", datetime(2023, 1, 27)],
+        ["第29回", datetime(2023, 2, 27)],
+        ["2.5周年スペシャル", datetime(2023, 3, 23)],
+        ["第31回", datetime(2023, 4, 24)],
+        ["第32回", datetime(2023, 5, 24)],
+        ["第33回", datetime(2023, 6, 19)],
+        ["第34回", datetime(2023, 7, 26)],
+        ["第35回", datetime(2023, 8, 17)],
+        ["3周年スペシャル", datetime(2023, 9, 27)]],
+        columns=["No", "配信日時"]
+    )
 
     # Be careful that No column includes the description of the stream
     return aa
