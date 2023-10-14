@@ -41,9 +41,8 @@ for f in os.listdir("./"):
 # pj_sekaiのみ過去データが多いので、マージグラフでその部分を大雑把に除く
 # dfs_trend_xmin = max([min(df.index) for df in dfs_trend])
 # 過去6か月間に指定
-dfs_trend_xmin = datetime.now() + timedelta(days=-184)
-
-dfs_trend = [df[df.index >= dfs_trend_xmin] for df in dfs_trend]
+dfs_trend_184days = [df[df.index >= datetime.now() + timedelta(days=-184)]
+                     for df in dfs_trend]
 
 # seasonal, resは直近10日のみ、かつ上下限-0.95、0.95を設定
 dfs_season = [df[df.index >= (datetime.now(
@@ -58,10 +57,12 @@ dfs_res = [df[df.index >= (datetime.now(
 #     y_label=None,
 #     y_labels=None
 # ):
-make_multi_timeline([df[df.index >= (datetime.now() + timedelta(days=-10))] for df in dfs_trend], "trend_multi_10days",
+make_multi_timeline(dfs_trend, "trend_multi",
                     y_label="フォロワー数推移トレンド（増減数/分）", y_labels=["@" + df.columns[0] for df in dfs_trend])
-make_multi_timeline(dfs_trend, "trend_multi_184days",
-                    y_label="フォロワー数推移トレンド（増減数/分）", y_labels=["@" + df.columns[0] for df in dfs_trend])
+make_multi_timeline([df[df.index >= (datetime.now() + timedelta(days=-10))] for df in dfs_trend_184days], "trend_multi_10days",
+                    y_label="フォロワー数推移トレンド（増減数/分）", y_labels=["@" + df.columns[0] for df in dfs_trend_184days])
+make_multi_timeline(dfs_trend_184days, "trend_multi_184days",
+                    y_label="フォロワー数推移トレンド（増減数/分）", y_labels=["@" + df.columns[0] for df in dfs_trend_184days])
 make_multi_timeline(dfs_res, "res_multi", y_label="フォロワー数推移残差（増減数/分）", y_labels=[
                     "@" + df.columns[0] + " + " + str(idx*2) for idx, df in enumerate(dfs_res)], ylim=dict(bottom=-1, top=(len(dfs_res)-1)*2+1))
 make_multi_timeline(dfs_season, "season_multi", y_label="フォロワー数推移周期性成分（増減数/分）", y_labels=[
