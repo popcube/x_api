@@ -246,7 +246,7 @@ if True:
             make_timeline(y_cut_x,
                           y_cut_y,
                           "[filtered] " + iter_name,
-                          data_annots=[(y_cut_x[annot_idx], y_cut_y[annot_idx], "max")])
+                          data_annots=[(y_cut_x[annot_idx], y_cut_y[annot_idx], "min")])
 
     # 以下forループはデータに含まれているか判定するためのもので、iteration目的ではない
     days = 32
