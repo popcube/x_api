@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 import pandas as pd
+import numpy as np
 from statsmodels.tsa.seasonal import STL
 
 from matplotlib import pyplot as plt
@@ -45,6 +46,19 @@ def if_day_in_index(dt, df_res):
     else:
         return False
 
+# get the datetime which is closer to the in_datetie in terms of time, ignoring date
+# in_datetime_list elements must be in one day
+
+
+def get_time_in_list(in_datetime, in_datetime_list):
+    if len(in_datetime_list) == 0:
+        print("in_datetime_list is empty")
+        sys.exit(1)
+    in_date = in_datetime_list[0].date()
+    in_time = in_datetime.time()
+    target_datetime = datetime.combine(in_date, in_time)
+    return np.abs(np.asarray(in_datetime_list) - target_datetime).argmin()
+
 # outputter = make_js("test_name")
 
 
@@ -54,6 +68,9 @@ df_flw_1min = pd.read_csv("result_cut_dif.csv",
 # TOBE DELETED debug line
 
 df_flw_1min.sort_index(inplace=True)
+
+# last index
+df_flw_1min_last_idx = df_flw_1min.tail(1).index[0]
 
 # outputter.write_js(df_flw_1min.loc["2022-12-28"]
 #                    ["y_cut_diff"], "sample_data")
@@ -225,7 +242,11 @@ if True:
                           data_annots=((df_raw_day.idxmax(), df_raw_day.max(), "min"),
                                        (df_raw_day.idxmin(), df_raw_day.min(), "min")))
             y_cut_x, y_cut_y = get_y_cut(iter_str_day)
-            make_timeline(y_cut_x, y_cut_y, "[filtered] " + iter_name)
+            annot_idx = get_time_in_list(df_flw_1min_last_idx, y_cut_x)
+            make_timeline(y_cut_x,
+                          y_cut_y,
+                          "[filtered] " + iter_name,
+                          data_annots=[(y_cut_x[annot_idx], y_cut_y[annot_idx], "max")])
 
     # 以下forループはデータに含まれているか判定するためのもので、iteration目的ではない
     days = 32
