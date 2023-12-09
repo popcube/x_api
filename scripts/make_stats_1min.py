@@ -179,8 +179,6 @@ if account == "pj_sekai":
     cut_event_table_yesterday.columns = ["desc", "date"]
 
     # cut_stream_table = stream_table[stream_table["date"] >= cut_off_date]
-    stream_table.loc[:, "No"] = stream_table["No"].apply(
-        lambda x: "ワンダショちゃんねる " + x)
     stream_table.columns = ["desc", "date"]
 
     merge_table = pd.concat(
@@ -255,6 +253,9 @@ if True:
         if if_day_in_index(iter_dt_today, df_flw_raw_1min):
             df_flw_raw_1min_days = df_flw_raw_1min[df_flw_raw_1min.index >
                                                    dt_today + timedelta(-1 * days)].iloc[:, 0]
+            # df_flw_raw_1min_days_200m_idx = df_flw_raw_1min_days[df_flw_raw_1min_days >= 2000000].index[0]
+            # print(df_flw_raw_1min_days_200m_idx, df_flw_raw_1min_days[df_flw_raw_1min_days_200m_idx])
+            # sys.exit(0)
             make_timeline(df_flw_raw_1min_days.index,
                           df_flw_raw_1min_days,
                           "[raw] 31days",
