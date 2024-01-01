@@ -267,11 +267,15 @@ def make_timeline(
     if len(data_annots) > 0:
         for data_annot in data_annots:
             # print(data_annot)
-            if len(data_annot) == 3:
+            if len(data_annot) >= 3:
                 va = "top" if data_annot[2] == "min" else "bottom"
                 # remove trailing zero and dot from annotation string
-                plt.annotate(f"{data_annot[1]:5,.3f}".rstrip("0").rstrip("."), xy=data_annot[:2],
-                             horizontalalignment="center", verticalalignment=va, zorder=2)
+                if len(data_annot) == 3:
+                    plt.annotate(f"{data_annot[1]:5,.3f}".rstrip("0").rstrip("."), xy=data_annot[:2],
+                                horizontalalignment="center", verticalalignment=va, zorder=2)
+                else:
+                    plt.annotate(str(data_annot[3]), xy=data_annot[:2],
+                                horizontalalignment="center", verticalalignment=va, zorder=2)
             # plt.show()
 
     if event_hline is None:

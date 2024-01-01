@@ -223,6 +223,27 @@ if account == "pj_sekai":
     if len(iter_table[iter_table.duplicated(subset=["date"])]) != 0:
         iter_table = iter_table_backup
 
+
+# print([(minute, idx) for minute, idx in enumerate(df_flw_raw_1min.loc["2023-12-27"].index)])
+# print((1438, pd.Timestamp('2023-12-27 23:58:35.100000')))
+# print(df_flw_raw_1min.loc[pd.Timestamp('2023-12-27 23:58:35.100000'), 0])
+
+# data_annots = [
+#                     (idx, df_flw_raw_1min.loc[idx, 0], "min", minute)
+#                     for minute, idx in enumerate(df_flw_raw_1min.loc["2023-12-27"].index)
+#                 ]
+        
+target_time_str = "2023-12-27 12"
+target_df = df_flw_raw_1min.loc[target_time_str]
+make_timeline(target_df.index,
+                target_df.iloc[:, 0],
+                "[specific raw] " + target_time_str,
+                data_annots=[
+                    (idx, target_df.iloc[minute, 0], "max", minute)
+                    for minute, idx in enumerate(target_df.index)
+                ])
+sys.exit(0)
+
 if True:
     for iter_name, iter_dt_day in iter_table.values:
         iter_name = iter_name.replace("/", "_")
@@ -245,6 +266,8 @@ if True:
                           y_cut_y,
                           "[filtered] " + iter_name,
                           data_annots=[(y_cut_x[annot_idx], y_cut_y[annot_idx], "min")])
+
+    sys.exit(0)
 
     # 以下forループはデータに含まれているか判定するためのもので、iteration目的ではない
     days = 32
