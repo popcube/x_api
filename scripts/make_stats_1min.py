@@ -114,6 +114,34 @@ def get_y_cut(today):
 
     return x_res, y_res
 
+def get_range_df(df, start_time, end_time):
+    return df[
+        (df.index > start_time) &
+        (df.index < end_time)
+    ]
+
+def get_y_cut_range(st, et):
+    
+    df_flw_1min_ranged = get_range_df(df_flw_1min, st, et)
+    df_flw_raw_1min_ranged = get_range_df(df_flw_raw_1min, st, et)
+
+    x_in = df_flw_1min_ranged.index.to_list()
+    x_res = [df_flw_raw_1min_ranged.index[0]]
+    for i in range(len(x_in) - 1):
+        x_res.append(x_in[i] + (x_in[i+1] - x_in[i]) / 2)
+    if df_flw_raw_1min_ranged.index[-1] > x_in[-1]:
+        x_res.append(df_flw_raw_1min_ranged.index[-1])
+    else:
+        x_res.append(pd.Timestamp(st.year, st.month, st.day) + timedelta(days=1, seconds=-1))
+
+    y_in = df_flw_1min_ranged.iloc[:, 0].to_list()
+    y_res = [0]
+    for i, yd in enumerate(y_in):
+        y_res.append(y_res[-1] + yd * (x_res[i+1] -
+                     x_res[i]).total_seconds() / 60)
+
+    return x_res, y_res
+
 
 def get_y_cut_days(days):  # days: int
 
@@ -233,14 +261,31 @@ if account == "pj_sekai":
 #                     for minute, idx in enumerate(df_flw_raw_1min.loc["2023-12-27"].index)
 #                 ]
         
-target_time_str = "2023-12-27 12"
-target_df = df_flw_raw_1min.loc[target_time_str]
+# target_time_str = "2024-02-27 20"
+# target_df = df_flw_raw_1min.loc[target_time_str]
+start_time = datetime(2024, 2, 27, 21, 30)
+end_time = datetime(2024, 2, 27, 22, 30)
+
+target_time_str = start_time.strftime("%Y-%m-%d-%H-%M-%S")
+target_df = df_flw_raw_1min[
+    (df_flw_raw_1min.index > start_time) &
+    (df_flw_raw_1min.index < end_time)
+]
 make_timeline(target_df.index,
                 target_df.iloc[:, 0],
                 "[specific raw] " + target_time_str,
                 data_annots=[
-                    (idx, target_df.iloc[minute, 0], "max", minute)
-                    for minute, idx in enumerate(target_df.index)
+                    (idx, target_df.iloc[idx_from_0, 0], "max", idx.minute)
+                    for idx_from_0, idx in enumerate(target_df.index)
+                ])
+
+y_cut_x, y_cut_y = get_y_cut_range(start_time, end_time)
+make_timeline(y_cut_x,
+                y_cut_y,
+                "[specific filtered] " + target_time_str,
+                data_annots=[
+                    (time_idx, y_cut_y[idx], "max", time_idx.minute)
+                    for idx, time_idx in enumerate(y_cut_x)
                 ])
 sys.exit(0)
 
