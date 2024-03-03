@@ -263,10 +263,10 @@ if account == "pj_sekai":
         
 # target_time_str = "2024-02-27 20"
 # target_df = df_flw_raw_1min.loc[target_time_str]
-start_time = datetime(2024, 2, 27, 21, 30)
-end_time = datetime(2024, 2, 27, 22, 30)
+start_time = datetime(2024, 2, 27, 19, 53)
+end_time = datetime(2024, 2, 27, 20, 53)
 
-target_time_str = start_time.strftime("%Y-%m-%d-%H-%M-%S")
+target_time_str = start_time.strftime("%Y-%m-%d %H-%M-%S")
 target_df = df_flw_raw_1min[
     (df_flw_raw_1min.index > start_time) &
     (df_flw_raw_1min.index < end_time)
