@@ -10,7 +10,7 @@ from make_timeline import make_timeline
 
 plt.rcParams["font.family"] = "IPAexGothic"
 account = os.environ.get("ACCOUNT")
-
+dt_10_days_ago = datetime.now() + timedelta(days=-10)
 
 def show_data_stats(time_data):
     minutes_range = (time_data[-1] - time_data[0]).total_seconds() / 60
@@ -24,6 +24,7 @@ def show_data_stats(time_data):
 
     print()
     print("########## data stats ##########")
+    print("from " + time_data[0].isoformat() + " to " + time_data[-1].isoformat())
     print(f'data count: {data_count}, data range: {minutes_range:.2f} min')
     print(
         f'minimum diff: {data_diff_min.total_seconds():.2f} sec at {diff_min_date.isoformat()}')
@@ -46,6 +47,14 @@ x = [d[0] for d in data]
 y = [d[1] for d in data]
 
 show_data_stats(x)
+
+x_10days_idx = 0
+for idx, _x in enumerate(x):
+    if _x >= dt_10_days_ago:
+        x_10days_idx = idx
+        break
+    
+show_data_stats(x[x_10days_idx:])
 # sys.exit(0)
 # 12/25 3:00 -
 # x = [d[0] for d in data if d[0] > datetime(2022, 12, 25, 3, 0, 0)]
@@ -121,7 +130,7 @@ plt.close()
 
 x_dif_10days_idx = 0
 for idx, _x in enumerate(x_dif):
-    if _x >= datetime.now() + timedelta(days=-10):
+    if _x >= dt_10_days_ago:
         x_dif_10days_idx = idx
         break
 
@@ -334,7 +343,7 @@ make_timeline(x, y, "y_raw",
 #               adjusted_idxs=adjusted_idxs)
 
 x_dif_10days = [xd for xd in x_dif if xd >=
-                datetime.now() + timedelta(days=-10)]
+                dt_10_days_ago]
 y_cut_dif_10days = [ycd for ycd in y_cut_dif[-1 * len(x_dif_10days):]]
 make_timeline(x_dif_10days, y_cut_dif_10days, "y_cut_dif_10days", tl=True, y0=True,
               ylim=dict(top=y_cut_max, bottom=y_cut_min))
