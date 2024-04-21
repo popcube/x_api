@@ -29,14 +29,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version-file: 'package-lock.json'
+          node-version: '>=16.0.0'
           cache: 'npm'
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
           cache: 'pip'
 
-      - name: npm run
+      - name: data extract run
         run: |
           npm install
           npm start           
