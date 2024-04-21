@@ -47,14 +47,16 @@ jobs:
           SEC_ACC_KEY: ${{ secrets.AWS_DYN_SEC_ACC_KEY }}
           ACCOUNT: ${{ inputs.account }}
         
-      - name: main run
-        continue-on-error: true
+      - name: main run setup
         run: |
           sudo apt-get update
           sudo apt-get install fonts-ipaexfont          
-          pip install --upgrade pip --quiet
-          pip install -r requirements.txt --quiet
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
+      - name: main run
+        continue-on-error: true
+        run: |
           python ./scripts/see_res_1min.py
           python ./scripts/make_stats_1min.py
         env:
