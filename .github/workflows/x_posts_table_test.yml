@@ -35,5 +35,6 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
+          if-no-files-found: error
           path: ./proseka_x/docs/sorted_data.csv
           name: sorted_data.csv

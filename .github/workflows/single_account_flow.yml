@@ -27,6 +27,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        if: ${{ inputs.account == 'pj_sekai' }}
+        with:
+          token: ${{ env.FULL_REPO_TOKEN }}
+          repository: "popcube/proseka_x"
+          path: ./proseka_x
       - uses: actions/setup-node@v4
         with:
           node-version: '>=16.0.0'
@@ -53,6 +59,15 @@ jobs:
           sudo apt-get install fonts-ipaexfont          
           pip install --upgrade pip
           pip install -r requirements.txt
+          pip install -r ./proseka_x/requirements.txt || :
+
+      - name: data decrypt
+        if: ${{ inputs.account == 'pj_sekai' }}
+        run: |
+          cd ./proseka_x
+          python encode_decode.py
+        env:
+          ENC_DEC: 'DEC'
 
       - name: main run
         continue-on-error: true
