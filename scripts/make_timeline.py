@@ -209,7 +209,6 @@ def make_timeline(
 
     # アノテーションがあるとき（一日毎の表示限定）
     if type(annot_dfds) is pd.core.series.Series or type(annot_dfds) is pd.core.frame.DataFrame:
-        # plt.close()
         plt.plot(x, y, marker='o', markerfacecolor='black', markeredgewidth=0,
                  markersize=4, linewidth=0, label=y_label_temp)
 

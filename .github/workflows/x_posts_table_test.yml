@@ -1,0 +1,38 @@
+name: main
+on:
+  workflow_dispatch:
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    env:
+      CSV_KEY: ${{ secrets.CSV_KEY }}
+      FULL_REPO_TOKEN: ${{ secrets.FULL_REPO_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ env.FULL_REPO_TOKEN }}
+          repository: "popcube/proseka_x"
+          path: ./proseka_x
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+          cache: 'pip'
+
+      - name: setup
+        run: |
+          pip install -r ./proseka_x/requirements.txt
+          pip install -r ./requirements.txt
+      
+      - name: data decrypt
+        run: |
+          cd ./proseka_x
+          python encode_decode.py
+        env:
+          ENC_DEC: 'DEC'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: ./prosela_x/sorted_data.csv
+          name: sorted_data.csv

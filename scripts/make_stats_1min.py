@@ -9,7 +9,7 @@ import sys
 import os
 
 # from make_js import make_js
-from get_event_table import get_event_table, get_stream_table
+from get_table import get_event_table, get_stream_table
 
 
 def unit_to_color(unit):
