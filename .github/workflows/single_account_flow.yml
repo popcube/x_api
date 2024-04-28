@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v4
         if: ${{ inputs.account == 'pj_sekai' }}
         with:
-          token: ${{ env.FULL_REPO_TOKEN }}
+          token: ${{ secrets.FULL_REPO_TOKEN }}
           repository: "popcube/proseka_x"
           path: ./proseka_x
       - uses: actions/setup-node@v4
