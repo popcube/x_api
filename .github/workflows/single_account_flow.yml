@@ -68,6 +68,7 @@ jobs:
           python encode_decode.py
         env:
           ENC_DEC: 'DEC'
+          CSV_KEY: ${{ secrets.CSV_KEY }}
 
       - name: main run
         continue-on-error: true
