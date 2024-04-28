@@ -9,7 +9,7 @@ import sys
 import os
 
 # from make_js import make_js
-from get_table import get_event_table, get_stream_table
+from get_table import get_event_table, get_stream_table, get_x_posts
 
 
 def unit_to_color(unit):
@@ -35,9 +35,14 @@ today = dt_today.strftime("%Y-%m-%d")
 
 
 def if_day_in_index(dt, df_res):
+    if len(df_res) == 0: return False
     for year in set(df_res.index.year):
+        if year != dt.year:
+            continue
         month_list = set(df_res.loc[str(year)].index.month)
         for month in month_list:
+            if month != dt.month:
+                continue
             day_list = set(df_res.loc[f'{year}-{month}'].index.day)
             for day in day_list:
                 today = f'{year}-{month:02d}-{day:02d}'
@@ -141,6 +146,7 @@ def get_y_cut_days(days):  # days: int
 
 
 days = 11
+cut_off_days = 32
 iter_dt_days = [dt_today + timedelta(days=-1 * iter_day)
                 for iter_day in range(days)]
 iter_names = [iter_dt_today.strftime("%Y-%m-%d")
@@ -152,9 +158,11 @@ iter_table["date"] = iter_dt_days
 iter_table_backup = pd.DataFrame()
 
 event_table = None
+x_post_table = pd.DataFrame(columns=["POST ID", "BODY TEXT", "DETECTED DATE"])
 merge_table = pd.DataFrame(columns=["desc", "date"])
 
 if account == "pj_sekai":
+    x_post_table = get_x_posts()
     event_table = get_event_table()
     event_table = event_table[["イベント名", "ユニット", "開始日", "終了日", "参加人数"]]
     event_table["color"] = event_table["ユニット"].apply(unit_to_color)
@@ -163,7 +171,6 @@ if account == "pj_sekai":
     stream_table = get_stream_table()
     stream_table.columns = ["No", "date"]
 
-    cut_off_days = 94
     cut_off_date = dt_today + timedelta(days=-1 * cut_off_days)
 
     # cut_event_table = event_table[event_table["start_date"] >= cut_off_date]
@@ -233,10 +240,12 @@ if True:
             #                   df_flw_raw_1min.loc[iter_today].iloc[:, 0], "flw_raw_" + iter_today + "_temp", annot_dfds=df_twt.loc[iter_today])
             #     print(df_twt.loc[iter_today]["url"].to_list())
             # else:
+            x_post_day = x_post_table.loc[iter_str_day] if if_day_in_index(iter_dt_day, x_post_table) else False
             df_raw_day = df_flw_raw_1min.loc[iter_str_day].iloc[:, 0]
             make_timeline(df_raw_day.index,
                           df_raw_day,
                           "[raw] " + iter_name,
+                          annot_dfds=x_post_day,
                           data_annots=((df_raw_day.idxmax(), df_raw_day.max(), "min"),
                                        (df_raw_day.idxmin(), df_raw_day.min(), "min")))
             y_cut_x, y_cut_y = get_y_cut(iter_str_day)
@@ -244,6 +253,7 @@ if True:
             make_timeline(y_cut_x,
                           y_cut_y,
                           "[filtered] " + iter_name,
+                          annot_dfds=x_post_day,
                           data_annots=[(y_cut_x[annot_idx], y_cut_y[annot_idx], "min")])
 
     # 以下forループはデータに含まれているか判定するためのもので、iteration目的ではない

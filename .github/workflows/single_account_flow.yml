@@ -84,3 +84,4 @@ jobs:
           path: |
             ./*.csv
             ./*.png
+            ./proseka_x/docs/sorted_data.csv

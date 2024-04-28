@@ -26,7 +26,7 @@ async function main(account = undefined) {
         userNames.splice(0, userNames.length, account);
     }
     console.log(userNames);
-    console.log(account);
+    // console.log(account);
 
     // for (const userName of userNames) {
     //     const flwObj = await getFollowers(userName);

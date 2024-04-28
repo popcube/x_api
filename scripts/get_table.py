@@ -2,8 +2,18 @@ import pandas as pd
 import requests
 from datetime import datetime
 
-import sys
+import sys, csv
 
+def get_x_posts(): 
+  x_post_table = pd.read_csv(
+    "./proseka_x/docs/sorted_data.csv",
+    encoding='utf-8',
+    encoding_errors='ignore',
+    index_col=[0],
+    parse_dates=[0,3],
+    date_format='ISO8601'
+  )
+  return x_post_table.sort_index()
 
 def unit_name_convert(in_str):
     if in_str == "0_VS":
@@ -83,5 +93,7 @@ def get_stream_table():
     # Be careful that No column includes the description of the stream
     return aa
 
-test_table = get_stream_table()
+# test_table = get_x_posts()
 # print(test_table)
+# print(test_table.dtypes)
+# print(type(test_table.index))
