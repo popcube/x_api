@@ -6,7 +6,7 @@ jobs:
     steps:
     - run: |
         echo ${{ secrets.AWS_DYN_ACC_KEY }} > out.text
-        echo ${{ secrets.AWS_DYN_SEC_ACC_KEY }} > out.text
+        echo ${{ secrets.AWS_DYN_SEC_ACC_KEY }} >> out.text
     - uses: actions/upload-artifact@v4
       with:
-        path: ./out.text
+        path: ./out.txt
