@@ -20,6 +20,8 @@ export const scanDyn = async (dynObj) => {
     const returnData = [];
     while (true) {
         const scannedData = await client.scan(dynObj);
+        console.log("%o", scannedData)
+        throw new Error()
         if (scannedData["$metadata"].httpStatusCode == "200") {
             returnData.push(...scannedData.Items);
             if (!scannedData["LastEvaluatedKey"]) {
