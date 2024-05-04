@@ -43,10 +43,10 @@ export const scanDyn = async (dynObj) => {
 export const queryDyn = async (dynObj) => {
     const returnData = [];
     while (true) {
-        dynObj["ReturnConsumedCapacity"] = "TOTAL"; //TOBEDELETED
+        // dynObj["ReturnConsumedCapacity"] = "TOTAL"; //TOBEDELETED
         const scannedData = await client.query(dynObj);
-        delete scannedData["Items"]; //TOBEDELETED
-        console.log("%o", scannedData); //TOBEDELETED
+        // delete scannedData["Items"]; //TOBEDELETED
+        // console.log("%o", scannedData); //TOBEDELETED
         throw new Error()
         if (scannedData["$metadata"].httpStatusCode == "200") {
             returnData.push(...scannedData.Items);
