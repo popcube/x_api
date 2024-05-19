@@ -1,5 +1,4 @@
 matplotlib==3.5.2
-install
 scipy
 lxml
 html5lib
