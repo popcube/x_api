@@ -146,7 +146,7 @@ def get_y_cut_days(days):  # days: int
 
 
 days = 11
-cut_off_days = 32
+cut_off_days = 94
 iter_dt_days = [dt_today + timedelta(days=-1 * iter_day)
                 for iter_day in range(days)]
 iter_names = [iter_dt_today.strftime("%Y-%m-%d")
