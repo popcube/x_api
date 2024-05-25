@@ -263,8 +263,8 @@ if account == "pj_sekai":
         
 # target_time_str = "2024-02-27 20"
 # target_df = df_flw_raw_1min.loc[target_time_str]
-start_time = datetime(2024, 2, 27, 19, 53)
-end_time = datetime(2024, 2, 27, 20, 53)
+start_time = datetime(2024, 5, 21, 20, 0)
+end_time = datetime(2024, 5, 21, 21, 59)
 
 target_time_str = start_time.strftime("%Y-%m-%d %H-%M-%S")
 target_df = df_flw_raw_1min[
@@ -273,20 +273,12 @@ target_df = df_flw_raw_1min[
 ]
 make_timeline(target_df.index,
                 target_df.iloc[:, 0],
-                "[specific raw] " + target_time_str,
-                data_annots=[
-                    (idx, target_df.iloc[idx_from_0, 0], "max", idx.minute)
-                    for idx_from_0, idx in enumerate(target_df.index)
-                ])
+                "[specific raw] " + target_time_str,)
 
 y_cut_x, y_cut_y = get_y_cut_range(start_time, end_time)
 make_timeline(y_cut_x,
                 y_cut_y,
-                "[specific filtered] " + target_time_str,
-                data_annots=[
-                    (time_idx, y_cut_y[idx], "max", time_idx.minute)
-                    for idx, time_idx in enumerate(y_cut_x)
-                ])
+                "[specific filtered] " + target_time_str,)
 sys.exit(0)
 
 if True:
