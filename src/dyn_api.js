@@ -63,7 +63,7 @@ export const queryDyn = async (dynObj) => {
             throw new Error('ERROR at query');
         }
         dynObj["ExclusiveStartKey"] = scannedData["LastEvaluatedKey"]
-        await setTimeout(1000);
+        await setTimeout(1500);
     }
     return returnData;
 }
