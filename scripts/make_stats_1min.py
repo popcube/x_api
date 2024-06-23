@@ -132,7 +132,8 @@ def get_y_cut_range(st, et):
     if df_flw_raw_1min_ranged.index[-1] > x_in[-1]:
         x_res.append(df_flw_raw_1min_ranged.index[-1])
     else:
-        x_res.append(pd.Timestamp(st.year, st.month, st.day) + timedelta(days=1, seconds=-1))
+        x_res.append(et + timedelta(seconds=-1))
+        # x_res.append(pd.Timestamp(st.year, st.month, st.day) + timedelta(days=1, seconds=-1))
 
     y_in = df_flw_1min_ranged.iloc[:, 0].to_list()
     y_res = [0]
@@ -263,22 +264,32 @@ if account == "pj_sekai":
         
 # target_time_str = "2024-02-27 20"
 # target_df = df_flw_raw_1min.loc[target_time_str]
-start_time = datetime(2024, 5, 21, 20, 0)
-end_time = datetime(2024, 5, 21, 21, 59)
+start_time = datetime(2023, 9, 20, 00, 00)
+end_time = datetime(2023, 10, 1, 00, 00)
+data_annots_flg = False
 
 target_time_str = start_time.strftime("%Y-%m-%d %H-%M-%S")
 target_df = df_flw_raw_1min[
     (df_flw_raw_1min.index > start_time) &
     (df_flw_raw_1min.index < end_time)
 ]
+target_df_annots = ()
+if data_annots_flg:
+    target_df_annots = list(zip(target_df.index, target_df.iloc[:, 0], ["max"]*len(target_df.index),
+                                [idx.strftime("%M") for idx in target_df.index]))[::(len(target_df.index)-20)//60 + 1]
 make_timeline(target_df.index,
                 target_df.iloc[:, 0],
-                "[specific raw] " + target_time_str,)
+                "[specific raw] " + target_time_str,
+                data_annots = target_df_annots)
 
 y_cut_x, y_cut_y = get_y_cut_range(start_time, end_time)
+if data_annots_flg:
+    target_df_annots = list(zip(y_cut_x, y_cut_y, ["max"]*len(target_df.index),
+                                [idx.strftime("%M") for idx in y_cut_x]))[::(len(y_cut_x)-20)//60 + 1]
 make_timeline(y_cut_x,
                 y_cut_y,
-                "[specific filtered] " + target_time_str,)
+                "[specific filtered] " + target_time_str,
+                data_annots = target_df_annots)
 sys.exit(0)
 
 if True:
