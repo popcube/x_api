@@ -119,26 +119,26 @@ plt.legend()
 plt.savefig("./cut_dif.png")
 plt.close()
 
-x_dif_10days_idx = 0
-for idx, _x in enumerate(x_dif):
-    if _x >= datetime.now() + timedelta(days=-10):
-        x_dif_10days_idx = idx
-        break
+# x_dif_10days_idx = 0
+# for idx, _x in enumerate(x_dif):
+#     if _x >= datetime.now() + timedelta(days=-10):
+#         x_dif_10days_idx = idx
+#         break
 
-print("10 days idx: " + str(x_dif_10days_idx))
-print("10 days limit datetime " +
-      x_dif[x_dif_10days_idx].strftime("%Y-%m-%d %H:%M:%S"))
+# print("10 days idx: " + str(x_dif_10days_idx))
+# print("10 days limit datetime " +
+#       x_dif[x_dif_10days_idx].strftime("%Y-%m-%d %H:%M:%S"))
 
-plt.figure(figsize=(15, 8))
-plt.hist(y_dif[x_dif_10days_idx:], log=True,
-         range=(-50, 50), bins=100, label="元の増減量")
-plt.legend()
-plt.savefig("./ori_dif_10days.png")
+# plt.figure(figsize=(15, 8))
+# plt.hist(y_dif[x_dif_10days_idx:], log=True,
+#          range=(-50, 50), bins=100, label="元の増減量")
+# plt.legend()
+# plt.savefig("./ori_dif_10days.png")
 
-plt.hist(y_dif_cut[x_dif_10days_idx:], log=True,
-         range=(-50, 50), bins=100, label="うち、有効な増減量")
-plt.legend()
-plt.savefig("./cut_dif_10days.png")
+# plt.hist(y_dif_cut[x_dif_10days_idx:], log=True,
+#          range=(-50, 50), bins=100, label="うち、有効な増減量")
+# plt.legend()
+# plt.savefig("./cut_dif_10days.png")
 plt.close()
 
 # y_cut_temp_min = y_cut_min
@@ -321,10 +321,10 @@ print(
 # print(len(x), len(y_dif), len(y_cut))
 
 ###### Chart creaation part ######
-make_timeline(x_dif, y_dif, "y_dif_10days", y0=True,
-              nan_idxs=nan_idxs, adjusted_idxs=adjusted_idxs,
-              ylim={"top": 80, "bottom": -80},
-              xlim={"left": datetime.now() + timedelta(days=-10), "right": datetime.now()})
+# make_timeline(x_dif, y_dif, "y_dif_10days", y0=True,
+#               nan_idxs=nan_idxs, adjusted_idxs=adjusted_idxs,
+#               ylim={"top": 80, "bottom": -80},
+#               xlim={"left": datetime.now() + timedelta(days=-10), "right": datetime.now()})
 make_timeline(x_dif, y_cut_dif, "y_cut_dif", tl=True, y0=True,
               ylim=dict(top=y_cut_max, bottom=y_cut_min))
 make_timeline(x, y, "y_raw",
@@ -333,11 +333,11 @@ make_timeline(x, y, "y_raw",
 # make_timeline(x, y, "y_raw_annot", nan_idxs=nan_idxs,
 #               adjusted_idxs=adjusted_idxs)
 
-x_dif_10days = [xd for xd in x_dif if xd >=
-                datetime.now() + timedelta(days=-10)]
-y_cut_dif_10days = [ycd for ycd in y_cut_dif[-1 * len(x_dif_10days):]]
-make_timeline(x_dif_10days, y_cut_dif_10days, "y_cut_dif_10days", tl=True, y0=True,
-              ylim=dict(top=y_cut_max, bottom=y_cut_min))
+# x_dif_10days = [xd for xd in x_dif if xd >=
+#                 datetime.now() + timedelta(days=-10)]
+# y_cut_dif_10days = [ycd for ycd in y_cut_dif[-1 * len(x_dif_10days):]]
+# make_timeline(x_dif_10days, y_cut_dif_10days, "y_cut_dif_10days", tl=True, y0=True,
+#               ylim=dict(top=y_cut_max, bottom=y_cut_min))
 
 y_cut = [0]
 for i, yd in enumerate(y_cut_dif[1:]):
