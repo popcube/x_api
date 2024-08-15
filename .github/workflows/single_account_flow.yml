@@ -1,4 +1,4 @@
-name: "single account flw"
+name: "single_account_flow"
 on:
   workflow_dispatch:
     inputs:
@@ -81,6 +81,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           if-no-files-found: error
+          name: ${{ github.workflow }}.zip
           path: |
             ./*.csv
             ./*.png
