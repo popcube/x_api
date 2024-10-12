@@ -80,11 +80,11 @@ def make_timeline(
     plt.scatter(x, y, marker='None')
 
     if event_hline is not None:
-        plt.title(f"公式ツイッター{account}フォロワー数＆イベント参加人数観測", y=1, pad=45)
+        plt.title(f"公式X {account}フォロワー数＆イベント参加人数観測", y=1, pad=45)
     elif type(annot_dfds) is not bool:
-        plt.title(f"公式ツイッター{account}フォロワー数観測", y=1, pad=45)
+        plt.title(f"公式X {account}フォロワー数観測", y=1, pad=45)
     else:
-        plt.title(f"公式ツイッター{account}フォロワー数観測", )
+        plt.title(f"公式X {account}フォロワー数観測", )
 
     x_range = max(x) - min(x)
     y_range = max(y) - min(y)
@@ -247,6 +247,29 @@ def make_timeline(
                         linestyle="dotted", color=cm_colors[ci])
 
     label_flgs = [True, True]
+    if figname.startswith("[trend]"):
+        x_fill_pairs = [
+            (datetime(2023, 9, 30, 0, 0, 0), datetime(2023, 10, 18, 4, 0, 0), "3周年記念ログインキャンペーン"),
+            (datetime(2023, 11, 24, 00, 00, 0), datetime(2023, 11, 25, 00, 0, 0), "プロセカ放送局#2 サンリオコラボ期間発表"),
+            (datetime(2023, 12, 26, 00, 00, 0), datetime(2023, 12, 27, 00, 0, 0), "プロセカ放送局#3 70連無料ガチャ発表"),
+            (datetime(2024, 1, 14, 0, 0, 0), datetime(2024, 1, 19, 0, 0, 0), "ZOZOコラボ第2弾イラスト投稿期間"),
+            (datetime(2024, 3, 27, 0, 00, 0), datetime(2024, 3, 28, 0, 0, 0), "プロセカ放送局3.5周年 70連無料ガチャ発表"),
+            (datetime(2024, 3, 30, 12, 00, 0), datetime(2024, 5, 1, 4, 0, 0), "3900'sログインキャンペーン"),
+            (datetime(2024, 7, 29, 0, 00, 0), datetime(2024, 7, 30, 0, 0, 0), "プロセカ放送局#10 劇場版発表"),
+            (datetime(2024, 9, 27, 0, 00, 0), datetime(2024, 9, 28, 0, 0, 0), "プロセカ放送局 出張版 4th Anniversary"),
+        ]
+        cm_colors_light = plt.cm.get_cmap("Pastel2").colors
+        cm_colors_dark = plt.cm.get_cmap("Set2").colors
+        for idx, x_fill_pair in enumerate(x_fill_pairs):
+            if x_fill_pair[2].startswith("プロセカ放送局"):
+                fc = cm_colors_dark[idx % len(cm_colors_dark)]
+            else:                
+                fc = cm_colors_light[idx % len(cm_colors_light)]
+            plt.gca().fill_between(x_fill_pair[:2], *ylim, fc=fc, zorder=0, label=x_fill_pair[2])
+            
+    if figname.startswith("[tren"):
+        x_fill_pairs = []
+
     for x_fill_pair in x_fill_pairs:
         fc = ""
         label = None
@@ -279,7 +302,10 @@ def make_timeline(
             # plt.show()
 
     if event_hline is None:
-        plt.legend().set(zorder=21)
+        if figname.startswith("[trend]"):
+            plt.legend(loc="upper left", bbox_to_anchor=(1, 1), framealpha=0.8).set(zorder=21)
+        else:
+            plt.legend().set(zorder=21)
 
     # イベント開催期間追記用
     else:
@@ -321,6 +347,10 @@ def make_timeline(
 
         plt.legend(proxy_artists, proxy_labels, loc="lower left", ncol=10, bbox_to_anchor=(
             0, 1), edgecolor="white")
+        
+    
+            
+    plt.tight_layout()
 
     # ローカル実行ならグラフ表示、Actions実行ならグラフ保存
     if len(sys.argv) > 1:

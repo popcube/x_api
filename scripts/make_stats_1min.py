@@ -264,9 +264,9 @@ if account == "pj_sekai":
         
 # target_time_str = "2024-02-27 20"
 # target_df = df_flw_raw_1min.loc[target_time_str]
-if True:
-    start_time = datetime(2024, 6, 26, 20, 00, 00)
-    end_time = datetime(2024, 6, 27, 1, 00, 00)
+if False:
+    start_time = datetime(2024, 1, 27, 0, 0, 00)
+    end_time = datetime(2024, 2, 1, 0, 0, 00)
     data_annots_flg = False
 
     target_time_str = start_time.strftime("%Y-%m-%d %H-%M-%S")
@@ -291,6 +291,29 @@ if True:
                     y_cut_y,
                     "[specific filtered] " + target_time_str,
                     data_annots = target_df_annots)
+    
+if True:
+    trend_df = pd.read_csv("./trend_diff.csv", index_col="time", parse_dates=True)
+    
+    start_time = datetime(2023, 9, 28, 0, 0, 00)
+    end_time = datetime(2029, 9, 24, 0, 0, 00)
+    
+    target_time_str = start_time.strftime("%Y-%m-%d %H-%M-%S")
+    target_df = trend_df[
+        (trend_df.index > start_time) &
+        (trend_df.index < end_time)
+    ]
+    
+    make_timeline(target_df.index,
+                    target_df.iloc[:, 0],
+                    "[trend] " + target_time_str,
+                    y_label="フォロワー数増減量トレンド")
+    
+    make_timeline(target_df.index,
+                    target_df.iloc[:, 0],
+                    "[tren] " + target_time_str,
+                    y_label="フォロワー数増減量トレンド")
+
 sys.exit(0)
 
 if False:
@@ -348,9 +371,9 @@ print(df_flw)
 
 stl = STL(ds_flw, period=24*4, robust=True)
 stl_series = stl.fit()
-stl_series.plot()
+# stl_series.plot()
 # plt.savefig("./STL_decompose.png")
-plt.close()
+# plt.close()
 
 stl_r = stl_series.resid
 stl_trend = stl_series.trend
