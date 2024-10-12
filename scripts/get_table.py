@@ -39,7 +39,7 @@ def date_convert(in_str):
     # return datetime.strptime(in_str + "T15", f"%Y/%m/%dT%H")
     # return datetime.strptime(in_str + "T21", f"%Y/%m/%dT%H")
     datetime_str = in_str.split("*")[0].strip()
-    return datetime.strptime(in_str, f"%Y/%m/%d")
+    return datetime.strptime(datetime_str, f"%Y/%m/%d")
 
 
 def get_event_table():
