@@ -371,7 +371,7 @@ def make_multi_timeline(
 ):
 
     plt.figure(figsize=(15, 8))
-    plt.title(f"公式ツイッター{account}フォロワー数観測")
+    plt.title(f"公式X {account} フォロワー数観測")
 
     for df in dfs:
         plt.scatter(df.index, df.iloc[:, 0], marker='None')

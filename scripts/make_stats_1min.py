@@ -4,7 +4,7 @@ import numpy as np
 from statsmodels.tsa.seasonal import STL
 
 from matplotlib import pyplot as plt
-from make_timeline import make_timeline
+from make_timeline import make_timeline, make_multi_timeline
 import sys
 import os
 
@@ -169,7 +169,7 @@ def get_y_cut_days(days):  # days: int
     return x_res, y_res
 
 
-days = 11
+days = 100
 iter_dt_days = [dt_today + timedelta(days=-1 * iter_day)
                 for iter_day in range(days)]
 iter_names = [iter_dt_today.strftime("%Y-%m-%d")
@@ -265,11 +265,12 @@ if account == "pj_sekai":
 # target_time_str = "2024-02-27 20"
 # target_df = df_flw_raw_1min.loc[target_time_str]
 if False:
-    start_time = datetime(2024, 1, 27, 0, 0, 00)
-    end_time = datetime(2024, 2, 1, 0, 0, 00)
-    data_annots_flg = False
+    start_time = datetime(2024, 11, 29, 0, 0, 00)
+    end_time = datetime(2024, 11, 30, 0, 0, 00)
+    data_annots_flg = False # for every datapoints
+    data_annots_flg_2 = True # for start and end
 
-    target_time_str = start_time.strftime("%Y-%m-%d %H-%M-%S")
+    target_time_str = start_time.strftime("%Y-%m-%d %H-%M-%S") + " to " + end_time.strftime("%Y-%m-%d %H-%M-%S")
     target_df = df_flw_raw_1min[
         (df_flw_raw_1min.index > start_time) &
         (df_flw_raw_1min.index < end_time)
@@ -278,12 +279,19 @@ if False:
     if data_annots_flg:
         target_df_annots = list(zip(target_df.index, target_df.iloc[:, 0], ["max"]*len(target_df.index),
                                     [idx.strftime("%M") for idx in target_df.index]))[::(len(target_df.index)-20)//60 + 1]
+    
+    if data_annots_flg_2:
+        target_df_annots = [
+            (target_df.index[0], target_df.iloc[0, 0], "max"),
+            (target_df.index[-1], target_df.iloc[-1, 0], "min")
+        ]
     make_timeline(target_df.index,
                     target_df.iloc[:, 0],
                     "[specific raw] " + target_time_str,
                     data_annots = target_df_annots)
 
     y_cut_x, y_cut_y = get_y_cut_range(start_time, end_time)
+    target_df_annots = ()
     if data_annots_flg:
         target_df_annots = list(zip(y_cut_x, y_cut_y, ["max"]*len(target_df.index),
                                     [idx.strftime("%M") for idx in y_cut_x]))[::(len(y_cut_x)-20)//60 + 1]
@@ -292,27 +300,53 @@ if False:
                     "[specific filtered] " + target_time_str,
                     data_annots = target_df_annots)
     
+    sys.exit(0)
+    
 if True:
     trend_df = pd.read_csv("./trend_diff.csv", index_col="time", parse_dates=True)
     
-    start_time = datetime(2023, 9, 28, 0, 0, 00)
-    end_time = datetime(2029, 9, 24, 0, 0, 00)
+    start_time = datetime(2023, 1, 1, 0, 0, 00)
+    end_time = datetime(2023, 4, 1, 0, 0, 00)
+    start_time_2 = datetime(2024, 1, 1, 0, 0, 00)
+    end_time_2 = datetime(2024, 4, 1, 0, 0, 00)
+    start_time_3 = datetime(2025, 1, 1, 0, 0, 00)
+    end_time_3 = datetime(2025, 4, 1, 0, 0, 00)
     
     target_time_str = start_time.strftime("%Y-%m-%d %H-%M-%S")
     target_df = trend_df[
         (trend_df.index > start_time) &
         (trend_df.index < end_time)
     ]
+    target_df_2 = trend_df[
+        (trend_df.index > start_time_2) &
+        (trend_df.index < end_time_2)
+    ]
+    target_df_3 = trend_df[
+        (trend_df.index > start_time_3) &
+        (trend_df.index < end_time_3)
+    ]
     
-    make_timeline(target_df.index,
-                    target_df.iloc[:, 0],
+    def replace_year(in_dt, a, b):
+        return datetime.fromisoformat(in_dt.isoformat().replace(str(a), str(b), 1))
+    
+    target_df.index = target_df.index.to_series().apply(lambda x: replace_year(x, 2023, 2024))
+    target_df_3.index = target_df_3.index.to_series().apply(lambda x: replace_year(x, 2025, 2024))
+    
+    
+    # make_timeline(target_df.index,
+    #                 target_df.iloc[:, 0],
+    #                 "[trend] " + target_time_str,
+    #                 y_label="フォロワー数増減量トレンド")
+    
+    # print(target_df)
+    # print(target_df_2)
+    # print(target_df_3)
+    
+    make_multi_timeline(
+                    [target_df, target_df_2, target_df_3],
                     "[trend] " + target_time_str,
-                    y_label="フォロワー数増減量トレンド")
-    
-    make_timeline(target_df.index,
-                    target_df.iloc[:, 0],
-                    "[tren] " + target_time_str,
-                    y_label="フォロワー数増減量トレンド")
+                    y_label="フォロワー数増減量トレンド",
+                    y_labels=["2023年", "2024年", "2025年"])
 
 sys.exit(0)
 
@@ -320,6 +354,10 @@ if False:
     for iter_name, iter_dt_day in iter_table.values:
         iter_name = iter_name.replace("/", "_")
         iter_str_day = iter_dt_day.strftime("%Y-%m-%d")
+    # date_range_raw = pd.date_range(start="20240701", end="20241027")
+    # for iter_dt_day in date_range_raw:
+    #     iter_str_day = iter_dt_day.isoformat().split("T")[0]
+    #     iter_name = iter_str_day.replace("-", "_")
         if if_day_in_index(iter_dt_day, df_flw_raw_1min) and if_day_in_index(iter_dt_day, df_flw_1min):
             # if if_day_in_index(iter_dt_today, df_twt):
             #     make_timeline(df_flw_raw_1min.loc[iter_today].index,
