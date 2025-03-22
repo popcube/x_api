@@ -42,16 +42,44 @@ def date_convert(in_str):
     return datetime.strptime(datetime_str, f"%Y/%m/%d")
 
 
-def get_event_table():
-    pjsekai_res = requests.get("https://pjsekai.com/?2d384281f1")
+# def get_event_table():
+#     pjsekai_res = requests.get("https://pjsekai.com/?2d384281f1")
 
-    a = pd.read_html(pjsekai_res.content, index_col='No', encoding="utf-8",
-                     attrs={"id": "sortable_table1"})[0]
-    a["ユニット"] = a["ユニット"].apply(unit_name_convert)
-    a["開始日"] = a["開始日"].apply(date_convert)
-    a["終了日"] = a["終了日"].apply(date_convert)
-    # a.to_csv("./event_data.csv", index=False, header=False)
-    return a
+#     a = pd.read_html(pjsekai_res.content, index_col='No', encoding="utf-8",
+#                      attrs={"id": "sortable_table1"})[0]
+#     a["ユニット"] = a["ユニット"].apply(unit_name_convert)
+#     a["開始日"] = a["開始日"].apply(date_convert)
+#     a["終了日"] = a["終了日"].apply(date_convert)
+#     # a.to_csv("./event_data.csv", index=False, header=False)
+#     return a
+
+def get_event_table():
+    try:
+        pjsekai_res = requests.get("https://pjsekai.com/?2d384281f1")
+        if pjsekai_res.ok:
+
+            a = pd.read_html(pjsekai_res.content, index_col='No', encoding="utf-8",
+                            attrs={"id": "sortable_table1"})[0]
+            # default columns belown
+            # No, 週目, イベント名, 形式, ユニット, タイプ, 書き下ろし楽曲, 開始日, 終了日, 日数, 参加人数
+            
+            # a["ユニット"] = a["ユニット"].apply(unit_name_convert)
+            # a["開始日"] = date_convert(a, start=True)
+            # a["終了日"] = date_convert(a, end=True)
+            a["ユニット"] = a["ユニット"].apply(unit_name_convert)
+            a["開始日"] = a["開始日"].apply(date_convert)
+            a["終了日"] = a["終了日"].apply(date_convert)
+            
+
+            
+            # a.to_csv("./event_data.csv", index=False, header=False)
+            return a
+        else:
+            raise ValueError("status code: " + str(pjsekai_res.status_code))
+    except Exception as e:
+        print("ERROR at fetchig event table")
+        print(e)
+        return pd.DataFrame(columns=["開始日", "終了日", "イベント名"])
 
 
 def get_stream_table():
