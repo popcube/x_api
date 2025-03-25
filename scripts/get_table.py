@@ -79,7 +79,7 @@ def get_event_table():
     except Exception as e:
         print("ERROR at fetchig event table")
         print(e)
-        return pd.DataFrame(columns=["開始日", "終了日", "イベント名"])
+        return pd.DataFrame(columns=["開始日", "終了日", "イベント名", "ユニット", "参加人数"])
 
 
 def get_stream_table():
