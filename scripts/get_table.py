@@ -123,7 +123,7 @@ def get_stream_table():
             aa.reset_index()
             
     except Exception as e:
-        print("ERROR at fetchig event table")
+        print("ERROR at fetchig steams table")
         print(e)
 
     # Be careful that No column includes the description of the stream
