@@ -172,18 +172,25 @@ if account == "pj_sekai":
     stream_table.columns = ["No", "date"]
 
     cut_off_date = dt_today + timedelta(days=-1 * cut_off_days)
+    
+    if len(event_table) > 0:
 
-    # cut_event_table = event_table[event_table["start_date"] >= cut_off_date]
-    cut_event_table = event_table[["event_name", "unit", "start_date"]]
-    # merge event_name and unit to create new description for event
-    cut_event_table = cut_event_table.apply(lambda x: pd.Series(
-        ["【" + x["unit"].upper() + " イベント】" + x["event_name"] + " start date", x["start_date"]]), axis=1)
-    cut_event_table.columns = ["desc", "date"]
-    # # print(cut_event_table["desc"])
-    # cut_event_table_yesterday = cut_event_table.apply(lambda x: x.index, axis=1)
-    cut_event_table_yesterday = cut_event_table.apply(lambda x: pd.Series(
-        [x["desc"][:-1*len("start date")] + "announcement date", x["date"] + timedelta(days=-1)]), axis=1)
-    cut_event_table_yesterday.columns = ["desc", "date"]
+        # cut_event_table = event_table[event_table["start_date"] >= cut_off_date]
+        cut_event_table = event_table[["event_name", "unit", "start_date"]]
+        # merge event_name and unit to create new description for event
+        cut_event_table = cut_event_table.apply(lambda x: pd.Series(
+            ["【" + x["unit"].upper() + " イベント】" + x["event_name"] + " start date", x["start_date"]]), axis=1)
+        cut_event_table.columns = ["desc", "date"]
+        # # print(cut_event_table["desc"])
+        # cut_event_table_yesterday = cut_event_table.apply(lambda x: x.index, axis=1)
+        cut_event_table_yesterday = cut_event_table.apply(lambda x: pd.Series(
+            [x["desc"][:-1*len("start date")] + "announcement date", x["date"] + timedelta(days=-1)]), axis=1)
+        cut_event_table_yesterday.columns = ["desc", "date"]
+        
+    else:
+        
+        cut_event_table = pd.DataFrame(columns=["desc", "date"])
+        cut_event_table_yesterday = pd.DataFrame(columns=["desc", "date"])
 
     # cut_stream_table = stream_table[stream_table["date"] >= cut_off_date]
     stream_table.columns = ["desc", "date"]
