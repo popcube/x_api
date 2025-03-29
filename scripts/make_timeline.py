@@ -80,11 +80,11 @@ def make_timeline(
     plt.scatter(x, y, marker='None')
 
     if event_hline is not None:
-        plt.title(f"公式ツイッター{account}フォロワー数＆イベント参加人数観測", y=1, pad=45)
+        plt.title(f"公式X {account} フォロワー数＆イベント参加人数観測", y=1, pad=45)
     elif type(annot_dfds) is not bool:
-        plt.title(f"公式ツイッター{account}フォロワー数観測", y=1, pad=45)
+        plt.title(f"公式X {account} フォロワー数観測", y=1, pad=45)
     else:
-        plt.title(f"公式ツイッター{account}フォロワー数観測", )
+        plt.title(f"公式X {account} フォロワー数観測", )
 
     x_range = max(x) - min(x)
     y_range = max(y) - min(y)
@@ -336,7 +336,7 @@ def make_multi_timeline(
 ):
 
     plt.figure(figsize=(15, 8))
-    plt.title(f"公式ツイッター{account}フォロワー数観測")
+    plt.title(f"公式X {account} フォロワー数観測")
 
     for df in dfs:
         plt.scatter(df.index, df.iloc[:, 0], marker='None')

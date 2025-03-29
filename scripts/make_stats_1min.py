@@ -4,7 +4,7 @@ import numpy as np
 from statsmodels.tsa.seasonal import STL
 
 from matplotlib import pyplot as plt
-from make_timeline import make_timeline
+from make_timeline import make_timeline, make_multi_timeline
 import sys
 import os
 
@@ -237,7 +237,7 @@ if account == "pj_sekai":
     if len(iter_table[iter_table.duplicated(subset=["date"])]) != 0:
         iter_table = iter_table_backup
 
-if True:
+if account == "pj_sekai":
     for iter_name, iter_dt_day in iter_table.values:
         iter_name = iter_name.replace("/", "_")
         iter_str_day = iter_dt_day.strftime("%Y-%m-%d")
@@ -335,8 +335,85 @@ trend_date_idxmaxs = [(date_range.idxmax(), date_range.max(), "max")
 
 make_timeline(stl_trend.index, stl_trend, 'trend_diff',
               y_label="増減量（/分）トレンド", event_hline=event_table)
-make_timeline(stl_trend_94_days.index, stl_trend_94_days, 'trend_diff_94_days',
-              y_label="増減量（/分）トレンド", event_hline=event_table, data_annots=trend_date_idxmaxs)
+
+start_date = stl_trend_94_days.index[0]
+end_date = stl_trend_94_days.index[-1]
+
+# leap year substitution
+if start_date.month == 2 and start_date.day == 29:
+    start_date += timedelta(day=-1)
+if end_date.month == 2 and end_date.day == 29:
+    end_date += timedelta(day=1)
+
+
+target_time_str = start_date.strftime("%Y-%m-%d %H-%M-%S")
+trend_period_df_list = []
+trend_period_year_list = []
+
+while True:
+    if end_date > stl_trend.index[0]:
+        trend_period_df_list.append(
+            pd.DataFrame(
+                stl_trend[(stl_trend.index > start_date) &
+                        (stl_trend.index < end_date)],
+                columns=["trend"]
+            )
+        )
+        trend_period_year_list.append(
+            str(start_date.year) + "年" if start_date.year == end_date.year else f"{start_date.year}-{end_date.year}年")
+    else:
+        break
+    
+    start_date = datetime(start_date.year - 1, start_date.month, start_date.day)
+    end_date = datetime(end_date.year - 1, end_date.month, end_date.day)
+    
+# start_time = datetime(2023, 1, 1, 0, 0, 00)
+# end_time = datetime(2023, 4, 1, 0, 0, 00)
+# start_time_2 = datetime(2024, 1, 1, 0, 0, 00)
+# end_time_2 = datetime(2024, 4, 1, 0, 0, 00)
+# start_time_3 = datetime(2025, 1, 1, 0, 0, 00)
+# end_time_3 = datetime(2025, 4, 1, 0, 0, 00)
+
+# target_df = trend_df[
+#     (trend_df.index > start_time) &
+#     (trend_df.index < end_time)
+# ]
+# target_df_2 = trend_df[
+#     (trend_df.index > start_time_2) &
+#     (trend_df.index < end_time_2)
+# ]
+# target_df_3 = trend_df[
+#     (trend_df.index > start_time_3) &
+#     (trend_df.index < end_time_3)
+# ]
+
+def replace_year(in_dt, a, b):
+    return datetime.fromisoformat(in_dt.isoformat().replace(str(a), str(b), 1))
+
+# replace year to leap year
+leap_year_offset = trend_period_df_list[0].index[-1].year - 2024
+for i in range(len(trend_period_df_list)):
+    trend_period_df_list[i].index = trend_period_df_list[i].index.to_series().apply(lambda x: replace_year(x, x.year, x.year + i - leap_year_offset))
+
+    print(trend_period_df_list[i])
+    
+# make_timeline(target_df.index,
+#                 target_df.iloc[:, 0],
+#                 "[trend] " + target_time_str,
+#                 y_label="フォロワー数増減量トレンド")
+
+# print(target_df)
+# print(target_df_2)
+# print(target_df_3)
+
+make_multi_timeline(
+                trend_period_df_list,
+                'trend_diff_94_days',
+                y_label="フォロワー数増減量トレンド",
+                y_labels=trend_period_year_list)
+    
+# make_timeline(stl_trend_94_days.index, stl_trend_94_days, 'trend_diff_94_days',
+#               y_label="増減量（/分）トレンド", event_hline=event_table, data_annots=trend_date_idxmaxs)
 make_timeline(stl_r_10days.index, stl_r_10days, 'res_diff_10days',
               y_label="増減量残差", ylim=dict(bottom=-5, top=5))
 make_timeline(stl_season_10days.index, stl_season_10days, 'season_diff_10days',
