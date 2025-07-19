@@ -121,7 +121,7 @@ def make_timeline(
     else:
         # every first Monday of the month
         xaxis_major_loc = mdates.RRuleLocator(mdates.rrulewrapper(
-            mdates.MONTHLY, byweekday=0, byhour=11, byminute=30))
+            mdates.MONTHLY, bymonthday=1, byhour=11, byminute=30))
         plt.gca().xaxis.set_major_locator(xaxis_major_loc)
 
     if x_range.days <= 20:
