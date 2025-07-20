@@ -130,7 +130,7 @@ def make_timeline(
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d\n%a'))
         plt.xticks(rotation=90)
     else:
-        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y/%m/%d'))
         plt.xticks(rotation=90)
 
     if not (len(xaxis_minor_byhour) == 1 and xaxis_minor_byhour[0] == 0):
