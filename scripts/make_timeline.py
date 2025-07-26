@@ -135,7 +135,7 @@ def make_timeline(
 
     if not (len(xaxis_minor_byhour) == 1 and xaxis_minor_byhour[0] == 0):
         plt.gca().xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
-    elif x_range.days <= 365:
+    if x_range.days <= 365:
         plt.gca().xaxis.set_minor_locator(mdates.HourLocator(byhour=xaxis_minor_byhour))
     else:
         plt.gca().xaxis.set_minor_locator(mdates.WeekdayLocator(byweekday=0))
