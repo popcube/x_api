@@ -118,7 +118,8 @@ if False:
     sys.exit(1)
 
 plt.figure(figsize=(15, 8))
-plt.hist(y_dif[-1000000:], log=True, range=(-50, 50), bins=100, label="元の増減量")
+# plt.hist(y_dif[-1000000:], log=True, range=(-50, 50), bins=100, label="元の増減量")
+plt.hist(y_dif, log=True, bins=range(-50, 51), label="元の増減量")
 plt.legend()
 plt.savefig("./ori_dif.png")
 
