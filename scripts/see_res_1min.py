@@ -119,12 +119,12 @@ if False:
 
 plt.figure(figsize=(15, 8))
 # plt.hist(y_dif[-1000000:], log=True, range=(-50, 50), bins=100, label="元の増減量")
-plt.hist(y_dif, log=True, bins=range(-50, 51), label="元の増減量")
+plt.hist(y_dif, log=True, bins=range(-50, 51), label="元の増減量", zorder=1)
 plt.legend()
 plt.savefig("./ori_dif.png")
 
-plt.hist(y_dif_cut, log=True,
-         range=(-50, 50), bins=100, label="うち、有効な増減量")
+# plt.hist(y_dif_cut, log=True, range=(-50, 50), bins=100, label="うち、有効な増減量", zorder=2)
+plt.hist(y_dif_cut, log=True, bins=range(-50, 51), label="うち、有効な増減量", zorder=2, alpha=.3)
 plt.legend()
 plt.savefig("./cut_dif.png")
 plt.close()
@@ -141,12 +141,12 @@ print("10 days limit datetime " +
 
 plt.figure(figsize=(15, 8))
 plt.hist(y_dif[x_dif_10days_idx:], log=True,
-         range=(-50, 50), bins=100, label="元の増減量")
+         range=(-50, 50), bins=100, label="元の増減量", zorder=1)
 plt.legend()
 plt.savefig("./ori_dif_10days.png")
 
 plt.hist(y_dif_cut[x_dif_10days_idx:], log=True,
-         range=(-50, 50), bins=100, label="うち、有効な増減量")
+         range=(-50, 50), bins=100, label="うち、有効な増減量", zorder=2, alpha=.3)
 plt.legend()
 plt.savefig("./cut_dif_10days.png")
 plt.close()
