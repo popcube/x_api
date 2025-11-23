@@ -76,7 +76,9 @@ elif account == "bang_dream_gbp" or account == "wds_game" or account == "ensembl
 y_dif = [0] + [(y[i] - y[i-1]) * 60 / (x[i]-x[i-1]).total_seconds()
                for i in range(1, len(y))]
 x_dif = [x[0]] + [x[i] + (x[i+1] - x[i])/2 for i in range(len(x)-1)]
-y_dif_cut = [d for d in y_dif if y_cut_min <= d <= y_cut_max]
+xy_dif_cut = [d for d in zip(x_dif, y_dif) if y_cut_min <= d[1] <= y_cut_max]
+y_dif_cut = [d[1] for d in xy_dif_cut]
+x_dif_cut = [d[0] for d in xy_dif_cut]
 print(f'mean before cut: {mean(y_dif):.2f}')
 # print(f'mean after cut: {mean(y_dif_cut):.2f}')
 
@@ -134,6 +136,12 @@ for idx, _x in enumerate(x_dif):
     if _x >= dt_10_days_ago:
         x_dif_10days_idx = idx
         break
+    
+x_dif_cut_10days_idx = 0
+for idx, _x in enumerate(x_dif_cut):
+    if _x >= dt_10_days_ago:
+        x_dif_cut_10days_idx = idx
+        break
 
 print("10 days idx: " + str(x_dif_10days_idx))
 print("10 days limit datetime " +
@@ -145,7 +153,7 @@ plt.hist(y_dif[x_dif_10days_idx:], log=True,
 plt.legend()
 plt.savefig("./ori_dif_10days.png")
 
-plt.hist(y_dif_cut[x_dif_10days_idx:], log=True,
+plt.hist(y_dif_cut[x_dif_cut_10days_idx:], log=True,
          range=(-50, 50), bins=100, label="うち、有効な増減量", zorder=2, alpha=.3)
 plt.legend()
 plt.savefig("./cut_dif_10days.png")
