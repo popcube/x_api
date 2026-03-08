@@ -254,6 +254,8 @@ def make_timeline(
                         linestyle="dotted", color=cm_colors[ci])
 
     label_flgs = [True, True]
+    if x_range.days > 800:
+        x_fill_pairs = []
     for x_fill_pair in x_fill_pairs:
         fc = ""
         label = None
