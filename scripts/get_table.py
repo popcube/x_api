@@ -33,7 +33,7 @@ def unit_name_convert(in_str):
         return "mix"
     else:
         print("unrecognized event type", in_str)
-        sys.exit(1)
+        return "tbc"
 
 
 def date_convert(in_str):
