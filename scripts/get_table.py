@@ -113,35 +113,40 @@ def get_stream_table():
     )
     aa.loc[:, "No"] = aa["No"].apply(lambda x: "ワンダショちゃんねる " + x)
     
-    # try:
-    pjsekai_res = requests.get("https://pjsekai.com/?1c5f55649f")
-    # print(pjsekai_res.status_code)
-    # print(pjsekai_res.content)
-    if pjsekai_res.ok:
-        a = pd.read_html(StringIO(pjsekai_res.text), 
-                    encoding="utf-8",
-                    attrs={"border": "0", "cellspacing": "1", "class": "style_table"})
-        # print(a[0])
+    try:
+        pjsekai_res = requests.get("https://pjsekai.com/?1c5f55649f")
+        # print(pjsekai_res.status_code)
+        # print(pjsekai_res.content)
+        if pjsekai_res.ok:
+            a = pd.read_html(StringIO(pjsekai_res.text), 
+                        encoding="utf-8",
+                        attrs={"border": "0", "cellspacing": "1", "class": "style_table"})
+            # print(a[0])
 
-        a_temp = a[0][["No", "配信日時"]]
-        a_temp.columns = ["No", "配信日時"]
-        # print(a_temp)
-        a_temp = a_temp.drop_duplicates(ignore_index=True)
+            a_temp = a[0][["No", "配信日時"]]
+            a_temp.columns = ["No", "配信日時"]
+            # print(a_temp)
+            a_temp = a_temp.drop_duplicates(ignore_index=True)
 
-        # convert Japanese datetime string to datetime object
-        a_temp["配信日時"] = a_temp["配信日時"].apply(
-            lambda x: datetime.strptime(x[:get_first_opener(x)], "%Y/%m/%d"))
-        a_temp.loc[:, "No"] = a_temp["No"].apply(lambda x: "プロセカ放送局 " + x)
-        # print(a_temp)
-        aa = pd.concat([aa, a_temp])
-        aa.reset_index()
-            
-    # except Exception as e:
-    #     print("ERROR at fetchig steams table")
-    #     print(e)
+            # convert Japanese datetime string to datetime object
+            a_temp["配信日時"] = a_temp["配信日時"].apply(
+                lambda x: datetime.strptime(x[:get_first_opener(x)], "%Y/%m/%d"))
+            a_temp.loc[:, "No"] = a_temp["No"].apply(lambda x: "プロセカ放送局 " + x)
+            # print(a_temp)
+            aa_2 = pd.concat([aa, a_temp])
+            aa_2.reset_index()
+                
+        # except Exception as e:
+        #     print("ERROR at fetchig steams table")
+        #     print(e)
 
-    # Be careful that No column includes the description of the stream
-    return aa
+        # Be careful that No column includes the description of the stream
+        return aa_2
+    
+    except Exception as e:
+        print("ERROR at fetchig stream table")
+        print(e)
+        return aa
 
 if __name__ == "__main__":
     print(get_stream_table())
