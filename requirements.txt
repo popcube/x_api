@@ -1,5 +1,5 @@
-numpy
-matplotlib
+numpy<2.0.0
+matplotlib==3.5.2
 scipy
 lxml
 html5lib
