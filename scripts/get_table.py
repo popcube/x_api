@@ -1,5 +1,6 @@
 import pandas as pd
 import requests
+import re
 from io import StringIO
 from datetime import datetime
 
@@ -85,8 +86,7 @@ def get_event_table():
             a["ユニット"] = a["ユニット"].apply(unit_name_convert)
             a["開始日"] = a["開始日"].apply(date_convert)
             a["終了日"] = a["終了日"].apply(date_convert)
-            
-
+            a["イベント名"] = a["イベント名"].apply(lambda x: "unknown event" if re.findall(r'["<>:|*?\r\n]', x) else x)
             
             # a.to_csv("./event_data.csv", index=False, header=False)
             return a
